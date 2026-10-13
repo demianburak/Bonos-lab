@@ -1,0 +1,31 @@
+name: Actualizar datos
+
+on:
+  schedule:
+    - cron: '0 13 * * 1-5'  # 10:00 Argentina (UTC-3), lunes a viernes
+  workflow_dispatch:          # también permite correrlo a mano
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install requests
+
+      - name: Correr script
+        run: python actualizar_datos.py
+
+      - name: Guardar datos.json
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add datos.json
+          git diff --staged --quiet || git commit -m "Actualizar datos $(date +'%Y-%m-%d')"
+          git push
