@@ -121,7 +121,7 @@ const EXTRA_EMBEBIDA = {"generado":"2026-10-12 21:24","fecha_excel":"2026-10-09"
 "use strict";
 /* ---------- datos ---------- */
 var REF = REF_EMBEBIDA, LIVE = SEMILLA_EMBEBIDA, D = null;
-var estado = {en_vivo:false, error:"", ultimoIntento:null};
+var estado = {en_vivo:false, error:"", ultimoIntento:null, fuente:""};
 var DAY = 86400000;
 function pd(s){ var p = s.split("-"); return Date.UTC(+p[0], +p[1]-1, +p[2]); }
 function isoDe(ms){ return new Date(ms).toISOString().slice(0,10); }
@@ -2681,21 +2681,55 @@ var _parOrig=R.par; R.par=function(){ _parOrig(); var x=calcDe(parEstado.t); if(
 try{ if(/[?&]debug/.test(location.search)) window.__bl={calcDe:calcDe,operacion:operacion,sensVal:sensVal,breakEven:breakEven,cerCalc:cerCalc,cerBonoPorT:cerBonoPorT,cerDualCalc:cerDualCalc,D:D,ustEfectiva:ustEfectiva,sucioEn:sucioEn,dualTMVE8:dualTMVE8,SUP:SUP,sE:sE}; }catch(e){}
 
 function estadoTexto(){
-  if(estado.en_vivo) return 'en vivo, actualizado el '+fechaAR(fechaART(LIVE.actualizado))+' a las '+horaART(LIVE.actualizado)+' (hora de Argentina).'+(LIVE.avisos&&LIVE.avisos.length?' Avisos: '+esc(LIVE.avisos.join("; "))+'.':'');
-  return 'sin conexión a datos en vivo'+(estado.error?' ('+esc(estado.error)+')':'')+'. Se muestran los últimos precios guardados en la app, del '+fechaAR(fechaART(LIVE.actualizado))+'.';
+  var cuando=fechaAR(fechaART(LIVE.actualizado))+' a las '+horaART(LIVE.actualizado)+' (hora de Argentina)';
+  if(estado.en_vivo) return 'en vivo ('+(estado.fuente==="directo"?'precios traídos directo de data912 hace un momento':'archivo de datos reciente')+'), actualizado el '+cuando+'.'+(LIVE.avisos&&LIVE.avisos.length?' Avisos: '+esc(LIVE.avisos.join("; "))+'.':'');
+  return 'sin datos en vivo'+(estado.error?' ('+esc(estado.error)+')':'')+'. Se muestran los últimos precios guardados, del '+cuando+'.';
 }
 
 function encabezado(){
   $("#asof").textContent="Precios del "+fechaAR(D.meta.fecha_precios)+" · liquidación "+fechaAR(D.meta.liquidacion);
-  var el=$("#datasrc"); el.innerHTML=(estado.en_vivo?'<span class="tag good">En vivo</span> ':'<span class="tag warn">Respaldo</span> ')+(estado.en_vivo?'actualizado '+horaART(LIVE.actualizado)+' h':'sin datos en vivo');
+  var el=$("#datasrc"); el.innerHTML=(estado.en_vivo?'<span class="tag good">En vivo</span> ':'<span class="tag warn">Respaldo</span> ')+(estado.en_vivo?'actualizado '+horaART(LIVE.actualizado)+' h':'sin datos en vivo · último dato '+fechaAR(fechaART(LIVE.actualizado))+(estado.error?' ('+esc(estado.error)+')':''));
   el.title=estadoTexto();
+}
+
+/* Precios en vivo: el navegador consulta data912 directo (con su propia conexión).
+   Si falla, se usa datos.json (que actualiza el robot de GitHub) y se marca como Respaldo si es viejo. */
+var URLS_PX=["https://data912.com/live/arg_bonds","https://data912.com/live/arg_notes","https://data912.com/live/arg_letras","https://data912.com/live/arg_bills"];
+function pedir(url, ms){
+  var ctl=(typeof AbortController!=="undefined")?new AbortController():null, t=ctl?setTimeout(function(){ ctl.abort(); },ms||15000):null;
+  return fetch(url,{cache:"no-store",signal:ctl?ctl.signal:undefined}).then(function(r){ if(t) clearTimeout(t); if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); },function(e){ if(t) clearTimeout(t); throw e; });
+}
+function posit(reg){ for(var i=1;i<arguments.length;i++){ var v=parseFloat(String(reg[arguments[i]]).replace(",",".")); if(isFinite(v)&&v>0) return v; } return null; }
+function preciosDirectos(){
+  return Promise.all(URLS_PX.map(function(u){ return pedir(u).catch(function(){ return null; }); })).then(function(res){
+    var px={};
+    res.forEach(function(data){ if(!Array.isArray(data)) return; data.forEach(function(reg){
+      var s=reg&&reg.symbol; if(!s||px[s]) return;
+      var p={c:posit(reg,"c","px_last","last"),bid:posit(reg,"px_bid","bid"),ask:posit(reg,"px_ask","ask"),v:posit(reg,"v","volume")}, q={};
+      for(var k in p) if(p[k]!==null) q[k]=p[k];
+      for(var k2 in q){ px[s]=q; break; }
+    }); });
+    if(Object.keys(px).length<20) throw new Error("data912 no respondió desde este navegador");
+    return px;
+  });
 }
 function cargarEnVivo(manual){
   estado.ultimoIntento=Date.now();
   return fetch("datos.json?t="+Date.now(),{cache:"no-store"}).then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }).then(function(o){
     if(!o||!o.precios||!o.actualizado) throw new Error("formato inesperado");
+    var edad=Date.now()-new Date(o.actualizado).getTime();
+    return preciosDirectos().then(function(px){
+      o.precios=px; o.actualizado=new Date().toISOString(); estado.fuente="directo"; estado.error="";
+      return pedir("https://dolarapi.com/v1/dolares/oficial",8000).then(function(d){ var v=d&&(d.venta||d.promedio||d.compra); if(v>0) o.oficial=+v; },function(){}).then(function(){ return o; });
+    },function(e){
+      estado.fuente="archivo"; estado.error=e.message; o.__fresco=edad<45*60000;
+      return o;
+    });
+  }).then(function(o){
     var cambio = o.actualizado!==LIVE.actualizado;
-    LIVE=o; estado.en_vivo=true; estado.error="";
+    estado.en_vivo = estado.fuente==="directo" || !!o.__fresco; delete o.__fresco;
+    if(estado.en_vivo) estado.error="";
+    LIVE=o;
     if(cambio){ buildD(); if(!carryEstado.manual){ carryEstado.entrada=null; carryEstado.dolFinal=null; } }
     encabezado();
     var foco=document.activeElement&&/INPUT|SELECT/.test(document.activeElement.tagName);
@@ -2710,12 +2744,6 @@ var h0=(location.hash||"").slice(1); if(R[h0]) actual=h0;
 pestanas(); R[actual]();
 })();
 </script>
-
-<footer style="text-align:center;padding:18px 0 22px;font-size:0.82rem;color:#6b7280;border-top:1px solid #1f2937;margin-top:32px;">
-  Desarrollado por <a href="https://www.linkedin.com/in/demianburak" target="_blank" rel="noopener" style="color:#34d399;text-decoration:none;font-weight:600;">Demian Burak</a>
-  · Maestría en Finanzas · Buenos Aires
-  &nbsp;·&nbsp; <span style="font-size:0.78rem;">Beta — opiniones bienvenidas</span>
-</footer>
-
+<footer style="text-align:center;padding:18px 0 22px;font-size:0.82rem;color:#6b7280;border-top:1px solid #1f2937;margin-top:32px;">Desarrollado por <a href="https://www.linkedin.com/in/demianburak" target="_blank" rel="noopener" style="color:#34d399;text-decoration:none;font-weight:600;">Demian Burak</a> · Maestría en Finanzas · Buenos Aires &nbsp;·&nbsp; Beta — opiniones bienvenidas</footer>
 </body>
 </html>
