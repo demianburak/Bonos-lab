@@ -54,7 +54,8 @@ avisos, out = [], {k: previo.get(k) for k in ("oficial", "a3500", "futuros")}
 # 1) bonos, letras y especies D/C (data912)
 precios = {}
 for url in ("https://data912.com/live/arg_bonds", "https://data912.com/live/arg_notes",
-            "https://data912.com/live/arg_letras", "https://data912.com/live/arg_bills"):
+            "https://data912.com/live/arg_letras", "https://data912.com/live/arg_bills",
+            "https://data912.com/live/arg_corp"):
     data = bajar(url, 2 if "notes" in url or "letras" in url or "bills" in url else 3)
     if isinstance(data, list):
         for reg in data:
@@ -65,9 +66,16 @@ for url in ("https://data912.com/live/arg_bonds", "https://data912.com/live/arg_
             p = {k: v for k, v in p.items() if v is not None}
             if p and s not in precios:
                 precios[s] = p
-if len(precios) < 20:
-    print("No se pudo bajar el listado de precios; no se toca datos.json.")
-    sys.exit(1)
+precios_ok = len(precios) >= 20
+if not precios_ok:
+    # data912 suele rechazar a los servidores de GitHub. No cortamos: seguimos con el resto de las fuentes
+    # (futuros, A3500, CER, TAMAR, Tesoro) y conservamos los ultimos precios; el navegador los pide directo a data912.
+    precios = previo.get("precios") or {}
+    if len(precios) < 20:
+        print("No se pudo bajar el listado de precios y no hay anteriores; no se toca datos.json.")
+        sys.exit(1)
+    avisos.append("precios: data912 no respondio desde el servidor; se conservan los anteriores")
+    print("  data912 no respondio: se conservan los precios anteriores y se sigue con las demas fuentes.")
 
 # 2) dolar oficial
 d = bajar("https://dolarapi.com/v1/dolares/oficial", 2)
@@ -223,7 +231,7 @@ try:
 except Exception as e:
     print("  historico:", e)
 
-out.update({"actualizado": datetime.now(timezone.utc).isoformat(timespec="seconds"), "origen": "data912.com, BCRA, A3 Mercados, dolarapi.com",
+out.update({"actualizado": datetime.now(timezone.utc).isoformat(timespec="seconds") if precios_ok else (previo.get("actualizado") or datetime.now(timezone.utc).isoformat(timespec="seconds")), "origen": "data912.com, BCRA, A3 Mercados, dolarapi.com",
             "precios": precios, "avisos": avisos})
 SALIDA.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 print("OK:", len(precios), "precios", "| avisos:", avisos or "ninguno")

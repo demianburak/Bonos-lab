@@ -274,7 +274,7 @@ var ordBonos = "tirN";
 R.bonos = function(){
   var h = '<h2>Bonos en dólares</h2><p class="lead">Cambiá el precio sucio (dólares cada 100 VN) y la fila se recalcula con los flujos del prospecto. La TIR es la efectiva anual (días reales / 365) y la TIR neta incluye tu costo de compra.</p>';
   h += '<div class="controls"><div class="field"><label for="ord">Ordenar por</label><select id="ord"><option value="tirN">TIR neta (mayor primero)</option><option value="dm">Duration modificada</option><option value="par">Paridad</option><option value="t">Ticker</option></select></div><button class="btn ghost" id="rst" hidden>Restablecer precios en vivo</button></div><p class="how">Los precios son los del mercado. Si escribís otro precio en la tabla, esa fila se recalcula como simulación y aparece el botón para volver al precio de mercado.</p>';
-  h += '<div class="tablewrap"><table><thead><tr><th>Bono</th><th class="l">Tipo</th><th>Vence</th><th>Cupón</th><th>Precio sucio</th><th>Corrido</th><th>Paridad</th><th>TIR bruta</th><th>TIR neta</th><th>Duration mod.</th><th>Duration Mac.</th><th>Convexidad</th><th>Current yield</th></tr></thead><tbody id="tb"></tbody></table></div>';
+  h += '<div class="tablewrap"><table><thead><tr><th class="l">Ticker</th><th class="l">Descripción</th><th>Ley</th><th class="l">Calificación</th><th>Vencimiento</th><th>Tasa (cupón)</th><th>V. residual</th><th>Int. corridos</th><th>V. técnico</th><th>Precio USD (sucio)</th><th>Paridad</th><th>TIR</th><th>TIR neta</th><th>Duration mod.</th><th>Duration Mac.</th><th>Convexidad</th><th>Current yield</th></tr></thead><tbody id="tb"></tbody></table></div>';
   h += '<p class="how" style="margin-top:12px"><b>TIR bruta</b> es la que publica el mercado (sin comisiones). <b>TIR neta</b> descuenta la comisión y los derechos de compra ('+pc(D.meta.costo_compra)+'). <b>Duration modificada</b>: si la TIR sube 1 punto, el precio baja aproximadamente esa cantidad de puntos porcentuales. <b>Paridad</b>: precio sobre valor técnico; debajo de 100% el bono cotiza con descuento.</p>';
   h += '<div class="note">AL, GD y BPD7 pueden mostrar punta vendedora (ask) en vivo del último día; los demás son último operado. La columna de calidad dice de dónde sale cada precio: confirmá puntas y volumen en tu broker antes de operar.</div>';
   $("#view").innerHTML = h;
@@ -289,9 +289,9 @@ function filasBonos(){
   c.sort(function(a,b){ if(ordBonos==="t") return a.b.t<b.b.t?-1:1; var k=ordBonos; return ordBonos==="tirN"||ordBonos==="par" ? (b[k]||0)-(a[k]||0) : (a[k]||0)-(b[k]||0); });
   var h="";
   c.forEach(function(x){
-    h += '<tr><td class="l"><b>'+esc(x.b.t)+'</b></td><td class="l">'+esc(x.b.tipo)+'</td><td>'+fechaAR(x.b.vto)+'</td><td>'+pc(x.b.cupon)+'</td>'
-      + '<td><input type="number" step="0.01" value="'+x.p+'" data-t="'+esc(x.b.t)+'" aria-label="Precio de '+esc(x.b.t)+'"></td>'
-      + '<td>'+nf(x.corr,3)+'</td><td>'+pc(x.par,1)+'</td><td>'+pc(x.tir)+'</td><td><b>'+pc(x.tirN)+'</b></td><td>'+nf(x.dm,2)+'</td><td>'+nf(x.mac,2)+'</td><td>'+nf(x.cv,1)+'</td><td>'+pc(x.cy)+'</td></tr>';
+    h += '<tr><td class="l"><b>'+esc(x.b.t)+'</b></td><td class="l">'+esc(x.b.nombre||'')+' <span class="sub">'+esc(x.b.tipo)+'</span></td><td>'+(/Nueva York|NY/i.test(x.b.ley||'')?'NY':'ARG')+'</td><td class="l"><span class="sub">'+(/BOPREAL/i.test(x.b.tipo)?'BCRA':'Soberano')+'</span></td><td>'+fechaAR(x.b.vto)+'</td><td>'+pc(x.b.cupon,3)+'</td><td>'+nf(x.b.vn,2)+'%</td>'
+      + '<td>'+nf(x.corr,2)+'</td><td>'+nf(x.vt,2)+'</td><td><input type="number" step="0.01" value="'+x.p+'" data-t="'+esc(x.b.t)+'" aria-label="Precio de '+esc(x.b.t)+'"></td>'
+      + '<td>'+pc(x.par,1)+'</td><td>'+pc(x.tir)+'</td><td><b>'+pc(x.tirN)+'</b></td><td>'+nf(x.dm,2)+'</td><td>'+nf(x.mac,2)+'</td><td>'+nf(x.cv,1)+'</td><td>'+pc(x.cy)+'</td></tr>';
   });
   $("#tb").innerHTML = h;
   $("#tb").querySelectorAll("input").forEach(function(i){
@@ -337,7 +337,7 @@ R.letras = function(){
   var L=D.letras;
   var h='<h2>Letras en pesos</h2><p class="lead">LECAP y BONCAP son deuda del Tesoro a tasa fija en pesos. El precio de hoy contra lo que pagan al vencimiento da la tasa. Se compara con un plazo fijo.</p>';
   h+='<div class="controls"><div class="field"><label for="lm">Monto a invertir ($)</label><input id="lm" type="number" step="10000" value="'+L.monto+'"></div><div class="field"><label for="lc">Comisión de compra (%)</label><input id="lc" type="number" step="0.01" value="'+(L.comision*100)+'"></div><div class="field"><label for="lp">Plazo fijo, TNA (%)</label><input id="lp" type="number" step="0.5" value="'+(L.tna_pf*100)+'"></div><button class="btn ghost" id="lr" hidden>Restablecer precios en vivo</button></div>';
-  h+='<div class="tablewrap"><table><thead><tr><th>Letra</th><th>Vence</th><th>Días</th><th>Precio c/100</th><th>Paga c/100</th><th>TEM</th><th>TIREA</th><th>Ganancia neta</th><th>Plazo fijo</th><th>Diferencia</th><th>TIREA vs curva (pb)</th><th class="l">Resultado</th></tr></thead><tbody id="lt"></tbody></table></div><div id="lg"></div>';
+  h+='<div class="tablewrap"><table><thead><tr><th class="l">Ticker</th><th class="l">Descripción</th><th>Ley</th><th class="l">Calificación</th><th>Vencimiento</th><th>Días</th><th>Precio $ c/100</th><th>Paga $ c/100</th><th>TNA</th><th>TEM</th><th>TIREA</th><th>Ganancia neta</th><th>Plazo fijo</th><th>Diferencia</th><th>TIREA vs curva (pb)</th><th class="l">Resultado</th></tr></thead><tbody id="lt"></tbody></table></div><div id="lg"></div>';
   h+='<p class="how" style="margin-top:12px"><b>TEM</b> = tasa efectiva mensual = (paga / precio)^(30/días) − 1. <b>TIREA</b> es lo mismo llevado a un año de 365 días. El plazo fijo equivalente se capitaliza en 30 días con TNA × 30/365. Las letras con pocos días tienen tasas muy sensibles al precio: un centavo de diferencia mueve mucho la TEM.</p>';
   $("#view").innerHTML=h;
   var rec=function(){ var m=+$("#lm").value, co=(+$("#lc").value)/100, tna=(+$("#lp").value)/100; filasLetras(m,co,tna); };
@@ -354,7 +354,7 @@ function filasLetras(monto,com,tna){
   var aj=ajusteCuad(rows.map(function(x){ return [x.l.dias,x.tirea]; }));
   rows.forEach(function(x){ x.vc=aj?(x.tirea-aj.f(x.l.dias))*10000:null; });
   var h=""; rows.forEach(function(x){
-    h+='<tr><td class="l"><b>'+esc(x.l.t)+'</b></td><td>'+fechaAR(x.l.vto)+'</td><td>'+nf(x.l.dias,0)+'</td><td><input type="number" step="0.001" value="'+x.p+'" data-t="'+esc(x.l.t)+'" aria-label="Precio de '+esc(x.l.t)+'"></td><td>'+nf(x.l.pago,3)+'</td><td><b>'+pc(x.tem)+'</b></td><td>'+pc(x.tirea,1)+'</td><td class="'+cls(x.gan)+'">$ '+nf(x.gan,0)+'</td><td>$ '+nf(x.pf,0)+'</td><td class="'+cls(x.dif)+'">$ '+nf(x.dif,0)+'</td><td class="'+cls(x.vc)+'">'+(x.vc==null?"—":nf(x.vc,0))+'</td><td class="l">'+(x.dif>0?'<span class="tag good">Le gana al plazo fijo</span>':'<span class="tag bad">No le gana al plazo fijo</span>')+'</td></tr>';
+    h+='<tr><td class="l"><b>'+esc(x.l.t)+'</b></td><td class="l">'+(/^T/.test(x.l.t)?'BONCAP':/^S/.test(x.l.t)?'LECAP':'Letra')+' <span class="sub">tasa fija en pesos</span></td><td>ARG</td><td class="l"><span class="sub">Tesoro</span></td><td>'+fechaAR(x.l.vto)+'</td><td>'+nf(x.l.dias,0)+'</td><td><input type="number" step="0.001" value="'+x.p+'" data-t="'+esc(x.l.t)+'" aria-label="Precio de '+esc(x.l.t)+'"></td><td>'+nf(x.l.pago,3)+'</td><td>'+pc((x.l.pago/x.p-1)*365/x.l.dias,1)+'</td><td><b>'+pc(x.tem)+'</b></td><td>'+pc(x.tirea,1)+'</td><td class="'+cls(x.gan)+'">$ '+nf(x.gan,0)+'</td><td>$ '+nf(x.pf,0)+'</td><td class="'+cls(x.dif)+'">$ '+nf(x.dif,0)+'</td><td class="'+cls(x.vc)+'">'+(x.vc==null?"—":nf(x.vc,0))+'</td><td class="l">'+(x.dif>0?'<span class="tag good">Le gana al plazo fijo</span>':'<span class="tag bad">No le gana al plazo fijo</span>')+'</td></tr>';
   });
   $("#lt").innerHTML=h;
   $("#lt").querySelectorAll("input").forEach(function(i){ i.onchange=function(){ var v=parseFloat(i.value); if(v>0) ED.letra[i.dataset.t]=v; else delete ED.letra[i.dataset.t]; filasLetras(monto,com,tna); }; });
@@ -728,7 +728,7 @@ R.cartera=function(){
 };
 function pintaCartera(){
   var cal=bonosCalc(), liq=D.meta.liquidacion, cc=D.meta.costo_compra, filas=[], tot=0;
-  cartera.forEach(function(c){ var x=cal.filter(function(z){ return z.b.t===c.t; })[0]; if(!x) return; var val=c.vn*x.p/100; filas.push({c:c,x:x,val:val}); tot+=val; });
+  cartera.forEach(function(c){ var x=calcDe(c.t); if(!x||x.tir==null) return; var val=c.vn*x.p/100; filas.push({c:c,x:x,val:val}); tot+=val; });
   if(!filas.length){ $("#cp").innerHTML='<div class="note info">Todavía no cargaste nada. Elegí un bono, escribí el valor nominal y tocá «Agregar a la cartera».</div>'; return; }
   // flujos combinados
   var mapa={}; filas.forEach(function(f){ f.x.b.flujos.forEach(function(fl){ mapa[fl[0]]=(mapa[fl[0]]||0)+f.c.vn/100*fl[1]; }); });
@@ -2390,6 +2390,8 @@ function cobAlternativas(){
   /* D. no cubre */
   var bx=calcDe("GD30")||calcDe("AL30"); if(bx){ var uM=K/(MEP*(1+cc));
     add({fam:"D",a:"Bono "+bx.b.t+" (dólares, riesgo argentino)",c:bx.b.t+" (no cubre)",ins:"Se compra con pesos vía MEP · TIR "+pc(bx.tir,1)+" en dólares",que:"Bono soberano en dólares: cobra cupones y capital en dólares.",prot:"No es cobertura: protege solo mientras el riesgo país no se mueva.",falla:"En una crisis el dólar sube Y el bono cae (en «sube» la TIR sube "+nf(cbE.crisis,0)+" pp): perdés por los dos lados.",f:function(e){ var o=operacion(bx,{inv:1,T:T,rr:bx.tir,ySale:bx.tir+e.sh/100}); return uM*o.fin*MEP/a3; }}); }
+  var ox=(typeof onsParaCobertura==="function")?onsParaCobertura(T):null; if(ox){ var uO=K/(MEP*(1+cc));
+    add({fam:"D",a:"ON "+ox.b.t+" ("+ox.b.emi+", "+ox.b.grupo+")",c:ox.b.t+" (no cubre del todo)",ins:"Se compra con pesos vía MEP · TIR "+pc(ox.tir,1)+" en dólares · vence "+fechaAR(ox.b.vto),que:"Obligación negociable en dólares: deuda de una empresa que paga cupones y capital en dólares.",prot:"Te deja en dólares, pero no es cobertura pura: el precio depende del crédito de la empresa.",falla:"En una crisis el spread de las empresas también sube: en «sube» se aplica el mismo salto de TIR que al soberano ("+nf(cbE.crisis,0)+" pp), un supuesto prudente. Además, muchas ONs se operan poco.",f:function(e){ var o=operacion(ox,{inv:1,T:T,rr:ox.tir,ySale:ox.tir+e.sh/100}); return uO*o.fin*MEP/a3; }}); }
   return {rows:out,lista:lista,S:S,F:F,dl:dl,T:T,U0:U0,a3:a3,esc:esc3,tl:tlT,lt:lt,lNom:lNom,contTxt:contTxt,cerC:cerC,duC:duC,dls:dls};
 }
 function cbSel(id,lista,val,txt){ return '<select id="'+id+'"><option value="">Automático (el más cercano a tu plazo)</option>'+lista.map(function(x){ return '<option value="'+esc(x.t)+'"'+(x.t===val?' selected':'')+'>'+esc(txt(x))+'</option>'; }).join("")+'</select>'; }
@@ -2657,7 +2659,7 @@ R.estrat=function(){
 var _altasOrig=R.altas; R.altas=function(){ _altasOrig(); $("#view").querySelectorAll("td").forEach(function(td){ td.innerHTML=td.innerHTML.replace(/\s*\((?:filas? |fila )[^)]*\)/g,"").replace(/\s*—\s*A–E ya cargadas/g,""); }); $("#view").querySelectorAll("p.how").forEach(function(p){ p.innerHTML=p.innerHTML.replace(/Estado según el Excel del ([^.]*)\./,"Estado según los datos de respaldo del $1."); }); };
 R.ayuda=function(){
   var h='<h2>Ayuda y datos</h2>';
-  h+='<div class="panel"><h3>De dónde salen los datos</h3><p class="how">Un proceso automático baja los datos de internet cada pocos minutos durante la rueda y los guarda en el archivo <b>datos.json</b>. Esta página lo lee sola cada 5 minutos. No hace falta el Excel.</p><ul class="how" style="padding-left:18px"><li><b>Bonos, letras, CER, duales y especies D y C:</b> data912.com</li><li><b>Dólar oficial:</b> dolarapi.com · <b>A3500, CER y TAMAR:</b> API del BCRA · <b>Dólar futuro:</b> A3 Mercados · <b>Tesoro de EE.UU.:</b> home.treasury.gov</li><li><b>MEP y CCL:</b> se calculan acá con los precios de los bonos.</li><li><b>Histórico de precios:</b> una vez por día, data912.</li><li>Lo que no llega se reemplaza por los <b>datos de respaldo</b> que trae la app (del '+fechaRespaldo()+'): cronogramas de pago, condiciones de emisión y la última foto de CER, TAMAR y precios.</li></ul><p class="how"><b>Estado ahora:</b> '+estadoTexto()+'</p><div class="controls"><button class="btn" id="rf">Actualizar ahora</button></div></div>';
+  h+='<div class="panel"><h3>De dónde salen los datos</h3><p class="how"><b>Precios:</b> tu navegador los pide directo a data912.com (y el dólar oficial a dolarapi.com) cada 60 segundos durante la rueda (lunes a viernes, de 10:45 a 17:15) y cada 5 minutos fuera de horario; se pausa si la pestaña está en segundo plano. <b>Resto de los datos</b> (futuros de dólar, A3500, CER, TAMAR, curva del Tesoro): salen del archivo <b>datos.json</b> del sitio, que se renueva con un proceso aparte. Si data912 no responde, la app muestra «Respaldo» con la fecha del último dato. No hace falta el Excel.</p><ul class="how" style="padding-left:18px"><li><b>Bonos, letras, CER, duales y especies D y C:</b> data912.com</li><li><b>ONs:</b> precios de data912 (arg_corp); condiciones y calificaciones del Reporte de ONs 1T2026 de CRITERIA y de los avisos de cada emisión.</li><li><b>Dólar oficial:</b> dolarapi.com · <b>A3500, CER y TAMAR:</b> API del BCRA · <b>Dólar futuro:</b> A3 Mercados · <b>Tesoro de EE.UU.:</b> home.treasury.gov</li><li><b>MEP y CCL:</b> se calculan acá con los precios de los bonos.</li><li><b>Histórico de precios:</b> una vez por día, data912.</li><li>Lo que no llega se reemplaza por los <b>datos de respaldo</b> que trae la app (del '+fechaRespaldo()+'): cronogramas de pago, condiciones de emisión y la última foto de CER, TAMAR y precios.</li></ul><p class="how"><b>Estado ahora:</b> '+estadoTexto()+'</p><div class="controls"><button class="btn" id="rf">Actualizar ahora</button></div></div>';
   h+='<div class="panel"><h3>Qué hace cada pestaña</h3>'+GRUPOS.map(function(G){ return '<details><summary>'+esc(G[0])+'</summary><ul class="how" style="padding-left:18px">'+G[1].map(function(v){ return '<li><b>'+lnk(v[0])+'</b>: '+esc(DESC[v[0]]||"")+'</li>'; }).join("")+'</ul></details>'; }).join("")+'</div>';
   h+='<div class="panel"><h3>Límites</h3><p class="how">Los feriados no se descuentan al calcular la liquidación (se toma el día hábil siguiente) ni las fechas de pago. Los precios pueden tener minutos de demora y los bonos poco líquidos pueden mostrar un último precio viejo. Los cronogramas de pago son los de los prospectos cargados en la app: si sale un bono nuevo, aparece en Novedades y hay que cargarlo. Todo es educativo.</p></div>';
   $("#view").innerHTML=h; $("#rf").onclick=function(){ cargarEnVivo(true); };
@@ -2680,6 +2682,1036 @@ var _parOrig=R.par; R.par=function(){ _parOrig(); var x=calcDe(parEstado.t); if(
 })();
 try{ if(/[?&]debug/.test(location.search)) window.__bl={calcDe:calcDe,operacion:operacion,sensVal:sensVal,breakEven:breakEven,cerCalc:cerCalc,cerBonoPorT:cerBonoPorT,cerDualCalc:cerDualCalc,D:D,ustEfectiva:ustEfectiva,sucioEn:sucioEn,dualTMVE8:dualTMVE8,SUP:SUP,sE:sE}; }catch(e){}
 
+/* ================= Z2 · MAPA DE CALOR DEL CARRY, BREAKEVEN MENSUAL, BUSCADOR Y MODO CLARO/OSCURO ================= */
+
+/* ---------- 1) Letra vs dólar: mapa de calor con varios dólares de salida + equilibrio contra la banda ---------- */
+var _pintaLqOrig=pintaLq;
+pintaLq=function(){
+  _pintaLqOrig();
+  var rows=D.letras.filas.map(carryCalc).sort(function(a,b){ return a.l.dias-b.l.dias; }); if(!rows.length) return;
+  var E=rows[0].E, cc=D.meta.costo_compra;
+  if(!carryEstado.esc||carryEstado.escBase!==Math.round(E)){ carryEstado.esc=[0.95,0.98,1,1.02,1.05,1.08,1.12,1.15].map(function(k){ return Math.round(E*k/10)*10; }); carryEstado.escBase=Math.round(E); }
+  var S=carryEstado.esc;
+  var celda=function(r){ var a=Math.min(1,Math.abs(r)/0.10), col=r>=0?"var(--good)":"var(--bad)"; return '<td style="background:color-mix(in srgb,'+col+' '+Math.round(12+a*48)+'%,transparent);'+(Math.abs(r)<0.0005?'':'')+'">'+pc(r,2)+'</td>'; };
+  var h='<div class="panel" style="margin-top:14px"><h3>Mapa de calor: cuánto ganás en dólares según el dólar de salida</h3>'+p_('Cada columna es un dólar posible el día que vence la letra (lo podés cambiar). Cada celda es el rendimiento en dólares contra comprar dólares hoy a '+ars(E,2)+'. Verde: le gana a comprar dólares hoy. Rojo: pierde.')+'<div class="tablewrap"><table><thead><tr><th class="l">Letra</th><th>Vence</th><th>Ganancia en pesos</th>';
+  S.forEach(function(v,i){ h+='<th><input type="number" step="10" value="'+v+'" data-i="'+i+'" aria-label="Dólar de salida '+(i+1)+'" style="width:84px"></th>'; });
+  h+='<th>Dólar de equilibrio</th></tr></thead><tbody>';
+  rows.forEach(function(r){ h+='<tr><td class="l"><b>'+esc(r.l.t)+'</b></td><td>'+fechaAR(r.l.vto)+'</td><td>'+pc(r.gan,2)+'</td>'; S.forEach(function(v){ h+=celda(r.pesosVto*(1-cc)/v/r.usdHoy-1); }); h+='<td><b>'+ars(r.eq)+'</b></td></tr>'; });
+  h+='</tbody></table></div>';
+  var hoy=pd(D.meta.liquidacion), xmax=Math.max.apply(null,rows.map(function(r){ return r.l.dias; }))*1.05, tch=[], k;
+  for(k=0;k<=30;k++){ var dd=xmax*k/30; tch.push([dd,techoA(isoDe(hoy+dd*DAY))]); }
+  var ys=rows.map(function(r){ return r.eq; }).concat(tch.map(function(p){ return p[1]; })).concat([E]), yr=rango(ys,.06);
+  h+='<h3 style="margin-top:16px">Dólar de equilibrio de cada letra contra el techo de la banda</h3>'+xySVG({W:900,H:340,xr:[0,xmax],yr:yr,xf:function(v){ return nf(v,0); },yf:function(v){ return "$"+nf(v,0); },xt:6,yt:Math.max(2,Math.round((yr[1]-yr[0])/yr[2])),xlabel:"Días al vencimiento",aria:"Dólar de equilibrio y banda",lines:[{pts:tch,color:"var(--warn)",w:2.5},{pts:rows.map(function(r){ return [r.l.dias,r.eq]; }),color:"var(--c1)",w:1.5,dash:"5 4"}],h:[{y:E,color:"var(--muted)",label:"dólar de hoy "+ars(E,0)}],pts:rows.map(function(r){ return {x:r.l.dias,y:r.eq,label:r.l.t,color:"var(--c1)",hollow:true}; })})+leyenda([["var(--c1)","Dólar de equilibrio de cada letra"],["var(--warn)","Techo de la banda proyectado"],["var(--muted)","Dólar de hoy"]])+p_('Si el dólar de equilibrio queda <b>por debajo</b> del techo, la banda no te protege del todo: el dólar podría subir hasta el techo y la letra perdería contra comprar dólares hoy. Cuanto más lejos del techo, más colchón tenés.')+'</div>';
+  $("#lqx").insertAdjacentHTML("beforeend",h);
+  $("#lqx").querySelectorAll("th input[data-i]").forEach(function(inp){ inp.onchange=function(){ var v=parseFloat(inp.value); if(v>0){ carryEstado.esc[+inp.dataset.i]=v; pintaLq(); } }; });
+};
+
+/* ---------- 2) Breakeven de inflación mensual (tasa fija contra CER del mismo vencimiento) ---------- */
+(function(){ var g=GRUPOS[2][1], i=g.map(function(v){ return v[0]; }).indexOf("cercurva"); g.splice(i+1,0,["breakeven","Breakeven mensual"]); })();
+_VLABEL.breakeven="Breakeven mensual";
+DESC.breakeven="Inflación mensual que descuenta el mercado entre una letra a tasa fija y un bono CER del mismo vencimiento, contra la que esperás vos.";
+var beE={esp:null,tol:20};
+R.breakeven=function(){
+  if(beE.esp==null) beE.esp=Math.round((Math.pow(1+(cerEstado.infl!=null?cerEstado.infl:D.cer.infl||0.25),1/12)-1)*1000)/10;
+  var h='<h2>Breakeven de inflación mes a mes</h2><p class="lead">Si comprás una letra a tasa fija y un bono CER que vencen el mismo día, hay una inflación a la que rinden exactamente igual. Esa es la <b>inflación de breakeven</b>: lo que el mercado está descontando. Si esperás más inflación que eso, conviene el CER; si esperás menos, la tasa fija.</p>';
+  h+='<div class="controls"><div class="field"><label for="be1">Inflación mensual que esperás (%)</label><input id="be1" type="number" step="0.1" value="'+beE.esp+'"></div><div class="field"><label for="be2">Diferencia máxima de vencimiento (días)</label><input id="be2" type="number" step="1" min="0" max="60" value="'+beE.tol+'"></div></div><div id="bex"></div>';
+  h+=metodo("Cómo se calcula",p_('<b>Breakeven anual</b> = (1 + TIREA de la letra) ÷ (1 + TIR real del bono CER) − 1 (ecuación de Fisher). <b>Breakeven mensual</b> = (1 + breakeven anual)^(1/12) − 1: es la inflación promedio por mes hasta el vencimiento, no la de un mes calendario puntual.')+p_('<b>Advertencias:</b> el CER se ajusta con unos 10 días hábiles de rezago, así que el bono CER «ve» la inflación un poco desplazada en el tiempo. Los bonos CER de menos de 60 días tienen TIR reales extremas (el CER que cobran ya está casi fijado) y su breakeven no es confiable: aparecen marcados. Si no hay una letra que venza cerca del bono CER (según la tolerancia que elegiste), el par no se arma.'),false);
+  $("#view").innerHTML=h;
+  var pinta=function(){
+    var esp=(beE.esp||0)/100, L=D.letras.filas.map(function(l){ var p=precioLetra(l); return p>0&&l.dias>0?{l:l,tirea:Math.pow(l.pago/p,365/l.dias)-1}:null; }).filter(Boolean);
+    var rows=[];
+    cerTodos().forEach(function(x){ if(x.tir==null||!x.vto) return; var dC=dias(D.meta.liquidacion,x.vto), best=null;
+      L.forEach(function(l){ var dif=Math.abs(l.l.dias-dC); if(dif<=beE.tol&&(!best||dif<best.dif)) best={l:l,dif:dif}; });
+      if(!best) return; var ba=(1+best.l.tirea)/(1+x.tir)-1; var cal=cerCalidad(cerBonoPorT(x.t),x.pr); rows.push({x:x,l:best.l,dif:best.dif,dC:dC,ba:ba,bm:Math.pow(1+ba,1/12)-1,corto:dC<60,dud:cal!=="OK"?cal:null}); });
+    rows.sort(function(a,b){ return a.dC-b.dC; });
+    if(!rows.length){ $("#bex").innerHTML='<div class="note">No hay pares letra / CER con vencimientos a menos de '+beE.tol+' días. Probá subir la tolerancia.</div>'; return; }
+    var t='<div class="tablewrap"><table><thead><tr><th class="l">Tasa fija</th><th class="l">CER</th><th>Días entre vencimientos</th><th>TIREA fija</th><th>TIR real CER</th><th>Breakeven anual</th><th>Breakeven mensual</th><th class="l">Con tu inflación ('+nf(beE.esp,1)+'% mensual)</th></tr></thead><tbody>';
+    rows.forEach(function(r){ var lec=r.dud?'<span class="tag warn">Dato dudoso: '+esc(r.dud.toLowerCase())+'</span>':r.corto?'<span class="tag warn">Muy corto: poco confiable</span>':Math.abs(esp-r.bm)<0.0005?'<span class="tag">Indiferente</span>':esp>r.bm?'<span class="tag good">Conviene el CER ('+esc(r.x.t)+')</span>':'<span class="tag bad">Conviene la tasa fija ('+esc(r.l.l.t)+')</span>';
+      t+='<tr><td class="l"><b>'+esc(r.l.l.t)+'</b> <span class="sub">'+fechaAR(r.l.l.vto)+'</span></td><td class="l"><b>'+esc(r.x.t)+'</b> <span class="sub">'+fechaAR(r.x.vto)+'</span></td><td>'+nf(r.dif,0)+'</td><td>'+pc(r.l.tirea,2)+'</td><td>'+pc(r.x.tir,2)+'</td><td>'+pc(r.ba,2)+'</td><td style="font-weight:600">'+pc(r.bm,2)+'</td><td class="l">'+lec+'</td></tr>'; });
+    t+='</tbody></table></div>';
+    var ok=rows.filter(function(r){ return !r.corto&&!r.dud; }), ys=ok.map(function(r){ return r.bm*100; }).concat([esp*100]);
+    if(ok.length){ var yr=rango(ys,.15), xm=Math.max.apply(null,ok.map(function(r){ return r.dC; }))*1.06;
+      t+='<div class="panel chart" style="margin-top:14px"><h3>Inflación mensual que descuenta el mercado según el plazo</h3>'+xySVG({W:900,H:320,xr:[0,xm],yr:yr,xf:function(v){ return nf(v,0); },yf:function(v){ return nf(v,1)+"%"; },xt:6,yt:Math.max(2,Math.round((yr[1]-yr[0])/yr[2])),xlabel:"Días al vencimiento",ylabel:"Inflación mensual de breakeven",lines:[{pts:ok.map(function(r){ return [r.dC,r.bm*100]; }),color:"var(--c1)",w:2}],pts:ok.map(function(r){ return {x:r.dC,y:r.bm*100,label:r.x.t,color:esp>r.bm?"var(--good)":"var(--bad)"}; }),h:[{y:esp*100,color:"var(--c2)",label:"tu inflación esperada"}],aria:"Breakeven mensual por plazo"})+leyenda([["var(--good)","Tu inflación es mayor: conviene CER"],["var(--bad)","Tu inflación es menor: conviene tasa fija"],["var(--c2)","Tu inflación mensual esperada"]])+'</div>';
+      var mx=ok.slice().sort(function(a,b){ return b.bm-a.bm; })[0], mn=ok.slice().sort(function(a,b){ return a.bm-b.bm; })[0], cer=ok.filter(function(r){ return esp>r.bm; }).length;
+      t+=concl("Qué nos dice hoy",['El mercado descuenta entre '+pc(mn.bm,2)+' y '+pc(mx.bm,2)+' de inflación mensual promedio según el plazo.',
+        ok[ok.length-1].bm<ok[0].bm?'La inflación descontada baja con el plazo: el mercado espera desinflación.':'La inflación descontada sube con el plazo: el mercado no espera que baje.',
+        cer?'Con tu expectativa de '+nf(beE.esp,1)+'% mensual, el CER le gana a la tasa fija en '+cer+' de '+ok.length+' plazos.':'Con tu expectativa de '+nf(beE.esp,1)+'% mensual, la tasa fija le gana al CER en todos los plazos.',
+        'Para comparar con una referencia externa, mirá el REM del BCRA (expectativas de inflación de los analistas).']); }
+    $("#bex").innerHTML=t;
+  };
+  $("#be1").oninput=function(){ var v=parseFloat(this.value); if(isFinite(v)&&v>-5&&v<30){ beE.esp=v; pinta(); } };
+  $("#be2").oninput=function(){ var v=parseInt(this.value,10); if(v>=0&&v<=60){ beE.tol=v; pinta(); } };
+  pinta();
+};
+
+var BUSCA_IDX={};
+/* ---------- 3) Buscador de ticker y 4) modo claro/oscuro, en el encabezado ---------- */
+(function(){
+  var css='.hdr-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.hdr-tools input{width:170px}.flash td{animation:flashrow 2.2s ease-out}@keyframes flashrow{0%{background:var(--warn-bg)}100%{background:transparent}}';
+  document.head.insertAdjacentHTML("beforeend",'<style>'+css+'</style>');
+  var idx=BUSCA_IDX;
+  REF.bonos.forEach(function(b){ idx[b.t]="bonos"; idx[b.t+"D"]="bonos"; idx[b.t+"C"]="bonos"; });
+  D.letras.filas.forEach(function(l){ idx[l.t]="letras"; });
+  (EX.cer.bonos||[]).forEach(function(b){ if(!idx[b.t]) idx[b.t]="cerbonos"; });
+  (EX.duales.inst||[]).forEach(function(i){ if(!idx[i.t]) idx[i.t]="duales"; });
+  var tks=Object.keys(idx).sort();
+  var ds=$("#datasrc"), box=document.createElement("div"); box.className="hdr-tools";
+  box.innerHTML='<input id="qtk" list="qtkl" placeholder="Buscar ticker (ej. AL30, S30N6)" aria-label="Buscar ticker" autocomplete="off"><datalist id="qtkl">'+tks.map(function(t){ return '<option value="'+esc(t)+'">'; }).join("")+'</datalist><button class="btn ghost" id="qtema" type="button"></button>';
+  ds.parentNode.insertBefore(box,ds.nextSibling);
+  var busca=function(){ var t=($("#qtk").value||"").trim().toUpperCase(); if(!t) return; var v=idx[t];
+    if(!v){ $("#qtk").setCustomValidity("No encontré ese ticker"); $("#qtk").reportValidity(); return; } $("#qtk").setCustomValidity("");
+    ir(v); setTimeout(function(){ var hit=null; $("#view").querySelectorAll("tbody tr").forEach(function(tr){ if(hit) return; var c=tr.querySelector("td"); if(c&&new RegExp("^\\s*"+t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b").test(c.textContent)) hit=tr; });
+      if(hit){ hit.classList.add("flash"); hit.scrollIntoView({block:"center",behavior:"smooth"}); } },60); };
+  $("#qtk").onchange=busca; $("#qtk").onkeydown=function(e){ if(e.key==="Enter") busca(); };
+  var oscuro=function(){ var t=document.documentElement.dataset.theme; return t?t==="dark":!!(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches); };
+  var etiqueta=function(){ $("#qtema").textContent=oscuro()?"Modo claro":"Modo oscuro"; };
+  try{ var gt=localStorage.getItem("bonoslab.tema"); if(gt==="dark"||gt==="light") document.documentElement.dataset.theme=gt; }catch(e){}
+  $("#qtema").onclick=function(){ var n=oscuro()?"light":"dark"; document.documentElement.dataset.theme=n; try{ localStorage.setItem("bonoslab.tema",n); }catch(e){} etiqueta(); };
+  etiqueta();
+})();
+
+/* ================= Z3 · OBLIGACIONES NEGOCIABLES EN DÓLARES (catálogo, TIR, calificación y curva) =================
+   Fuente de condiciones y calificaciones: CRITERIA, "Reporte de Obligaciones Negociables 2T2026" (datos al 02/07/2026; antes 1T2026),
+   tablas 6a (ley NY) y 6b (ley argentina) y anexo (bullet / parcial). Cronogramas de amortización de las parciales: avisos de
+   suscripción y comunicados de colocación (ver ONS_FUENTES). Precios: data912 /live/arg_corp (especie D = dólar MEP). */
+var ONS_FUENTE_CAL="CRITERIA, Reporte de ONs 2T2026 (datos al 02/07/2026)"; var ONS_FECHA_CAL="2026-07-02";
+var ONS_FUENTES={
+  YMCX:"Aviso de suscripción YPF Clase XXXI: amortiza 20% 11/09/2029, 20% 11/09/2030 y 60% 11/09/2031.",
+  TLCM:"Aviso de suscripción Telecom Clase 21 adicionales: amortiza 33% 18/07/2029, 33% 18/07/2030 y 34% 18/07/2031.",
+  VSCR:"Comunicado de colocación Vista Clase XXVI (Bruchou & Funes de Rioja): 33%, 33% y 34% anual desde el mes 60 (10/10/2029).",
+  GN49:"Nota de Mercado (20/11/2025) sobre la ON verde internacional Clase XLIX: 7,75% semestral, tres cuotas anuales de 33%, 33% y 34%. Las fechas exactas no se publican: se asumen las tres últimas anualidades hasta el vencimiento.",
+  PN43:"Comunicado de colocación Pan American Energy 2037 (Bruchou & Funes de Rioja) e IOL: 7,75%, 33% 15/01/2035, 33% 15/01/2036 y 34% 15/01/2037. El reporte de CRITERIA trae otro dato para PN43; se usa el del emisor."
+};
+/* [especie, emisor, clase, ley, vencimiento, cupón anual, pagos por año, amortización, FIX LP, Moody's Local]
+   amortización: "B" = bullet · lista [[fecha,%]] = cronograma verificado · "P" = parcial sin cronograma cargado (no se calcula TIR) */
+var ONS_CAT=[
+ ["YMC1","YPF","1","NY","2029-06-27",0.085,2,"B","AAA(arg)","AAA.ar"],
+ ["YMCI","YPF","17","NY","2029-06-30",0.09,2,[["2000-01-01",14.2858],["2026-12-30",14.2857],["2027-06-30",14.2857],["2027-12-30",14.2857],["2028-06-30",14.2857],["2028-12-30",14.2857],["2029-06-30",14.2857]],"AAA(arg)","AAA.ar"],
+ ["YMCX","YPF","31","NY","2031-09-11",0.0875,2,[["2029-09-11",20],["2030-09-11",20],["2031-09-11",60]],"AAA(arg)","AAA.ar"],
+ ["YMCU","YPF","28","NY","2031-01-17",0.095,2,[["2000-01-01",10.0],["2027-01-17",10.0],["2027-07-17",10.0],["2028-01-17",10.0],["2028-07-17",10.0],["2029-01-17",10.0],["2029-07-17",10.0],["2030-01-17",10.0],["2030-07-17",10.0],["2031-01-17",10.0]],"AAA(arg)","AAA.ar"],
+ ["YMCJ","YPF","18","NY","2033-09-30",0.07,2,[["2030-09-30",25],["2031-09-30",25],["2032-09-30",25],["2033-09-30",25]],"AAA(arg)","AAA.ar"],
+ ["YM34","YPF","34","NY","2034-01-17",0.0825,2,[["2032-01-17",30],["2033-01-17",30],["2034-01-17",40]],"AAA(arg)","AAA.ar"],
+ ["YCAM","YPF","53","NY","2027-07-21",0.0695,2,"B","AAA(arg)","AAA.ar"],
+ ["YCAN","YPF","54","NY","2047-12-15",0.07,2,"B","AAA(arg)","AAA.ar"],
+ ["YM41","YPF","41","ARG","2027-01-08",0.06,4,"B","AAA(arg)","AAA.ar"],
+ ["YM35","YPF","35","ARG","2027-02-27",0.0625,4,"B","AAA(arg)","AAA.ar"],
+ ["YM38","YPF","38","ARG","2027-07-22",0.075,4,"B","AAA(arg)","AAA.ar"],
+ ["YM40","YPF","40","ARG","2028-08-28",0.075,4,"B","AAA(arg)","AAA.ar"],
+ ["YMCY","YPF","33","ARG","2028-10-10",0.065,4,"B","AAA(arg)","AAA.ar"],
+ ["YM42","YPF","42","ARG","2029-03-02",0.07,2,"B","AAA(arg)","AAA.ar"],
+ ["YM39","YPF","39","ARG","2030-07-22",0.0875,2,"B","AAA(arg)","AAA.ar"],
+  ["YFCI","YPF Luz","17","ARG","2027-06-13",0.059,4,[["2027-03-13",50],["2027-06-13",50]],"AAA(arg)",""],
+ ["YFCK","YPF Luz","19","ARG","2026-11-22",0.0525,4,"B","AAA(arg)",""],
+ ["MGC3","Pampa Energía","3","NY","2029-04-15",0.09125,2,"B","AAA(arg)",""],
+ ["MGCM","Pampa Energía","21","NY","2031-09-10",0.0795,2,"B","AAA(arg)",""],
+ ["MGCO","Pampa Energía","23","NY","2034-12-16",0.07875,2,"B","AAA(arg)",""],
+ ["MGCR","Pampa Energía","26","NY","2037-11-14",0.0775,2,"B","AAA(arg)",""],
+ ["MGCQ","Pampa Energía","25","ARG","2028-08-06",0.0725,2,"B","AAA(arg)",""],
+ ["MGCN","Pampa Energía","22","ARG","2028-10-04",0.0575,2,"B","AAA(arg)",""],
+ ["TLCM","Telecom","21","NY","2031-07-18",0.095,2,[["2029-07-18",33],["2030-07-18",33],["2031-07-18",34]],"AA+(arg)","AA+.ar"],
+ ["TLCP","Telecom","24","NY","2033-05-28",0.0925,2,[["2032-05-28",50],["2033-05-28",50]],"AA+(arg)","AA+.ar"],
+ ["TLCT","Telecom","27","NY","2036-01-20",0.085,2,[["2035-01-20",50],["2036-01-20",50]],"AA+(arg)","AA+.ar"],
+ ["TLCQ","Telecom","25","ARG","2027-07-02",0.075,4,"B","AA+(arg)","AA+.ar"],
+ ["TLCO","Telecom","23","ARG","2028-11-28",0.07,2,"B","AA+(arg)","AA+.ar"],
+ ["TLCU","Telecom","28","ARG","2029-03-05",0.065,2,"B","AA+(arg)","AA+.ar"],
+ ["PNDC","Pan American Energy","12","NY","2027-04-30",0.09125,2,[["2000-01-01",60],["2026-10-30",20],["2027-04-30",20]],"AAA(arg)","AAA.ar"],
+ ["PN43","Pan American Energy","—","NY","2037-01-15",0.0775,2,[["2035-01-15",33],["2036-01-15",33],["2037-01-15",34]],"AAA(arg)","AAA.ar"],
+ ["PNXC","Pan American Energy","31","NY","2032-04-30",0.085,2,[["2030-04-30",33.33],["2031-04-30",33.33],["2032-04-30",33.34]],"AAA(arg)","AAA.ar"],
+ ["PN42","Pan American Energy","42","ARG","2027-04-17",0.06,2,"B","AAA(arg)","AAA.ar"],
+ ["PN38","Pan American Energy","38","ARG","2027-08-11",0.065,2,"B","AAA(arg)","AAA.ar"],
+ ["PN41","Pan American Energy","41","ARG","2029-08-27",0.075,2,"B","AAA(arg)","AAA.ar"],
+ ["PN35","Pan American Energy","35","ARG","2029-09-27",0.07,2,"B","AAA(arg)","AAA.ar"],
+ ["PN36","Pan American Energy","36","ARG","2031-11-13",0.0725,2,"B","AAA(arg)","AAA.ar"],
+ ["TTCA","Tecpetrol","10","NY","2033-01-22",0.07625,2,[["2031-01-22",33],["2032-01-22",33],["2033-01-22",34]],"AAA(arg)",""],
+ ["TTCD","Tecpetrol","12","NY","2030-11-03",0.07625,2,"B","AAA(arg)",""],
+ ["TTCB","Tecpetrol","11","ARG","2027-10-16",0.065,2,"B","AAA(arg)",""],
+ ["TTC8","Tecpetrol","8","ARG","2027-10-24",0.05,2,"B","AAA(arg)",""],
+ ["TTC9","Tecpetrol","9","ARG","2029-10-24",0.068,2,"B","AAA(arg)",""],
+ ["PLC4","Pluspetrol","4","NY","2032-05-30",0.085,2,"B","AAA(arg)",""],
+ ["PLC5","Pluspetrol","5","NY","2031-05-18",0.08125,2,"B","AAA(arg)",""],
+ ["PLC1","Pluspetrol","1","ARG","2028-01-27",0.06,2,"B","AAA(arg)",""],
+ ["PLC3","Pluspetrol","3","ARG","2028-04-30",0.0725,2,"B","AAA(arg)",""],
+ ["PLC6","Pluspetrol","6","ARG","2029-02-27",0.065,2,"B","AAA(arg)",""],
+ ["PLC2","Pluspetrol","2","ARG","2030-01-27",0.075,2,"B","AAA(arg)",""],
+ ["DNC7","Edenor","7","NY","2030-10-24",0.0975,2,[["2028-10-24",33.33],["2029-10-24",33.33],["2030-10-24",33.34]],"A+(arg)","A.ar"],
+ ["DNC3","Edenor","3","ARG","2026-11-22",0.0975,2,"B","A+(arg)","A.ar"],
+ ["DNC5","Edenor","5","ARG","2028-08-05",0.095,2,"B","A+(arg)","A.ar"],
+ ["VSCT","Vista Energy","27","NY","2035-12-10",0.07625,2,[["2033-12-10",33],["2034-12-10",33],["2035-12-10",34]],"AAA(arg)","AAA.ar"],
+ ["VSCV","Vista Energy","29","NY","2033-06-10",0.085,2,[["2031-06-10",33],["2032-06-10",33],["2033-06-10",34]],"AAA(arg)","AAA.ar"],
+ ["VSCO","Vista Energy","23","ARG","2027-03-06",0.065,2,"B","AAA(arg)","AAA.ar"],
+ ["VSCW","Vista Energy","30","ARG","2027-04-15",0.06,4,"B","AAA(arg)","AAA.ar"],
+ ["VSCP","Vista Energy","24","ARG","2029-05-03",0.08,2,[["2027-11-03",25],["2028-05-03",25],["2028-11-03",25],["2029-05-03",25]],"AAA(arg)","AAA.ar"],
+ ["VSCU","Vista Energy","28","ARG","2030-03-07",0.075,2,"B","AAA(arg)","AAA.ar"],
+ ["VSCR","Vista Energy","26","ARG","2031-10-10",0.0765,2,[["2029-10-10",33],["2030-10-10",33],["2031-10-10",34]],"AAA(arg)","AAA.ar"],
+ ["GN49","Genneia","49","NY","2033-12-02",0.0775,2,[["2031-12-02",33],["2032-12-02",33],["2033-12-02",34]],"","AA+.ar"],
+ ["GN43","Genneia","43","ARG","2027-03-08",0.0625,4,"B","","AA+.ar"],
+ ["GN48","Genneia","48","ARG","2028-03-05",0.065,2,"B","","AA+.ar"],
+ ["GN47","Genneia","47","ARG","2028-10-17",0.06,2,"B","","AA+.ar"],
+ ["IRCF","IRSA","14","NY","2028-06-22",0.0875,2,[["2000-01-01",52.5],["2027-06-22",17.5],["2028-06-22",30]],"AAA(arg)",""],
+ ["IRCP","IRSA","24","NY","2035-03-31",0.08,2,[["2033-03-31",33],["2034-03-31",33],["2035-03-31",34]],"AAA(arg)",""],
+ ["IRCJ","IRSA","18","ARG","2027-02-28",0.07,2,"B","AAA(arg)",""],
+ ["IRCO","IRSA","23","ARG","2029-10-23",0.0725,2,"B","AAA(arg)",""],
+ ["LOC5","Loma Negra","5","ARG","2027-07-24",0.08,2,"B","AAA(arg)",""],
+ ["LOC6","Loma Negra","6","ARG","2029-01-23",0.065,2,"B","AAA(arg)",""],
+ ["RCCJ","Arcor","18","NY","2027-10-09",0.0825,2,[["2000-01-01",71.4286],["2027-04-09",14.2857],["2027-10-09",14.2857]],"AAA(arg)","AAA.ar"],
+ ["ARC1","Aeropuertos Argentina 2000","1","NY","2031-08-01",0.085,4,[["2000-01-01",2.42],["2027-02-01",4.78],["2027-05-01",2.73],["2027-08-01",4.23],["2027-11-01",3.29],["2028-02-01",5.64],["2028-05-01",3.49],["2028-11-01",5.06],["2029-02-01",7.11],["2029-05-01",4.96],["2029-08-01",6.58],["2029-11-01",5.59],["2030-02-01",7.38],["2030-05-01",5.27],["2030-08-01",6.88],["2030-11-01",5.91],["2031-02-01",8.11],["2031-05-01",5.99],["2031-08-01",4.58]],"AA+(arg)","AA+.ar"],
+ ["CAC5","Capex","5","NY","2028-08-25",0.0925,2,[["2000-01-01",50.0],["2027-02-25",12.5],["2027-08-25",12.5],["2028-02-25",12.5],["2028-08-25",12.5]],"AA(arg)",""],
+ ["CACB","Capex","5","ARG","2028-06-17",0.0775,4,"B","AA(arg)",""],
+ ["YM43","YPF","43","ARG","2030-04-14",0.055,2,"B","AAA(arg)","AAA.ar"],
+ ["MGCT","Pampa Energía","27","ARG","2029-04-01",0.0549,2,"B","AAA(arg)",""],
+ ["TTCE","Tecpetrol","13","ARG","2029-05-21",0.055,2,"B","AAA(arg)",""],
+ ["TLCV","Telecom","29","ARG","2027-05-29",0.035,4,"B","AA+(arg)","AA+.ar"],
+ ["TLCW","Telecom","30","ARG","2030-05-29",0.0625,2,"B","AA+(arg)","AA+.ar"],
+ ["RAC4","Raghsa","4","NY","2027-05-04",0.085,2,"B","","AA-.ar"],
+ ["RAC5","Raghsa","5","NY","2030-04-24",0.0825,2,"B","","AA-.ar"],
+ ["IRCQ","IRSA","25","ARG","2027-06-08",0.0375,2,"B","AAA(arg)",""],
+ ["CS44","Cresud","44","ARG","2027-01-17",0.06,2,"B","AAA(arg)",""],
+ ["CS51","Cresud","51","ARG","2027-01-20",0.0575,2,"B","AAA(arg)",""],
+ ["CS49","Cresud","49","ARG","2027-09-02",0.0725,2,"B","AAA(arg)",""],
+ ["CS52","Cresud","52","ARG","2028-04-30",0.0475,2,"B","AAA(arg)",""],
+ ["CS48","Cresud","48","ARG","2028-07-11",0.08,2,"B","AAA(arg)",""],
+ ["CS50","Cresud","50","ARG","2029-03-10",0.0725,2,"B","AAA(arg)",""],
+ ["CS53","Cresud","53","ARG","2030-04-30",0.0625,2,"B","AAA(arg)",""],
+ ["VSCX","Vista Energy","31","NY","2038-04-08",0.07875,2,[["2036-04-08",33],["2037-04-08",33],["2038-04-08",34]],"AAA(arg)","AAA.ar"],
+ ["PLC7","Pluspetrol","7","NY","2037-09-30",0.0755,2,[["2035-09-30",33],["2036-09-30",33],["2037-09-30",34]],"AAA(arg)",""],
+ ["DNCA","Edenor","10","NY","2033-04-28",0.095,2,[["2031-04-28",33.33],["2032-04-28",33.33],["2033-04-28",33.34]],"A+(arg)","A.ar"],
+ ["BACA","Banco Macro","A","NY","2026-11-04",0.0675,2,"B","AAA(arg)","AAA.ar"],
+ ["BACG","Banco Macro","G","NY","2029-06-23",0.08,2,"B","AAA(arg)","AAA.ar"],
+ ["BACH","Banco Macro","H","NY","2031-01-28",0.08,2,"B","AAA(arg)","AAA.ar"],
+ ["RC5C","Arcor","5","ARG","2029-05-21",0.0525,2,"B","AAA(arg)","AAA.ar"],
+ ["LUC5","Luz de Tres Picos","5","ARG","2029-02-26",0.08,2,"B","AA(arg)",""],
+ ["PQCT","Petroquímica Comodoro Rivadavia","T","ARG","2028-07-21",0.085,2,"B","AA(arg)",""],
+ ["PQCR","Petroquímica Comodoro Rivadavia","R","ARG","2028-10-22",0.0675,2,"B","AA(arg)",""],
+ ["PQCS","Petroquímica Comodoro Rivadavia","S","ARG","2031-02-17",0.08,2,"B","AA(arg)",""],
+ ["MTC2","Mastellone Hermanos","2","ARG","2028-06-22",0.065,4,"B","","A.ar"],
+ ["BYCH","Banco Galicia","16","NY","2028-10-10",0.0775,2,"B","AAA(arg)","AAA.ar"]
+];
+
+/* ---------- cálculo ---------- */
+function onsMasMeses(iso,m){ var p=iso.split("-"), y=+p[0], mo=+p[1]-1+m, d=+p[2]; y+=Math.floor(mo/12); mo=((mo%12)+12)%12; var fin=new Date(Date.UTC(y,mo+1,0)).getUTCDate(); return y+"-"+String(mo+1).padStart(2,"0")+"-"+String(Math.min(d,fin)).padStart(2,"0"); }
+function onsNota(r){ var o=["AAA","AA+","AA","AA-","A+","A","A-","BBB+","BBB","BBB-","BB+","BB","BB-","B+","B","B-"]; var best=99;
+  [r.fix,r.moo].forEach(function(c){ if(!c) return; var m=String(c).toUpperCase().match(/^(AAA|AA\+|AA-|AA|A\+|A-|A|BBB\+|BBB-|BBB|BB\+|BB-|BB|B\+|B-|B)/); if(m){ var k=o.indexOf(m[1]); if(k>=0&&k<best) best=k; } });
+  return best===99?null:best; }
+function onsGrupo(n){ return n==null?"Sin calificación":n===0?"AAA":n<=3?"AA":n<=6?"A":"BBB o menor"; }
+function onsCalc(c){
+  var r={t:c[0],tk:c[0]+"D",emi:c[1],cl:c[2],ley:c[3],vto:c[4],cup:c[5],fr:c[6],am:c[7],fix:c[8],moo:c[9]}, liq=D.meta.liquidacion;
+  r.nota=onsNota(r); r.grupo=onsGrupo(r.nota); r.vivo=r.vto>liq;
+  var P=(LIVE.precios||{})[r.tk]||{}; r.precio=P.ask>0?P.ask:P.c>0?P.c:null; r.esAsk=P.ask>0; r.bid=P.bid||null; r.v=P.v||null;
+  if(r.am==="P"||!r.vivo) return r;
+  var paso=12/r.fr, fechas=[r.vto], k=1, f;
+  while((f=onsMasMeses(r.vto,-paso*k))>liq){ fechas.unshift(f); k++; } r.ultCupon=onsMasMeses(r.vto,-paso*k);
+  var am=r.am==="B"?[[r.vto,100]]:r.am, saldo=100, fl=[];
+  am.forEach(function(a){ if(a[0]<=liq) saldo-=a[1]; });
+  fechas.forEach(function(fe){ var amo=0; am.forEach(function(a){ if(a[0]===fe) amo+=a[1]; }); fl.push([fe,saldo*r.cup/r.fr+amo]); saldo-=amo; });
+  r.flujos=fl; r.residual=100-am.filter(function(a){ return a[0]<=liq; }).reduce(function(s,a){ return s+a[1]; },0);
+  r.corrido=r.residual*r.cup/r.fr*Math.max(0,dias(r.ultCupon,liq))/Math.max(1,dias(r.ultCupon,fechas[0]));
+  r.vt=r.residual+r.corrido; r.anios=dias(liq,r.vto)/365;
+  if(r.precio){ r.tir=tirDe(r.precio,fl,liq); r.par=r.precio/r.vt;
+    if(r.tir!=null){ var S=0,T=0; fl.forEach(function(x){ var t=dias(liq,x[0])/365, pv=x[1]/Math.pow(1+r.tir,t); S+=pv; T+=t*pv; }); r.dm=T/S/(1+r.tir); r.tirN=tirDe(r.precio*(1+D.meta.costo_compra),fl,liq); } }
+  return r;
+}
+function onsAjLog(pts){ var n=pts.length; if(n<3) return null; var sx=0,sy=0,sxx=0,sxy=0; pts.forEach(function(p){ var x=Math.log(p[0]); sx+=x; sy+=p[1]; sxx+=x*x; sxy+=x*p[1]; }); var den=n*sxx-sx*sx; if(Math.abs(den)<1e-12) return null; var b=(n*sxy-sx*sy)/den, a=(sy-b*sx)/n; return {a:a,b:b,f:function(x){ return a+b*Math.log(Math.max(x,0.05)); }}; }
+var ONS_MIN_NOTA=5; // 0=AAA … 5=A: no se muestran ONs con calificación menor a A ni sin calificación local
+function onsTodas(){ return ONS_CAT.map(onsCalc).filter(function(r){ return r.vivo&&r.nota!=null&&r.nota<=ONS_MIN_NOTA; }); }
+
+/* ---------- vistas ---------- */
+GRUPOS.splice(4,0,["ONs",[["ons","ONs en dólares"],["onscurva","Curva de ONs"]]]);
+_VLABEL.ons="ONs en dólares"; _VLABEL.onscurva="Curva de ONs";
+DESC.ons="Obligaciones negociables en dólares MEP: precio en vivo, TIR, duration, paridad y calificación de riesgo (FIX y Moody's Local).";
+DESC.onscurva="TIR contra duration de las ONs, separadas por calificación: cuánto paga cada escalón de riesgo.";
+ONS_CAT.forEach(function(c){ BUSCA_IDX[c[0]+"D"]="ons"; BUSCA_IDX[c[0]]="ons"; });
+(function(){ var dl=$("#qtkl"); if(dl) dl.insertAdjacentHTML("beforeend",ONS_CAT.map(function(c){ return '<option value="'+c[0]+'D">'; }).join("")); })();
+
+var onsE={ley:"todas",cal:"todas",q:"",orden:"vto"};
+function onsFiltra(rs){ return rs.filter(function(r){
+  if(onsE.ley!=="todas"&&r.ley!==onsE.ley) return false;
+  if(onsE.cal==="AAA"&&r.nota!==0) return false; if(onsE.cal==="AA"&&!(r.nota!=null&&r.nota<=3)) return false; if(onsE.cal==="A"&&!(r.nota!=null&&r.nota<=6)) return false;
+  if(onsE.q&&(r.emi+" "+r.tk).toUpperCase().indexOf(onsE.q.toUpperCase())<0) return false; return true; }); }
+function onsControles(){
+  return '<div class="controls"><div class="field"><label for="on1">Ley</label><select id="on1"><option value="todas">Todas</option><option value="NY">Nueva York</option><option value="ARG">Argentina</option></select></div><div class="field"><label for="on2">Calificación</label><select id="on2"><option value="todas">A o mejor (todas)</option><option value="AA">AA o mejor</option><option value="AAA">Solo AAA</option></select></div><div class="field"><label for="on3">Emisor o ticker</label><input id="on3" type="text" placeholder="Ej. YPF, Vista, TLCMD" value="'+esc(onsE.q)+'"></div></div>';
+}
+function onsEnlaza(f){ $("#on1").value=onsE.ley; $("#on2").value=onsE.cal; $("#on1").onchange=function(){ onsE.ley=this.value; f(); }; $("#on2").onchange=function(){ onsE.cal=this.value; f(); }; $("#on3").oninput=function(){ onsE.q=this.value.trim(); f(); }; }
+function onsCalTxt(r){ var a=[]; if(r.fix) a.push(r.fix+' <span class="sub">FIX</span>'); if(r.moo) a.push(r.moo+' <span class="sub">Moody\'s</span>'); return a.length?a.join(" · "):'<span class="sub">sin calificación local en la fuente</span>'; }
+function onsAmTxt(r){ return r.am==="B"?"Al vencimiento":r.am==="P"?'<span class="tag warn">Amortizable: cronograma pendiente</span>':'<span title="'+esc(ONS_FUENTES[r.t]||'')+'">Cuotas: '+r.am.filter(function(a){ return a[0]>'2001'; }).map(function(a){ return a[1]+'% '+fechaAR(a[0]); }).join(', ')+'</span>'; }
+
+R.ons=function(){
+  var h='<h2>Obligaciones negociables en dólares</h2><p class="lead">Las ON son deuda de empresas. Pagan intereses y devuelven el capital en dólares. La TIR te dice cuánto rinde por año si la tenés hasta el vencimiento y la empresa paga; la <b>calificación</b> te dice qué tan probable es que pague según una calificadora. Más TIR suele venir con más riesgo.</p>';
+  h+=onsControles()+'<div id="onx"></div>';
+  h+=metodo("De dónde salen los datos y cómo leerlos",p_('<b>Precios:</b> data912, especie terminada en D (dólar MEP), puntas vendedoras si hay; si no, último precio. Son precios <b>sucios</b> (incluyen el interés corrido), cada 100 de valor nominal original.')+p_('<b>Condiciones y calificaciones:</b> '+ONS_FUENTE_CAL+'. Solo entran ONs con calificación local <b>A o mejor</b> (en FIX o en Moody\'s); las que no tienen calificación local en la fuente, como TGS, quedan afuera. Las calificaciones son de <b>escala local</b>: FIX (afiliada de Fitch), con sufijo (arg), y Moody\'s Local Argentina, con sufijo .ar. AAA es la máxima; comparan empresas argentinas entre sí, no contra el resto del mundo. Las calificadoras revisan sus notas periódicamente (en general con cada balance trimestral) y ante hechos relevantes, así que pueden haber cambiado después de esa fecha: confirmalas en la web de la CNV o de la calificadora antes de invertir. El catálogo se actualiza con cada reporte trimestral de CRITERIA.')+p_('<b>Cronogramas:</b> bullet = todo el capital al vencimiento. Los cronogramas de amortización de las ONs amortizables se tomaron de las fichas públicas de Docta (verificados contra el valor técnico informado, 14/10/2026); en YMCUD y YMCID los porcentajes por cuota se dedujeron del total de pagos y conviene chequearlos. ARC1D (18 cuotas trimestrales desiguales) se tomó del simulador de A Cuánto Está. Si una ON no tiene cronograma cargado, aparece con precio y calificación, sin TIR. Los cupones se arman hacia atrás desde el vencimiento cada 6 meses (o 3 si la frecuencia es trimestral); si una ON recién emitida tiene un primer cupón irregular, la TIR puede diferir unos pocos puntos básicos.')+p_('<b>TIR neta</b> incluye la comisión de compra de la app ('+pc(D.meta.costo_compra,2)+'). <b>Paridad</b> = precio ÷ (capital residual + interés corrido).'),false);
+  $("#view").innerHTML=h;
+  var pinta=function(){
+    var rs=onsFiltra(onsTodas()).sort(function(a,b){ return a.vto<b.vto?-1:1; });
+    var conTir=rs.filter(function(r){ return r.tir!=null; }), sinP=rs.filter(function(r){ return !r.precio; }).length, pend=rs.filter(function(r){ return r.am==="P"; }).length;
+    var t='<p class="how">'+rs.length+' ONs · '+conTir.length+' con TIR'+(pend?' · '+pend+' amortizables con cronograma pendiente':'')+(sinP?' · '+sinP+' sin precio ahora':'')+'.</p><div class="tablewrap" style="max-height:620px"><table><thead><tr><th class="l">Ticker</th><th class="l">Descripción</th><th>Ley</th><th class="l">Calificación</th><th>Vencimiento</th><th>Tasa</th><th>V. residual</th><th>Int. corridos</th><th>V. técnico</th><th>Precio USD</th><th>Paridad</th><th>TIR</th><th>TIR neta</th><th>Duration mod.</th><th class="l">Amortización</th></tr></thead><tbody>';
+    rs.forEach(function(r){ t+='<tr><td class="l"><b>'+esc(r.tk)+'</b></td><td class="l">'+esc(r.emi)+' <span class="sub">Clase '+esc(r.cl)+'</span></td><td>'+(r.ley==="NY"?"NY":"ARG")+'</td><td class="l">'+onsCalTxt(r)+'</td><td>'+fechaAR(r.vto)+'</td><td>'+pc(r.cup,(Math.round(r.cup*100000)%10)?3:2)+(r.fr===4?' <span class="sub">trim.</span>':'')+'</td><td>'+(r.residual!=null?nf(r.residual,2)+'%':'—')+'</td><td>'+(r.corrido!=null?nf(r.corrido,2):'—')+'</td><td>'+(r.vt!=null?nf(r.vt,2):'—')+'</td><td>'+(r.precio?nf(r.precio,2)+(r.esAsk?'':' <span class="sub">últ.</span>'):'—')+'</td><td>'+(r.par?pc(r.par,1):'—')+'</td><td><b>'+pc(r.tir)+'</b></td><td>'+pc(r.tirN)+'</td><td>'+nf(r.dm,2)+'</td><td class="l">'+onsAmTxt(r)+'</td></tr>'; });
+    t+='</tbody></table></div>';
+    var gr={}; conTir.forEach(function(r){ (gr[r.grupo]=gr[r.grupo]||[]).push(r); });
+    var mt=conTir.slice().sort(function(a,b){ return b.tir-a.tir; });
+    t+=concl("Qué nos dice hoy",[
+      mt.length?'La de mayor TIR es <b>'+esc(mt[0].tk)+'</b> ('+esc(mt[0].emi)+'): '+pc(mt[0].tir)+' con '+(mt[0].fix||mt[0].moo||'sin calificación')+'. Antes de elegirla, mirá por qué paga más: menor calificación, plazo más largo o poco volumen.':'',
+      ["AAA","AA","A"].filter(function(g){ return gr[g]&&gr[g].length; }).map(function(g){ var v=gr[g].map(function(r){ return r.tir; }).sort(function(a,b){ return a-b; }); return g+': TIR mediana '+pc(v[Math.floor(v.length/2)])+' ('+v.length+' ONs)'; }).join(' · '),
+      'Una ON ley Nueva York te da jurisdicción extranjera si hay un problema; una ley argentina suele pagar algo menos de tasa por ser más chica y menos líquida, no necesariamente por ser más segura.',
+      'Solo se muestran ONs con calificación local A o mejor. Calificaciones al '+fechaAR(ONS_FECHA_CAL)+' ('+ONS_FUENTE_CAL+'). Confirmá la vigente antes de invertir.']);
+    $("#onx").innerHTML=t;
+  };
+  onsEnlaza(pinta); pinta();
+};
+
+R.onscurva=function(){
+  var h='<h2>Curva de ONs por calificación</h2><p class="lead">Cada punto es una ON: cuánto rinde (TIR) según su duration. Las curvas separan los escalones de riesgo. Una ON por encima de la curva de su calificación paga más que sus pares; por debajo, menos.</p>'+onsControles()+'<div id="ocx"></div>';
+  $("#view").innerHTML=h;
+  var COL={"AAA":"var(--c1)","AA":"var(--c3)","A":"var(--warn)","BBB o menor":"var(--bad)","Sin calificación":"var(--muted)"};
+  var pinta=function(){
+    var rs=onsFiltra(onsTodas()).filter(function(r){ return r.tir!=null&&r.dm!=null&&r.dm>0.15&&r.tir>-0.05&&r.tir<0.4; });
+    if(!rs.length){ $("#ocx").innerHTML='<div class="note">No hay ONs con TIR para estos filtros (puede que no haya precios en vivo ahora).</div>'; return; }
+    var gr={}; rs.forEach(function(r){ (gr[r.grupo]=gr[r.grupo]||[]).push(r); });
+    var lines=[], aj={}; Object.keys(gr).forEach(function(g){ var p=gr[g]; if(p.length<4) return; var a=onsAjLog(p.map(function(r){ return [r.dm,r.tir]; })); if(!a) return; aj[g]=a;
+      var x0=Math.min.apply(null,p.map(function(r){ return r.dm; })), x1=Math.max.apply(null,p.map(function(r){ return r.dm; })), pts=[]; for(var i=0;i<=30;i++){ var xv=x0+(x1-x0)*i/30; pts.push([xv,a.f(xv)*100]); } lines.push({pts:pts,color:COL[g],w:2,dash:"6 4"}); });
+    var ys=rs.map(function(r){ return r.tir*100; }), yr=rango(ys,.12), xm=Math.max.apply(null,rs.map(function(r){ return r.dm; }))*1.06;
+    var svg=xySVG({W:900,H:420,xr:[0,xm],yr:yr,xf:function(v){ return nf(v,1); },yf:function(v){ return nf(v,1)+"%"; },xt:6,yt:Math.max(2,Math.round((yr[1]-yr[0])/yr[2])),xlabel:"Duration modificada (años)",ylabel:"TIR",lines:lines,pts:rs.map(function(r){ return {x:r.dm,y:r.tir*100,label:rs.length<=30?r.tk:null,color:COL[r.grupo],r:5}; }),aria:"Curva de ONs por calificación"});
+    var lg=leyenda(Object.keys(COL).filter(function(g){ return gr[g]; }).map(function(g){ return [COL[g],g+' ('+gr[g].length+')'+(aj[g]?'':' · pocas para ajustar curva')]; }));
+    var t='<div class="panel chart">'+svg+lg+(rs.length>30?p_('Con más de 30 ONs se ocultan los nombres para que se lea el gráfico: filtrá por ley, calificación o emisor para verlos.'):'')+'</div>';
+    t+='<div class="tablewrap"><table><thead><tr><th class="l">ON</th><th class="l">Emisor</th><th class="l">Calificación</th><th>Duration mod.</th><th>TIR</th><th>TIR de su curva</th><th>Diferencia (pb)</th><th class="l">Lectura</th></tr></thead><tbody>';
+    rs.sort(function(a,b){ return a.dm-b.dm; }).forEach(function(r){ var a=aj[r.grupo], y=a?a.f(r.dm):null, d=y!=null?(r.tir-y)*10000:null;
+      t+='<tr><td class="l"><b>'+esc(r.tk)+'</b></td><td class="l">'+esc(r.emi)+'</td><td class="l">'+esc(r.grupo)+'</td><td>'+nf(r.dm,2)+'</td><td>'+pc(r.tir)+'</td><td>'+pc(y)+'</td><td class="'+cls(d)+'">'+nf(d,0)+'</td><td class="l">'+(d==null?'—':Math.abs(d)<40?'<span class="tag">En línea</span>':d>0?'<span class="tag good">Paga más que sus pares</span>':'<span class="tag bad">Paga menos que sus pares</span>')+'</td></tr>'; });
+    t+='</tbody></table></div>'+p_('La curva de cada calificación es un ajuste logarítmico (TIR = a + b × ln(duration)), la forma habitual de las curvas de crédito: sube rápido en el tramo corto y se aplana en el largo. Se dibuja con 4 o más ONs.')+p_('Un diferencial positivo puede ser una oportunidad o una señal de riesgo que la calificación todavía no refleja (o poca liquidez). Diferencias de menos de 40 pb se consideran ruido.');
+    $("#ocx").innerHTML=t;
+  };
+  onsEnlaza(pinta); pinta();
+};
+
+/* ================= Z4 · TABLERO DEL DÓLAR E HISTÓRICO MEP / CCL ================= */
+var _dolarOrig=R.dolar;
+R.dolar=function(){
+  _dolarOrig();
+  var C=D.carry, rows=mepPuntas(), a=rows.filter(function(r){ return r.t==="AL30"; })[0]||rows[0]; if(!a) return;
+  var of=C.dolar_oficial, techo=techoA(D.meta.liquidacion), dist=techo/of-1, brecha=a.mid/of-1;
+  var card=function(k,v,d,cl){ return '<div class="stat"><div class="k">'+k+'</div><div class="v'+(cl?' '+cl:'')+'">'+v+'</div>'+(d?'<div class="d">'+d+'</div>':'')+'</div>'; };
+  var h='<div class="grid" style="margin-bottom:14px">'+
+    card("Oficial (A3500 / mayorista)",ars(of,2),"Referencia de la banda")+
+    card("Techo de la banda hoy",ars(techo,0),"Distancia del oficial al techo: "+pc(dist,1))+
+    card("MEP "+esc(a.t)+" · compra / venta",ars(a.compra,0)+" / "+ars(a.venta,0),"Con puntas y tus comisiones")+
+    (a.cclCompra?card("CCL "+esc(a.t)+" · compra / venta",ars(a.cclCompra,0)+" / "+ars(a.cclVenta,0),"Dólar afuera (cable)"):"")+
+    card("Brecha MEP vs oficial",pc(brecha,1),"MEP de referencia "+ars(a.mid,0))+
+    (a.canje!=null?card("Canje CCL vs MEP",pc(a.canje,2),"Cuánto más vale el dólar afuera"):"")+'</div>';
+  var lead=$("#view .lead"); if(lead) lead.insertAdjacentHTML("afterend",h);
+};
+
+(function(){ var g=GRUPOS.filter(function(G){ return G[0]==="Dólar y riesgo"; })[0]; if(g) g[1].splice(1,0,["dolhist","Histórico MEP y CCL"]); })();
+_VLABEL.dolhist="Histórico MEP y CCL"; DESC.dolhist="Evolución diaria del MEP y del CCL calculados con el AL30, y el canje entre ambos, con rangos de fechas.";
+BUSCA_IDX.MEP="dolhist"; BUSCA_IDX.CCL="dolhist";
+var dhE={rango:"1A",datos:null,cargando:false,error:"",bono:"AL30"};
+function dhCarga(){
+  if(dhE.cargando) return; dhE.cargando=true; dhE.error="";
+  var b=dhE.bono, u=function(s){ return pedir("https://data912.com/historical/bonds/"+s,20000).catch(function(){ return null; }); };
+  Promise.all([u(b),u(b+"D"),u(b+"C")]).then(function(r){
+    dhE.cargando=false;
+    if(!Array.isArray(r[0])||!Array.isArray(r[1])){ dhE.error="data912 no devolvió el histórico desde este navegador"; if(actual==="dolhist") R.dolhist(); return; }
+    var m=function(arr){ var o={}; (arr||[]).forEach(function(x){ var c=+x.c; if(x.date&&c>0) o[String(x.date).slice(0,10)]=c; }); return o; };
+    var P=m(r[0]), U=m(r[1]), K=m(r[2]), out=[];
+    Object.keys(P).sort().forEach(function(f){ if(U[f]){ var mep=P[f]/U[f], ccl=K[f]?P[f]/K[f]:null; if(mep>0&&isFinite(mep)) out.push({f:f,mep:mep,ccl:ccl}); } });
+    dhE.datos=out; if(actual==="dolhist") R.dolhist();
+  });
+}
+R.dolhist=function(){
+  var h='<h2>Histórico del dólar MEP y CCL</h2><p class="lead">El MEP es lo que cuesta un dólar comprando un bono en pesos y vendiéndolo en dólares en el país; el CCL, lo mismo pero con los dólares afuera. Acá se calculan día por día con los cierres del '+esc(dhE.bono)+' (precio en pesos ÷ precio en dólares).</p>';
+  h+='<div class="controls"><div class="field"><label>Período</label><div style="display:flex;gap:6px">'+["1M","3M","6M","1A","Todo"].map(function(k){ return '<button class="btn'+(dhE.rango===k?'':' ghost')+'" data-r="'+k+'" type="button">'+k+'</button>'; }).join("")+'</div></div><div class="field"><label for="dhb">Bono</label><select id="dhb"><option>AL30</option><option>GD30</option></select></div></div><div id="dhx"></div>';
+  $("#view").innerHTML=h; $("#dhb").value=dhE.bono;
+  $("#view").querySelectorAll("[data-r]").forEach(function(b){ b.onclick=function(){ dhE.rango=b.dataset.r; R.dolhist(); }; });
+  $("#dhb").onchange=function(){ dhE.bono=this.value; dhE.datos=null; R.dolhist(); };
+  if(!dhE.datos){ if(dhE.error){ $("#dhx").innerHTML='<div class="note">No pude traer el histórico ('+esc(dhE.error)+'). Probá más tarde con «Actualizar ahora» en Ayuda o recargando la página.</div>'; dhE.error=""; return; }
+    $("#dhx").innerHTML='<p class="how">Cargando el histórico desde data912…</p>'; dhCarga(); return; }
+  var ds=dhE.datos; if(!ds.length){ $("#dhx").innerHTML='<div class="note">El histórico llegó vacío.</div>'; return; }
+  var ult=ds[ds.length-1].f, meses={"1M":1,"3M":3,"6M":6,"1A":12}[dhE.rango], desde=meses?onsMasMeses(ult,-meses):ds[0].f, S=ds.filter(function(x){ return x.f>=desde; });
+  var t0=pd(S[0].f), X=function(f){ return (pd(f)-t0)/DAY; }, xm=X(ult)||1;
+  var ys=S.map(function(x){ return x.mep; }).concat(S.filter(function(x){ return x.ccl; }).map(function(x){ return x.ccl; })), yr=rango(ys,.05);
+  var svg=xySVG({W:900,H:380,xr:[0,xm],yr:yr,xf:function(v){ return fechaAR(isoDe(t0+v*DAY)).slice(0,5)+"/"+fechaAR(isoDe(t0+v*DAY)).slice(-2); },yf:function(v){ return "$"+nf(v,0); },xt:6,yt:Math.max(2,Math.round((yr[1]-yr[0])/yr[2])),aria:"Histórico de MEP y CCL",
+    lines:[{pts:S.map(function(x){ return [X(x.f),x.mep]; }),color:"var(--c1)",w:2},{pts:S.filter(function(x){ return x.ccl; }).map(function(x){ return [X(x.f),x.ccl]; }),color:"var(--c2)",w:2}]});
+  var a=S[0], z=S[S.length-1], mx=S.slice().sort(function(p,q){ return q.mep-p.mep; })[0], cj=S.filter(function(x){ return x.ccl; }).map(function(x){ return x.ccl/x.mep-1; });
+  var t='<div class="grid" style="margin-bottom:12px"><div class="stat"><div class="k">MEP al '+fechaAR(z.f)+'</div><div class="v">'+ars(z.mep,0)+'</div><div class="d">'+pc(z.mep/a.mep-1,1)+' en el período</div></div>'+(z.ccl?'<div class="stat"><div class="k">CCL al '+fechaAR(z.f)+'</div><div class="v">'+ars(z.ccl,0)+'</div><div class="d">'+(a.ccl?pc(z.ccl/a.ccl-1,1)+' en el período':'')+'</div></div>':'')+'<div class="stat"><div class="k">Máximo del MEP en el período</div><div class="v">'+ars(mx.mep,0)+'</div><div class="d">'+fechaAR(mx.f)+'</div></div>'+(cj.length?'<div class="stat"><div class="k">Canje CCL / MEP promedio</div><div class="v">'+pc(cj.reduce(function(s,v){ return s+v; },0)/cj.length,2)+'</div><div class="d">Hoy '+(z.ccl?pc(z.ccl/z.mep-1,2):'—')+'</div></div>':'')+'</div>';
+  t+='<div class="panel chart">'+svg+leyenda([["var(--c1)","MEP"],["var(--c2)","CCL"]])+p_('Son cierres diarios: no incluyen comisiones ni puntas, por eso pueden diferir unos pesos del MEP que conseguís en tu broker. Un día con poco volumen en la especie en dólares puede mostrar un salto que no es real.')+'</div>';
+  $("#dhx").innerHTML=t;
+};
+
+/* ================= Z5 · ANÁLISIS DE ONs POR FAMILIA DE CALIFICACIÓN ================= */
+var ONS_FAMS=["AAA","AA","A"], ONS_COL={"AAA":"var(--c1)","AA":"var(--c3)","A":"var(--warn)"};
+var onsA={ley:"todas",rec:40,est:{AAA:150,AA:250,A:400}};
+(function(){ var g=GRUPOS.filter(function(G){ return G[0]==="ONs"; })[0];
+  if(g) g[1].push(["onsfam","Resumen por calificación"],["onsspread","Spread y default implícito"],["onssens","Sensibilidad y estrés de crédito"]); })();
+_VLABEL.onsfam="Resumen por calificación"; _VLABEL.onsspread="Spread y default implícito"; _VLABEL.onssens="Sensibilidad y estrés de crédito";
+DESC.onsfam="Las ONs agrupadas en AAA, AA y A: cuánto rinde cada escalón, a igual duration, y cuánto más se cobra por bajar de escalón.";
+DESC.onsspread="Cuánto más rinde cada ON que un bono soberano de igual duration, y qué probabilidad de default está pagando el mercado.";
+DESC.onssens="Cuánto cae el precio de cada ON si sube la tasa o si se deteriora el crédito de su familia, y cuántos meses de interés tardás en recuperarlo.";
+
+function onsBase(){ return onsTodas().filter(function(r){ return r.tir!=null&&r.dm!=null&&r.dm>0.15&&r.tir>-0.05&&r.tir<0.4&&ONS_COL[r.grupo]&&(onsA.ley==="todas"||r.ley===onsA.ley); }); }
+function onsLeyCtl(){ return '<div class="field"><label for="oley">Ley</label><select id="oley"><option value="todas">Todas</option><option value="NY">Nueva York</option><option value="ARG">Argentina</option></select></div>'; }
+function onsMed(a){ if(!a.length) return null; var v=a.slice().sort(function(x,y){ return x-y; }), m=Math.floor(v.length/2); return v.length%2?v[m]:(v[m-1]+v[m])/2; }
+function onsRng(a){ return [Math.min.apply(null,a),Math.max.apply(null,a)]; }
+function onsSoberana(){
+  var pts=bonosCalc().filter(function(x){ return noBopreal(x)&&x.tir!=null&&x.dm>0.15&&x.tir>0&&x.tir<0.4; }).map(function(x){ return [x.dm,x.tir]; });
+  if(pts.length<4) return null; var a=ajusteCuad(pts); if(!a) return null; var r=onsRng(pts.map(function(p){ return p[0]; }));
+  return {f:function(x){ return a.f(Math.min(Math.max(x,r[0]),r[1])); },lo:r[0],hi:r[1],n:pts.length};
+}
+function onsSuc(r,y){ var liq=D.meta.liquidacion, s=0; r.flujos.forEach(function(f){ if(f[0]>liq) s+=f[1]/Math.pow(1+y,dias(liq,f[0])/365); }); return s; }
+function onsAgrupa(rs){ var gr={}; ONS_FAMS.forEach(function(g){ gr[g]=rs.filter(function(r){ return r.grupo===g; }); }); return gr; }
+function onsAjFam(gr){ var aj={}; ONS_FAMS.forEach(function(g){ if(gr[g].length>=4){ var a=onsAjLog(gr[g].map(function(r){ return [r.dm,r.tir]; })); if(a){ var rg=onsRng(gr[g].map(function(r){ return r.dm; })); aj[g]={f:a.f,lo:rg[0],hi:rg[1]}; } } }); return aj; }
+function onsLey(f){ $("#oley").value=onsA.ley; $("#oley").onchange=function(){ onsA.ley=this.value; f(); }; }
+function onsSinDatos(){ return '<div class="note">No hay ONs con TIR para este filtro (puede que no haya precios en vivo ahora).</div>'; }
+
+/* ---------- 1) Resumen por calificación ---------- */
+R.onsfam=function(){
+  var h='<h2>ONs por familia de calificación</h2><p class="lead">Las calificadoras ordenan a las empresas por riesgo de impago: AAA es la más segura, después AA y A. Acá se compara qué rinde cada escalón, mirando ONs de <b>igual duration</b>, para ver cuánto te paga el mercado por aceptar un escalón más de riesgo.</p><div class="controls">'+onsLeyCtl()+'</div><div id="ofx"></div>';
+  $("#view").innerHTML=h;
+  var pinta=function(){
+    var rs=onsBase(); if(!rs.length){ $("#ofx").innerHTML=onsSinDatos(); return; }
+    var sob=onsSoberana(), gr=onsAgrupa(rs), aj=onsAjFam(gr);
+    var t='<div class="tablewrap"><table><thead><tr><th class="l">Calificación</th><th>ONs</th><th>TIR mínima</th><th>TIR mediana</th><th>TIR máxima</th><th>Duration media</th><th>Paridad media</th><th>Spread vs soberano (mediana)</th><th>% ley NY</th><th class="l">Mayor TIR de la familia</th></tr></thead><tbody>';
+    ONS_FAMS.forEach(function(g){ var v=gr[g]; if(!v.length){ t+='<tr><td class="l"><b>'+g+'</b></td><td>0</td><td colspan="8" class="l sub">sin ONs con precio hoy</td></tr>'; return; }
+      var tirs=v.map(function(r){ return r.tir; }), rg=onsRng(tirs), med=onsMed(tirs), dm=v.reduce(function(s,r){ return s+r.dm; },0)/v.length, pr=v.filter(function(r){ return r.par; }), par=pr.length?pr.reduce(function(s,r){ return s+r.par; },0)/pr.length:null;
+      var sp=sob?onsMed(v.map(function(r){ return r.tir-sob.f(r.dm); })):null, ny=v.filter(function(r){ return r.ley==="NY"; }).length/v.length;
+      var top=v.slice().sort(function(a,b){ return b.tir-a.tir; })[0];
+      t+='<tr><td class="l"><b style="color:'+ONS_COL[g]+'">'+g+'</b></td><td>'+v.length+'</td><td>'+pc(rg[0])+'</td><td><b>'+pc(med)+'</b></td><td>'+pc(rg[1])+'</td><td>'+nf(dm,2)+'</td><td>'+(par?pc(par,1):'—')+'</td><td class="'+cls(sp)+'">'+(sp==null?'—':nf(sp*10000,0)+' pb')+'</td><td>'+pc(ny,0)+'</td><td class="l"><b>'+esc(top.tk)+'</b> '+esc(top.emi)+' · '+pc(top.tir)+'</td></tr>'; });
+    t+='</tbody></table></div>';
+    var DS=[1.5,3,5], val=function(g,d){ var a=aj[g]; return a&&d>=a.lo&&d<=a.hi?a.f(d):null; };
+    t+='<h3 style="margin-top:22px">La escalera de riesgo: TIR de cada escalón a la misma duration</h3><p class="how">Se toma la curva ajustada de cada familia y se lee cuánto rinde a 1,5, 3 y 5 años de duration. Así se compara peras con peras: la diferencia entre filas es el premio por bajar de escalón.</p>';
+    t+='<div class="tablewrap"><table><thead><tr><th class="l">Calificación</th>'+DS.map(function(d){ return '<th>Duration '+nf(d,1)+'</th>'; }).join("")+'</tr></thead><tbody>';
+    ONS_FAMS.forEach(function(g){ t+='<tr><td class="l"><b style="color:'+ONS_COL[g]+'">'+g+'</b></td>'+DS.map(function(d){ var v=val(g,d); return '<td>'+(v==null?'<span class="sub">—</span>':pc(v))+'</td>'; }).join("")+'</tr>'; });
+    [["AA","AAA"],["A","AA"]].forEach(function(p){ t+='<tr><td class="l"><b>Premio '+p[1]+' → '+p[0]+'</b></td>'+DS.map(function(d){ var a=val(p[0],d), b=val(p[1],d); return '<td class="'+cls(a!=null&&b!=null?a-b:null)+'">'+(a!=null&&b!=null?nf((a-b)*10000,0)+' pb':'<span class="sub">—</span>')+'</td>'; }).join("")+'</tr>'; });
+    t+='</tbody></table></div>'+p_('Un «—» significa que esa familia no tiene ONs con esa duration, o hay menos de 4 para ajustar la curva: no se extrapola. «pb» son puntos básicos: 100 pb = 1 punto de TIR.');
+    var lines=[], pts=[];
+    ONS_FAMS.forEach(function(g){ var a=aj[g]; if(!a) return; var l=[]; for(var i=0;i<=30;i++){ var x=a.lo+(a.hi-a.lo)*i/30; l.push([x,a.f(x)*100]); } lines.push({pts:l,color:ONS_COL[g],w:3}); });
+    rs.forEach(function(r){ pts.push({x:r.dm,y:r.tir*100,label:null,color:ONS_COL[r.grupo],r:3}); });
+    var yr=rango(rs.map(function(r){ return r.tir*100; }),.12), xm=onsRng(rs.map(function(r){ return r.dm; }))[1]*1.06;
+    t+='<div class="panel chart" style="margin-top:14px">'+xySVG({W:900,H:380,xr:[0,xm],yr:yr,xf:function(v){ return nf(v,1); },yf:function(v){ return nf(v,1)+"%"; },xt:6,yt:Math.max(2,Math.round((yr[1]-yr[0])/yr[2])),xlabel:"Duration modificada (años)",ylabel:"TIR",lines:lines,pts:pts,aria:"Curvas de TIR por calificación"})+leyenda(ONS_FAMS.filter(function(g){ return gr[g].length; }).map(function(g){ return [ONS_COL[g],g+' ('+gr[g].length+')'+(aj[g]?'':' · pocas para curva')]; }))+'</div>';
+    var aa=val("AA",3), a3=val("AAA",3), aN=val("A",3);
+    t+=concl("Qué nos dice hoy",[
+      a3!=null&&aa!=null?'A 3 años de duration, bajar de <b>AAA a AA</b> te paga '+nf((aa-a3)*10000,0)+' pb de TIR'+((aa-a3)<0.002?': muy poco, el mercado casi no distingue entre esos dos escalones.':'.'):'',
+      aa!=null&&aN!=null?'De <b>AA a A</b> el premio es de '+nf((aN-aa)*10000,0)+' pb a esa misma duration.':'',
+      'Si el premio por bajar un escalón es chico, conviene quedarse en el escalón de arriba: asumís menos riesgo por casi el mismo rendimiento. Si es grande, el mercado está viendo un riesgo real que la calificación sola no muestra.',
+      'Son calificaciones de escala local (FIX y Moody\'s Local): comparan empresas argentinas entre sí. Al '+fechaAR(ONS_FECHA_CAL)+' ('+ONS_FUENTE_CAL+'); confirmá la vigente antes de invertir.']);
+    $("#ofx").innerHTML=t;
+  };
+  onsLey(pinta); pinta();
+};
+
+/* ---------- 2) Spread contra el soberano y default implícito ---------- */
+R.onsspread=function(){
+  var h='<h2>Spread contra el soberano y default implícito</h2><p class="lead">El <b>spread</b> es cuánto más rinde una ON que un bono del Tesoro de igual duration: es el premio por prestarle a una empresa. De ese premio se puede despejar qué probabilidad de default está descontando el mercado, usando una hipótesis de cuánto se recupera si la empresa no paga.</p><div class="controls">'+onsLeyCtl()+'<div class="field"><label for="orec">Recupero si hay default (%)</label><input id="orec" type="number" min="0" max="90" step="5" value="'+onsA.rec+'"></div></div><div id="osx"></div>';
+  $("#view").innerHTML=h;
+  var pinta=function(){
+    var rs=onsBase(), sob=onsSoberana();
+    if(!rs.length){ $("#osx").innerHTML=onsSinDatos(); return; }
+    if(!sob){ $("#osx").innerHTML='<div class="note">No hay suficientes bonos soberanos con precio para armar la curva de referencia.</div>'; return; }
+    var rec=Math.min(0.9,Math.max(0,(+onsA.rec||0)/100)), gr=onsAgrupa(rs);
+    var fila=rs.map(function(r){ var s=r.tir-sob.f(r.dm); return {r:r,ref:sob.f(r.dm),s:s,pd:s>0?s/(1-rec):null,fuera:r.dm<sob.lo||r.dm>sob.hi}; });
+    var t='<div class="tablewrap"><table><thead><tr><th class="l">Calificación</th><th>ONs</th><th>Spread mediano</th><th>Spread mínimo</th><th>Spread máximo</th><th>Default anual implícito</th><th>Default acumulado a 3 años</th></tr></thead><tbody>';
+    ONS_FAMS.forEach(function(g){ var v=fila.filter(function(x){ return x.r.grupo===g&&!x.fuera; }); if(!v.length){ t+='<tr><td class="l"><b>'+g+'</b></td><td>0</td><td colspan="5" class="l sub">sin ONs dentro del rango de la curva soberana</td></tr>'; return; }
+      var ss=v.map(function(x){ return x.s; }), med=onsMed(ss), rg=onsRng(ss), pd=med>0?med/(1-rec):null;
+      t+='<tr><td class="l"><b style="color:'+ONS_COL[g]+'">'+g+'</b></td><td>'+v.length+'</td><td class="'+cls(med)+'"><b>'+nf(med*10000,0)+' pb</b></td><td>'+nf(rg[0]*10000,0)+' pb</td><td>'+nf(rg[1]*10000,0)+' pb</td><td>'+(pd==null?'<span class="sub">no positivo</span>':pc(pd,2))+'</td><td>'+(pd==null?'<span class="sub">—</span>':pc(1-Math.pow(1-pd,3),1))+'</td></tr>'; });
+    t+='</tbody></table></div>'+p_('Las estadísticas por familia usan solo las ONs cuya duration está dentro del rango de los bonos soberanos (marcadas sin asterisco en el detalle); las más cortas se muestran, pero no entran en el promedio porque no hay soberano comparable.')+p_('Default anual implícito = spread ÷ (1 − recupero). Es una cuenta de referencia: supone que todo el spread es compensación por default. En la práctica el spread también paga liquidez (ONs que casi no se operan), jurisdicción (ley argentina contra Nueva York) y diferencias de moneda de pago, así que el número real de default descontado es menor.');
+    var yr=rango(fila.map(function(x){ return x.s*10000; }).concat([0]),.12), xm=onsRng(rs.map(function(r){ return r.dm; }))[1]*1.06;
+    t+='<div class="panel chart" style="margin-top:14px">'+xySVG({W:900,H:380,xr:[0,xm],yr:yr,xf:function(v){ return nf(v,1); },yf:function(v){ return nf(v,0)+" pb"; },xt:6,yt:Math.max(2,Math.round((yr[1]-yr[0])/yr[2])),xlabel:"Duration modificada (años)",ylabel:"Spread contra el soberano",pts:fila.map(function(x){ return {x:x.r.dm,y:x.s*10000,label:fila.length<=30?x.r.tk:null,color:ONS_COL[x.r.grupo],r:5}; }),h:[{y:0,label:"soberano"}],aria:"Spread de ONs contra soberano"})+leyenda(ONS_FAMS.filter(function(g){ return gr[g].length; }).map(function(g){ return [ONS_COL[g],g+' ('+gr[g].length+')']; }))+p_('La línea en 0 es la curva de bonos soberanos en dólares ('+sob.n+' bonos, ajuste cuadrático, duration entre '+nf(sob.lo,1)+' y '+nf(sob.hi,1)+' años). Fuera de ese rango la referencia se mantiene en el último valor.')+'</div>';
+    t+='<h3 style="margin-top:22px">Detalle por ON</h3><div class="tablewrap" style="max-height:560px"><table><thead><tr><th class="l">ON</th><th class="l">Emisor</th><th class="l">Calificación</th><th>Duration mod.</th><th>TIR</th><th>TIR soberana comparable</th><th>Spread (pb)</th><th>Default anual implícito</th></tr></thead><tbody>';
+    fila.slice().sort(function(a,b){ return b.s-a.s; }).forEach(function(x){ var r=x.r;
+      t+='<tr><td class="l"><b>'+esc(r.tk)+'</b></td><td class="l">'+esc(r.emi)+'</td><td class="l">'+esc(r.grupo)+'</td><td>'+nf(r.dm,2)+(x.fuera?' <span class="sub" title="Duration fuera del rango de la curva soberana">*</span>':'')+'</td><td>'+pc(r.tir)+'</td><td>'+pc(x.ref)+'</td><td class="'+cls(x.s)+'"><b>'+nf(x.s*10000,0)+'</b></td><td>'+(x.pd==null?'<span class="sub">—</span>':pc(x.pd,2))+'</td></tr>'; });
+    t+='</tbody></table></div>'+p_('* Duration fuera del rango de los bonos soberanos: la comparación es menos confiable.');
+    var dentro=function(g){ return fila.filter(function(x){ return x.r.grupo===g&&!x.fuera; }).map(function(x){ return x.s; }); }, mA=onsMed(dentro('AAA')), mN=onsMed(dentro('A'));
+    t+=concl("Cómo leerlo",[
+      mA!=null?'Las <b>AAA</b> rinden '+(mA>=0?nf(mA*10000,0)+' pb más':nf(-mA*10000,0)+' pb menos')+' que el soberano de su duration'+(mA<0?': el mercado las está pagando como si fueran tan o más sólidas que el Tesoro, o bien hay un efecto de liquidez o de ley que distorsiona la comparación.':'.'):'',
+      mN!=null?'Las <b>A</b> rinden '+(mN>=0?nf(mN*10000,0)+' pb más':nf(-mN*10000,0)+' pb menos')+'.':'',
+      'Una ON con spread alto dentro de su familia puede ser una oportunidad o una advertencia: mirá su liquidez (volumen), su ley y si la calificadora la tiene con perspectiva negativa antes de decidir.',
+      'Cambiá el recupero para ver cómo se mueve el default implícito: con menos recupero, el mismo spread equivale a una probabilidad de default menor.']);
+    $("#osx").innerHTML=t;
+  };
+  onsLey(pinta); $("#orec").oninput=function(){ onsA.rec=this.value; pinta(); }; pinta();
+};
+
+/* ---------- 3) Sensibilidad y estrés de crédito ---------- */
+R.onssens=function(){
+  var h='<h2>Sensibilidad y estrés de crédito de las ONs</h2><p class="lead">Dos preguntas: qué pasa con el precio si cambia la tasa de mercado (todas las ONs por igual) y qué pasa si el crédito de una familia se deteriora (el spread de AAA, AA y A se abre distinto). Se vuelve a valuar cada ON con sus flujos exactos.</p><div class="controls">'+onsLeyCtl()+'<div class="field"><label for="eaaa">Estrés AAA (pb)</label><input id="eaaa" type="number" step="25" value="'+onsA.est.AAA+'"></div><div class="field"><label for="eaa">Estrés AA (pb)</label><input id="eaa" type="number" step="25" value="'+onsA.est.AA+'"></div><div class="field"><label for="ea">Estrés A (pb)</label><input id="ea" type="number" step="25" value="'+onsA.est.A+'"></div></div><div id="oex"></div>';
+  $("#view").innerHTML=h;
+  var pinta=function(){
+    var rs=onsBase(); if(!rs.length){ $("#oex").innerHTML=onsSinDatos(); return; }
+    var SH=[-200,-100,100,200,300], gr=onsAgrupa(rs);
+    var fila=rs.map(function(r){ var p0=onsSuc(r,r.tir), v=SH.map(function(s){ return onsSuc(r,r.tir+s/10000)/p0-1; }), e=(+onsA.est[r.grupo]||0), pe=onsSuc(r,r.tir+e/10000)/p0-1; return {r:r,v:v,e:e,pe:pe,meses:pe<0&&r.tir>0?-pe/(r.tir/12):0}; });
+    var t='<h3>Estrés de crédito por familia</h3><div class="tablewrap"><table><thead><tr><th class="l">Calificación</th><th>Estrés (pb)</th><th>ONs</th><th>Caída de precio promedio</th><th>Peor caso</th><th>Meses de interés para recuperarlo (promedio)</th></tr></thead><tbody>';
+    ONS_FAMS.forEach(function(g){ var v=fila.filter(function(x){ return x.r.grupo===g; }); if(!v.length){ t+='<tr><td class="l"><b>'+g+'</b></td><td>'+onsA.est[g]+'</td><td>0</td><td colspan="3" class="l sub">sin ONs con precio hoy</td></tr>'; return; }
+      var pm=v.reduce(function(s,x){ return s+x.pe; },0)/v.length, w=v.slice().sort(function(a,b){ return a.pe-b.pe; })[0], mm=v.reduce(function(s,x){ return s+x.meses; },0)/v.length;
+      t+='<tr><td class="l"><b style="color:'+ONS_COL[g]+'">'+g+'</b></td><td>+'+nf(onsA.est[g],0)+'</td><td>'+v.length+'</td><td class="'+cls(pm)+'">'+pc(pm,1)+'</td><td class="'+cls(w.pe)+'">'+pc(w.pe,1)+' <span class="sub">'+esc(w.r.tk)+'</span></td><td>'+nf(mm,1)+'</td></tr>'; });
+    t+='</tbody></table></div>'+p_('Meses de interés para recuperarlo = caída de precio ÷ (TIR ÷ 12): cuánto tardarías en cobrar, solo con el rendimiento, lo que perdiste en el precio. Si esa cuenta da más que el plazo que te queda, no se recupera por carry.');
+    t+='<h3 style="margin-top:22px">Detalle: cambio de precio por ON</h3><div class="tablewrap" style="max-height:600px"><table><thead><tr><th class="l">ON</th><th class="l">Calificación</th><th>TIR</th><th>Duration mod.</th>'+SH.map(function(s){ return '<th>'+(s>0?'+':'')+s+' pb</th>'; }).join("")+'<th>Estrés de su familia</th><th>Meses de interés</th></tr></thead><tbody>';
+    fila.sort(function(a,b){ return a.r.nota-b.r.nota||a.r.dm-b.r.dm; }).forEach(function(x){ var r=x.r;
+      t+='<tr><td class="l"><b>'+esc(r.tk)+'</b> <span class="sub">'+esc(r.emi)+'</span></td><td class="l">'+esc(r.grupo)+'</td><td>'+pc(r.tir)+'</td><td>'+nf(r.dm,2)+'</td>'+x.v.map(function(v){ return '<td class="'+cls(v)+'">'+pc(v,1)+'</td>'; }).join("")+'<td class="'+cls(x.pe)+'">'+pc(x.pe,1)+' <span class="sub">(+'+x.e+' pb)</span></td><td>'+nf(x.meses,1)+'</td></tr>'; });
+    t+='</tbody></table></div>';
+    var big=fila.slice().sort(function(a,b){ return a.pe-b.pe; })[0];
+    t+=concl("Cómo leerlo",[
+      'Un +100 pb de tasa le resta a cada ON, aproximadamente, su duration en %: una ON con duration 4 pierde cerca de 4%. Las cortas casi no se mueven.',
+      big?'En el escenario de estrés que cargaste, la que más cae es <b>'+esc(big.r.tk)+'</b> ('+pc(big.pe,1)+'): es larga y de familia más baja, la combinación más sensible.':'',
+      'El estrés distinto por familia imita lo que pasa en una crisis: el spread de las empresas más débiles se abre más que el de las más sólidas. Podés cambiar los tres valores y ver cómo cambia el resultado.',
+      'Para una ON que mantenés hasta el vencimiento y que paga, la caída de precio es temporal; el riesgo de verdad es que no pague, y eso lo mide el default implícito (pestaña anterior).']);
+    $("#oex").innerHTML=t;
+  };
+  onsLey(pinta);
+  [["eaaa","AAA"],["eaa","AA"],["ea","A"]].forEach(function(p){ $("#"+p[0]).oninput=function(){ onsA.est[p[1]]=this.value; pinta(); }; });
+  pinta();
+};
+
+/* ================= Z6 · LAS ONs DENTRO DE LAS HERRAMIENTAS DE BONOS =================
+   Cada ON con cronograma y precio se arma con el mismo formato que un bono soberano
+   (flujos con interés, amortización y valor residual), así Sensibilidad, Convexidad,
+   Convergencia, Horizonte, Roll down, Inmunización, Reinversión, Retorno total,
+   Comparador y Mi cartera la pueden usar sin duplicar cálculos.                         */
+
+/* ---------- 1) La ON como bono ---------- */
+function onsComoBono(r){
+  var liq=D.meta.liquidacion, am=r.am==="B"?[[r.vto,100]]:r.am, saldo=100, full=[];
+  am.forEach(function(a){ if(a[0]<=liq) saldo-=a[1]; });
+  full.push([r.ultCupon,0,0,saldo,r.cup]);
+  r.flujos.forEach(function(f){ var amo=0; am.forEach(function(a){ if(a[0]===f[0]) amo+=a[1]; }); var it=saldo*r.cup/r.fr; full.push([f[0],it+amo,it,saldo,r.cup]); saldo-=amo; });
+  return {t:r.tk,nombre:r.emi+" · ON Clase "+r.cl,ley:r.ley==="NY"?"Nueva York":"Argentina",tipo:"ON "+r.grupo,vto:r.vto,cupon:r.cup,vn:full[1][3],precio:r.precio,bid:r.bid,ask:r.esAsk?r.precio:null,
+    calidad:r.esAsk?"ask en vivo":"último operado",ult_pago:full[0][0],prox_pago:full[1][0],int_prox:full[1][2],flujos:r.flujos.map(function(f){ return [f[0],f[1]]; }),full:full,esON:true,grupo:r.grupo,emi:r.emi,fr:r.fr};
+}
+var ONB={d:null,p:null,v:[]};
+function onsBonos(){
+  if(ONB.d===D&&ONB.p===LIVE.precios) return ONB.v;
+  var v=[]; try{ v=onsTodas().filter(function(r){ return r.flujos&&r.flujos.length&&r.precio&&r.ultCupon; }).map(onsComoBono); }catch(e){ v=[]; }
+  v.sort(function(a,b){ return ONS_FAMS.indexOf(a.grupo)-ONS_FAMS.indexOf(b.grupo)||(a.vto<b.vto?-1:1); });
+  ONB={d:D,p:LIVE.precios,v:v}; return v;
+}
+function onsCalcLista(u){ var g=u==="ON"?null:u.slice(3);
+  return onsBonos().filter(function(b){ return !g||b.grupo===g; }).map(function(b){ var p=precioBono(b); return Object.assign({b:b,p:p},metricas(b,p)); })
+    .filter(function(x){ return x.tir!=null&&x.tir>-0.05&&x.tir<0.4&&x.dm>0.1; }); }
+
+/* ---------- 2) Las funciones de búsqueda y los selectores aceptan ONs ---------- */
+var _bonoPorT0=bonoPorT; bonoPorT=function(t){ return _bonoPorT0(t)||onsBonos().filter(function(b){ return b.t===t; })[0]; };
+calcDe=function(t){ var b=bonoPorT(t); if(!b) return undefined; var p=precioBono(b); return Object.assign({b:b,p:p},metricas(b,p)); };
+var _familia0=familia; familia=function(b){ return b&&b.esON?"ON "+b.grupo:_familia0(b); };
+selBono=function(id,val,extra){
+  var ok=function(b){ return !(extra&&extra(b)===false); }, opt=function(b){ return '<option value="'+esc(b.t)+'"'+(b.t===val?" selected":"")+'>'+esc(b.t)+(b.esON?' · '+esc(b.emi):'')+'</option>'; };
+  var h='<select id="'+id+'"><optgroup label="Bonos soberanos en dólares">'+D.bonos.filter(ok).map(opt).join("")+'</optgroup>';
+  ONS_FAMS.forEach(function(g){ var l=onsBonos().filter(function(b){ return b.grupo===g&&ok(b); }); if(l.length) h+='<optgroup label="ONs '+g+'">'+l.map(opt).join("")+'</optgroup>'; });
+  return h+'</select>';
+};
+function riesgoClase(t){ var b=bonoPorT(t); return !b?null:b.esON?"ON "+b.grupo:"Soberano"; }
+
+/* ---------- 3) Roll down y TIR de salida para una ON: curva de su calificación ---------- */
+function onsCurvaFam(g){ var l=onsCalcLista("ON-"+g); if(l.length<5) return null; var a=onsAjLog(l.map(function(x){ return [x.dm,x.tir]; })); if(!a) return null; var r=onsRng(l.map(function(x){ return x.dm; })); return {f:a.f,lo:r[0],hi:r[1],n:l.length}; }
+var _rollDy0=rollDy; rollDy=function(x,T){
+  if(!x.b.esON) return _rollDy0(x,T);
+  var c=onsCurvaFam(x.b.grupo); if(!c||x.b.vto<=T) return 0; var d1=durEn(x.b,x.tir,T); if(!d1) return 0;
+  var k=function(v){ return Math.max(c.lo,Math.min(c.hi,v)); }; return c.f(k(d1.dm))-c.f(k(x.dm));
+};
+var _tsm0=tirSalidaModo; tirSalidaModo=function(x,T,modo,man,shock){
+  if(modo!=="CURVA"||!x.b.esON) return _tsm0(x,T,modo,man,shock);
+  var c=onsCurvaFam(x.b.grupo), dy=rollDy(x,T);
+  return {y:x.tir+dy,txt:!c?"roll down: hay menos de 5 ONs "+x.b.grupo+" con precio, la curva no es confiable y se usa la TIR de hoy ("+pc(x.tir,2)+")":"roll down: la curva de las ONs "+x.b.grupo+" queda quieta y la ON, al acortarse, pasa a rendir "+pc(x.tir+dy,2)+" ("+nf(dy*10000,0)+" pb)"};
+};
+
+/* ---------- 4) «Qué bonos comparar»: soberanos o ONs por calificación ---------- */
+var UNIV={sel:"SOB",u:"SOB"}, UNIV_V={sens:1,horiz:1,roll:1};
+var _bonosCalc0=bonosCalc; bonosCalc=function(){ return UNIV.u==="SOB"?_bonosCalc0():onsCalcLista(UNIV.u); };
+var _ir0=ir; ir=function(v){ UNIV.u=UNIV_V[v]?UNIV.sel:"SOB"; _ir0(v); };
+var UNIV_TXT={SOB:"Bonos soberanos en dólares","ON-AAA":"ONs AAA","ON-AA":"ONs AA","ON-A":"ONs A",ON:"Todas las ONs (A o mejor)"};
+function univCtl(){
+  var h='<div class="controls" id="univbox"><div class="field"><label for="univ">Qué bonos comparar en las tablas</label><select id="univ">'+Object.keys(UNIV_TXT).map(function(k){ return '<option value="'+k+'">'+UNIV_TXT[k]+'</option>'; }).join("")+'</select></div></div>';
+  if(UNIV.u==="ON") h+='<div class="note"><b>Estás mirando ONs de distintas calificaciones juntas.</b> Las tablas aplican el mismo salto de TIR a todas, como si se movieran con una sola curva. Entre familias distintas eso no pasa: en una crisis, el spread de una A se abre más que el de una AAA. Para comparar en serio, elegí una sola calificación.</div>';
+  else if(UNIV.u!=="SOB") h+='<div class="note info">Comparás '+UNIV_TXT[UNIV.u]+' entre sí: mismo escalón de riesgo, así que suponer que todas se mueven con la misma curva es una aproximación razonable. Igual, cada empresa tiene su propio riesgo y su propia liquidez.</div>';
+  return h;
+}
+function univPick(ts){ if(ts.length<=4) return ts.slice(); var n=ts.length; return [ts[0],ts[Math.round(n/3)],ts[Math.round(2*n/3)],ts[n-1]]; }
+["sens","horiz","roll"].forEach(function(v){ var o=R[v]; R[v]=function(){
+  UNIV.u=UNIV.sel;
+  var cal=bonosCalc().filter(function(x){ return x.tir!=null; }).sort(function(a,b){ return a.dm-b.dm; }), ts=cal.map(function(x){ return x.b.t; }), en=function(a){ return a.some(function(t){ return ts.indexOf(t)>=0; }); };
+  if(v==="sens"&&!en(sE.graf)) sE.graf=univPick(ts);
+  if(v==="horiz"){ if(!en(hzE.graf)) hzE.graf=univPick(ts); if(UNIV.u!=="SOB"&&ts.length&&ts.indexOf(hzE.t)<0) hzE.t=ts[Math.floor(ts.length/2)]; }
+  o();
+  var lead=$("#view .lead"); if(lead) lead.insertAdjacentHTML("afterend",univCtl()); else $("#view").insertAdjacentHTML("afterbegin",univCtl());
+  $("#univ").value=UNIV.sel; $("#univ").onchange=function(){ UNIV.sel=UNIV.u=this.value; R[v](); };
+}; });
+
+/* ---------- 5) Avisos cuando se mezclan riesgos distintos ---------- */
+var RIESGO_TXT={
+  barbell:'El barbell supone que las tres TIR se mueven juntas (un solo shock paralelo). Entre un soberano y una ON, o entre ONs de distinta calificación, eso no se cumple: el spread de crédito de cada una se mueve por su cuenta, y un cambio de spread puede tapar la convexidad que ganaste. Sirve como ejercicio, no como estrategia de cobertura.',
+  inmun:'Redington supone <b>una sola curva de descuento</b> para todos los activos. La cartera queda inmunizada contra la tasa, pero no contra el <b>spread</b>: si el crédito de uno de los dos empeora, su TIR sube sola y la cartera deja de estar inmunizada (riesgo de base). Lo correcto es inmunizar con bonos del mismo riesgo: soberano con soberano, o ONs de la misma calificación.',
+  comp:'Comparás una inversión en pesos con una ON: además del riesgo de tipo de cambio, sumás el riesgo de crédito de la empresa. La comparación de retornos es válida; la de riesgos no, porque son riesgos de naturaleza distinta.'};
+function avisoRiesgo(sel,ts,tipo){
+  var box=$(sel); if(!box) return; var cl=ts.map(riesgoClase).filter(function(c){ return c; }), u=cl.filter(function(c,i){ return cl.indexOf(c)===i; }), h='';
+  if(tipo==="comp"){ if(u[0]&&u[0]!=="Soberano") h='<div class="note"><b>Ojo: la ON tiene riesgo de empresa.</b> '+RIESGO_TXT.comp+'</div>'; }
+  else if(u.length>1) h='<div class="note"><b>Ojo: estás mezclando riesgos distintos ('+u.join(", ")+').</b> '+RIESGO_TXT[tipo]+'</div>';
+  else if(u.length===1&&u[0]!=="Soberano") h='<div class="note info">Todos los activos son '+u[0]+': mismo escalón de riesgo, así que la teoría aplica. Igual, cada empresa tiene su propio riesgo: dentro de una calificación los spreads no se mueven idénticos, y conviene no concentrar en un solo emisor.</div>';
+  if(h) box.insertAdjacentHTML("afterbegin",h);
+}
+var _pintaCv2_0=pintaCv2; pintaCv2=function(){ _pintaCv2_0(); avisoRiesgo("#cv2",[cvE.corto,cvE.medio,cvE.largo],"barbell"); };
+var _pintaIm0=pintaIm; pintaIm=function(){ _pintaIm0(); avisoRiesgo("#ix",[imE.corto,imE.largo],"inmun"); };
+var _pintaCp0=pintaCp; pintaCp=function(){ _pintaCp0(); avisoRiesgo("#cpx",[cmpE2.bono],"comp"); };
+
+/* ---------- 6) Reinversión y Retorno total: el selector también lista ONs ---------- */
+function onsEnSelect(id,val){ var s=$("#"+id); if(!s) return; var d=document.createElement("div"); d.innerHTML=selBono("tmp",val,noBopreal); s.innerHTML=d.firstChild.innerHTML; s.value=val; }
+var _reinv0=R.reinv; R.reinv=function(){ var k=SUP.bono, b=bonoPorT(k), on=!!(b&&b.esON); _reinv0(); if(on) SUP.bono=k; onsEnSelect("r1",SUP.bono); if(on) pintaRv(); };
+var _ret0=R.retorno; R.retorno=function(){ var k=rtE.t, b=bonoPorT(k), on=!!(b&&b.esON); _ret0(); if(on) rtE.t=k; onsEnSelect("t1",rtE.t); if(on) pintaRt(); };
+
+/* ---------- 7) Para Cobertura: la ON AAA que vence más cerca del plazo ---------- */
+function onsParaCobertura(T){
+  var l=onsCalcLista("ON-AAA").filter(function(x){ return x.b.vto>=T; }); if(!l.length) l=onsCalcLista("ON-AAA");
+  return l.sort(function(a,b){ return Math.abs(dias(T,a.b.vto))-Math.abs(dias(T,b.b.vto)); })[0]||null;
+}
+
+/* ---------- 8) Guía: qué herramientas sirven para ONs y cuándo se puede mezclar ---------- */
+(function(){ var g=GRUPOS.filter(function(G){ return G[0]==="ONs"; })[0]; if(g) g[1].push(["onsmezcla","Herramientas con ONs"]); })();
+_VLABEL.onsmezcla="Herramientas con ONs"; DESC.onsmezcla="Qué herramientas de bonos sirven para ONs y cuándo la teoría permite mezclarlas con soberanos.";
+R.onsmezcla=function(){
+  var L=function(v,t){ return '<a href="#'+v+'" data-go="'+v+'">'+t+'</a>'; };
+  var rows=[
+    ["Sensibilidad",L("sens","Análisis de bonos › Sensibilidad"),"Sí: elegí «ONs AAA», «ONs AA» o «ONs A» en «Qué bonos comparar».","Comparar la sensibilidad sí; sumar un mismo shock a todas no: cada familia tiene su propio spread."],
+    ["Convexidad (un bono)",L("conv","Análisis de bonos › Convexidad"),"Sí: el selector incluye las ONs.","No hace falta: es un solo activo."],
+    ["Barbell contra bullet",L("conv","Análisis de bonos › Convexidad"),"Sí, con las tres ONs de la <b>misma calificación</b>.","<b>No conviene.</b> El barbell supone un único shock paralelo. Con riesgos distintos, un cambio de spread puede borrar la convexidad. La app te avisa."],
+    ["Convergencia al par",L("par","Análisis de bonos › Convergencia al par"),"Sí.","No aplica: es un solo activo."],
+    ["Retorno al horizonte",L("horiz","Análisis de bonos › Retorno al horizonte"),"Sí: la ON en el detalle y la tabla por calificación.","Comparar retornos sí; son resultados de cada activo por separado."],
+    ["Roll down y carry",L("roll","Análisis de bonos › Roll down"),"Sí: el roll down usa la curva de su calificación. Es el «carry» de una ON en dólares: lo que rinde si la curva no se mueve.","No: el roll down se mide contra la curva de la propia familia."],
+    ["Inmunización (Redington)",L("inmun","Análisis de bonos › Inmunización"),"Sí, con dos ONs de la <b>misma calificación</b>.","<b>No.</b> Redington supone una sola curva de descuento. Con un soberano y una ON quedás inmunizado contra la tasa, pero no contra el spread (riesgo de base). La app te avisa."],
+    ["Reinversión y Retorno total",L("retorno","Análisis de bonos › Retorno total"),"Sí: el selector incluye las ONs.","No aplica: es un solo activo."],
+    ["Comparador letra contra bono",L("comparador","Mercado › Comparador"),"Sí: podés comparar una letra con una ON.","Se comparan <b>retornos</b> en dólares, no se combinan: es válido, pero sumás riesgo de empresa al riesgo cambiario."],
+    ["Cobertura contra devaluación",L("cobertura","Dólar y riesgo › Cobertura"),"Sí: aparece la ON AAA que vence más cerca de tu plazo.","Una ON en dólares, como un soberano, <b>no es cobertura pura</b>: en una crisis el spread también sube."],
+    ["Cambiar de bono u ON",L("swap","Análisis de bonos › Cambiar de bono"),"Sí: vendés una ON y comprás otra (o un soberano), con comisiones y puntas.","Se puede, pero si cambiás de escalón de riesgo, parte de la TIR extra es pago por ese riesgo. La app te avisa y el escáner busca primero en el mismo escalón."],
+    ["Mi cartera",L("cartera","Mi cartera"),"Sí: podés cargar ONs junto con soberanos.","Sí: una cartera puede tener los dos. La TIR y la duration de la cartera son promedios; el riesgo de crédito no se promedia, se suma."]];
+  var h='<h2>Herramientas de bonos con ONs: qué vale y qué no</h2><p class="lead">Todas las herramientas de «Análisis de bonos» ahora aceptan ONs. La pregunta de fondo es otra: <b>¿se pueden mezclar activos de riesgo distinto?</b> Depende de lo que supone cada herramienta.</p>';
+  h+='<div class="panel">'+p_('<b>La regla.</b> Las técnicas basadas en duration y convexidad (barbell, inmunización, sensibilidad de una cartera) suponen que todos los activos se descuentan con <b>la misma curva</b> y que, si la tasa se mueve, se mueve igual para todos (shock paralelo). Eso es razonable entre bonos del mismo emisor o del mismo escalón de riesgo.')+p_('<b>Por qué no se puede mezclar.</b> La TIR de una ON es la tasa base (el soberano) más un <b>spread</b> de crédito de la empresa. Ese spread se mueve por su cuenta: depende de los balances de la empresa, de su sector y de la liquidez de la ON. Si mezclás un soberano con una ON, la cobertura de tasa funciona, pero quedás expuesto al <b>riesgo de base</b>: que el spread se abra justo cuando lo necesitás.')+p_('<b>Lo que sí se puede.</b> Comparar retornos entre activos de distinto riesgo (es elegir dónde invertir) y tenerlos juntos en una cartera. Lo que no se puede es usar uno para <b>cubrir</b> al otro como si fueran el mismo riesgo.')+p_('<b>Letras en pesos.</b> Son otra moneda: nunca se combinan con ONs en dólares para inmunizar o armar un barbell. Solo se comparan resultados medidos en una misma moneda (el Comparador lo hace en dólares).')+'</div>';
+  h+='<div class="tablewrap"><table><thead><tr><th class="l">Herramienta</th><th class="l">Dónde</th><th class="l">¿Sirve con ONs?</th><th class="l">¿Se puede mezclar con soberanos u otra calificación?</th></tr></thead><tbody>'+rows.map(function(r){ return '<tr><td class="l"><b>'+r[0]+'</b></td><td class="l">'+r[1]+'</td><td class="l">'+r[2]+'</td><td class="l">'+r[3]+'</td></tr>'; }).join("")+'</tbody></table></div>';
+  h+=concl("En una línea",['Mismo riesgo: la teoría aplica. Distinto riesgo: se puede comparar y diversificar, pero no cubrir ni inmunizar uno con otro.','Por calificación local, AAA con AAA es lo más parecido a «un solo riesgo», aunque cada empresa sigue teniendo el suyo. Diversificá entre emisores.']);
+  $("#view").innerHTML=h;
+  $("#view").querySelectorAll("[data-go]").forEach(function(a){ a.onclick=function(e){ e.preventDefault(); ir(a.dataset.go); }; });
+};
+
+/* ================= Z7 · CAMBIAR DE BONO (SWAP) Y CALENDARIO DE PAGOS ================= */
+(function(){
+  var g=GRUPOS.filter(function(G){ return G[0]==="Análisis de bonos"; })[0]; if(g) g[1].splice(0,0,["swap","Cambiar de bono"]);
+  var c=GRUPOS.filter(function(G){ return G[0]==="Mi cartera"; })[0]; if(c) c[1].splice(1,0,["calpagos","Calendario de pagos"]);
+})();
+_VLABEL.swap="Cambiar de bono"; _VLABEL.calpagos="Calendario de pagos";
+DESC.swap="Vender un bono u ON y comprar otro de mayor TIR: cuánto cuesta el cambio con comisiones y puntas, y en cuánto tiempo se recupera.";
+DESC.calpagos="Qué pagan los bonos, ONs y letras mes a mes: rentas, amortizaciones y vencimientos, y cuánto cobrás con tu cartera.";
+
+/* ---------------- 1) CAMBIAR DE BONO ---------------- */
+var swE={a:"AL30",b:"GD35",vn:10000,cv:null,cc:null,fijo:0,puntas:true,fecha:null,universo:"igual"};
+function swDef(){ if(swE.cv==null) swE.cv=D.meta.costo_venta; if(swE.cc==null) swE.cc=D.meta.costo_compra; if(!swE.fecha) swE.fecha=sumaDias(D.meta.liquidacion,365); }
+function swPuntas(x){ var b=x.b, bid=b.bid>0?b.bid:null, ask=b.ask>0?b.ask:null; return {bid:bid||x.p,ask:ask||x.p,hayBid:!!bid,hayAsk:!!ask}; }
+// valor de una posición en T: cobros reinvertidos a la TIR del propio bono + precio a la TIR y (si no venció)
+function swVal(x,units,T,y){ var liq=D.meta.liquidacion, b=x.b, v=0; b.flujos.forEach(function(f){ if(f[0]>liq&&f[0]<=T) v+=units*f[1]*Math.pow(1+Math.max(0,x.tir),dias(f[0],T)/365); }); if(T<b.vto) v+=units*sucioEn(b,y,T); return v; }
+// arma la operación: vendo A (VN) y compro B
+function swCalc(A,B,vn){
+  var pa=swPuntas(A), pb=swPuntas(B), uA=vn/100, pxV=swE.puntas?pa.bid:A.p, pxC=swE.puntas?pb.ask:B.p;
+  var bruto=uA*pxV, comV=bruto*swE.cv, neto=bruto-comV-swE.fijo, uB=Math.max(0,neto)/(pxC*(1+swE.cc)), comC=neto-uB*pxC;
+  var vA0=uA*A.p, vB0=uB*B.p, costo=vA0-vB0, costoPct=costo/vA0;
+  var tirV=tirDe(pxV,A.b.flujos,D.meta.liquidacion), tirC=tirDe(pxC*(1+swE.cc),B.b.flujos,D.meta.liquidacion);
+  var liq=D.meta.liquidacion, fin=[A.b.vto,B.b.vto].sort()[1], be=null, serie=[];
+  for(var d=7; d<=Math.min(3650,dias(liq,fin)+370); d+=7){ var T=sumaDias(liq,d), va=swVal(A,uA,T,A.tir), vb=swVal(B,uB,T,B.tir); serie.push([d,vb-va]); if(be==null&&vb>=va) be=d; }
+  var aprox=(B.tir-A.tir)>0?costoPct/(B.tir-A.tir)*365:null;
+  return {pa:pa,pb:pb,uA:uA,uB:uB,pxV:pxV,pxC:pxC,bruto:bruto,comV:comV,neto:neto,comC:comC,vA0:vA0,vB0:vB0,costo:costo,costoPct:costoPct,tirV:tirV,tirC:tirC,be:be,aprox:aprox,serie:serie,spreadUSD:uA*(A.p-pxV)+uB*(pxC-B.p)};
+}
+function swRiesgo(A,B){ var a=riesgoClase(A.b.t), b=riesgoClase(B.b.t); return {a:a,b:b,igual:a===b}; }
+function swMeses(d){ return d==null?null:d/30.4; }
+R.swap=function(){
+  swDef(); if(!bonoPorT(swE.a)) swE.a=D.bonos[0].t; if(!bonoPorT(swE.b)) swE.b=D.bonos[1].t;
+  var h='<h2>Cambiar de bono: ¿conviene vender y comprar otro de mayor TIR?</h2><p class="lead">Tenés un bono u ON cuya TIR bajó y ves otro que rinde más. Cambiar tiene un costo seguro hoy (comisiones, derechos y la diferencia entre la punta compradora y la vendedora) y una ganancia que llega de a poco (la TIR extra). La pregunta es <b>en cuánto tiempo recuperás el costo</b>, y si la TIR extra no es simplemente más riesgo.</p>';
+  h+='<div class="controls"><div class="field"><label for="w1">Lo que tengo</label>'+selBono("w1",swE.a,noBopreal)+'</div><div class="field"><label for="w2">Valor nominal que tengo</label><input id="w2" type="number" step="1000" value="'+swE.vn+'"></div><div class="field"><label for="w3">Lo que quiero comprar</label>'+selBono("w3",swE.b,noBopreal)+'</div><div class="field"><label for="w8">Fecha hasta la que pensás mantenerlo</label><input id="w8" type="date" value="'+swE.fecha+'"></div></div>';
+  h+='<div class="controls"><div class="field"><label for="w4">Costo de venta (% comisión + derechos)</label><input id="w4" type="number" step="0.05" value="'+(+(swE.cv*100).toFixed(3))+'"></div><div class="field"><label for="w5">Costo de compra (%)</label><input id="w5" type="number" step="0.05" value="'+(+(swE.cc*100).toFixed(3))+'"></div><div class="field"><label for="w6">Gastos fijos del cambio (USD)</label><input id="w6" type="number" step="1" value="'+swE.fijo+'"></div><div class="field"><label for="w7">Precios</label><select id="w7"><option value="1">Puntas: vendo al bid y compro al ask</option><option value="0">Último precio (sin puntas)</option></select></div></div>';
+  h+='<div id="wx"></div>';
+  h+=metodo("Cómo se calcula",p_('<b>El cambio, paso a paso.</b> Vendés tu VN de A a su punta compradora (bid) y pagás el costo de venta; con lo que queda, menos los gastos fijos, comprás B a su punta vendedora (ask) más el costo de compra. La diferencia entre lo que valía tu posición en A a precio de mercado y lo que vale la nueva en B, también a precio de mercado, es el <b>costo del cambio</b>: comisiones más spread de puntas.')+fx('Costo del cambio = Valor de mercado de A − Valor de mercado de B comprado con lo que obtuviste')+p_('<b>El recupero.</b> Se proyectan las dos posiciones semana a semana suponiendo que la TIR de cada una <b>no cambia</b>: cobrás sus cupones y amortizaciones, los reinvertís a la TIR de cada bono y valuás lo que queda a esa misma TIR. El recupero es la primera semana en que la posición en B vale más que la que tenías en A. La cuenta rápida, que sirve para chequear, es:')+fx('Tiempo de recupero ≈ Costo del cambio (%) ÷ (TIR de B − TIR de A) × 365 días')+p_('<b>Lo que el cálculo no ve.</b> Si la TIR de B es más alta porque es más riesgosa (otra calificación, más duration, menos liquidez), el cambio no es gratis aunque se recupere rápido: estás cobrando por un riesgo nuevo. Por eso abajo se compara la duration, el escalón de riesgo y qué pasa si la TIR de B sube después de comprarla.'),false);
+  $("#view").innerHTML=h; $("#w7").value=swE.puntas?"1":"0";
+  $("#w1").onchange=function(){ swE.a=this.value; pintaSw(); }; $("#w3").onchange=function(){ swE.b=this.value; pintaSw(); };
+  $("#w2").oninput=function(){ if(+this.value>0){ swE.vn=+this.value; pintaSw(); } };
+  $("#w4").oninput=function(){ var v=+this.value/100; if(v>=0&&v<0.2){ swE.cv=v; pintaSw(); } }; $("#w5").oninput=function(){ var v=+this.value/100; if(v>=0&&v<0.2){ swE.cc=v; pintaSw(); } };
+  $("#w6").oninput=function(){ var v=+this.value; if(v>=0){ swE.fijo=v; pintaSw(); } }; $("#w7").onchange=function(){ swE.puntas=this.value==="1"; pintaSw(); };
+  $("#w8").onchange=function(){ if(this.value>D.meta.liquidacion){ swE.fecha=this.value; pintaSw(); } };
+  pintaSw();
+};
+function pintaSw(){
+  var A=calcDe(swE.a), B=calcDe(swE.b); if(!A||!B||A.tir==null||B.tir==null){ $("#wx").innerHTML='<div class="note">Elegí dos instrumentos con precio y TIR.</div>'; return; }
+  if(A.b.t===B.b.t){ $("#wx").innerHTML='<div class="note">Elegí dos instrumentos distintos.</div>'; return; }
+  var o=swCalc(A,B,swE.vn), rk=swRiesgo(A,B), liq=D.meta.liquidacion, T=swE.fecha, hz=dias(liq,T);
+  var vaT=swVal(A,o.uA,T,A.tir), vbT=swVal(B,o.uB,T,B.tir), dT=vbT-vaT, mesesBe=swMeses(o.be);
+  var h='';
+  // aviso de riesgo
+  if(!rk.igual) h+='<div class="note"><b>Cambiás de riesgo: '+esc(rk.a)+' → '+esc(rk.b)+'.</b> Parte de la TIR extra es pago por un riesgo distinto (de crédito, de jurisdicción o de liquidez), no una ganancia gratis. Compará con un destino del mismo escalón antes de decidir.</div>';
+  if(!o.pa.hayBid||!o.pb.hayAsk) h+='<div class="note info">'+(!o.pa.hayBid?'No hay punta compradora de '+esc(A.b.t)+' ahora: se usa su último precio. ':'')+(!o.pb.hayAsk?'No hay punta vendedora de '+esc(B.b.t)+': se usa su último precio. ':'')+'Con el mercado abierto el costo real puede ser mayor.</div>';
+  h+='<div class="grid"><div class="stat"><div class="k">Costo del cambio</div><div class="v neg">'+usd(o.costo,2)+'</div><div class="d">'+pc(o.costoPct,2)+' de tu posición · puntas '+usd(o.spreadUSD,2)+' + comisiones '+usd(o.comV+o.comC,2)+(swE.fijo?' + fijos '+usd(swE.fijo,0):'')+'</div></div>'
+   +'<div class="stat"><div class="k">TIR que dejás → TIR que comprás</div><div class="v">'+pc(A.tir)+' → '+pc(B.tir)+'</div><div class="d">'+nf((B.tir-A.tir)*10000,0)+' pb · neta de puntas y comisión: '+pc(o.tirV)+' (vendés) → '+pc(o.tirC)+' (comprás)</div></div>'
+   +'<div class="stat"><div class="k">Recuperás el costo en</div><div class="v '+(o.be!=null&&o.be<=hz?'pos':'neg')+'">'+(o.be!=null?(mesesBe<1?nf(o.be,0)+' días':nf(mesesBe,1)+' meses'):'no se recupera')+'</div><div class="d">'+(o.aprox!=null?'Cuenta rápida: '+nf(o.aprox/30.4,1)+' meses':'La TIR de destino no es mayor')+' · tu plazo: '+nf(hz/30.4,1)+' meses</div></div>'
+   +'<div class="stat"><div class="k">Diferencia al '+fechaAR(T)+'</div><div class="v '+cls(dT)+'">'+(dT>=0?'+':'')+usd(dT,0)+'</div><div class="d">Si las dos TIR no cambian · '+pc(dT/o.vA0,2)+' de tu posición</div></div></div>';
+  // la operación
+  h+='<h3 style="margin-top:14px">La operación</h3><div class="tablewrap corta"><table><thead><tr><th class="l">Paso</th><th>Precio (c/100 VN)</th><th>VN</th><th>USD</th><th class="l">Detalle</th></tr></thead><tbody>'
+   +'<tr><td class="l">Tu posición hoy en '+esc(A.b.t)+'</td><td>'+nf(A.p,2)+'</td><td>'+nf(swE.vn,0)+'</td><td>'+nf(o.vA0,2)+'</td><td class="l">A precio de mercado ('+esc(A.b.calidad||'')+')</td></tr>'
+   +'<tr><td class="l">Vendés '+esc(A.b.t)+'</td><td>'+nf(o.pxV,2)+'</td><td>'+nf(swE.vn,0)+'</td><td>'+nf(o.bruto,2)+'</td><td class="l">'+(swE.puntas?'Punta compradora (bid)':'Último precio')+'</td></tr>'
+   +'<tr><td class="l">Costo de venta</td><td></td><td></td><td class="neg">−'+nf(o.comV,2)+'</td><td class="l">'+pc(swE.cv,2)+' de la venta</td></tr>'
+   +(swE.fijo?'<tr><td class="l">Gastos fijos</td><td></td><td></td><td class="neg">−'+nf(swE.fijo,2)+'</td><td class="l">Los que cargaste</td></tr>':'')
+   +'<tr><td class="l">Comprás '+esc(B.b.t)+'</td><td>'+nf(o.pxC,2)+'</td><td>'+nf(o.uB*100,0)+'</td><td>'+nf(o.uB*o.pxC,2)+'</td><td class="l">'+(swE.puntas?'Punta vendedora (ask)':'Último precio')+'</td></tr>'
+   +'<tr><td class="l">Costo de compra</td><td></td><td></td><td class="neg">−'+nf(o.comC,2)+'</td><td class="l">'+pc(swE.cc,2)+' de la compra</td></tr>'
+   +'<tr class="sel"><td class="l"><b>Tu posición nueva en '+esc(B.b.t)+'</b></td><td>'+nf(B.p,2)+'</td><td>'+nf(o.uB*100,0)+'</td><td><b>'+nf(o.vB0,2)+'</b></td><td class="l">A precio de mercado: perdiste '+usd(o.costo,2)+' en el cambio</td></tr></tbody></table></div>';
+  // comparación de riesgo
+  var fila=function(n,a,b,f){ return '<tr><td class="l">'+n+'</td><td>'+a+'</td><td>'+b+'</td><td class="l">'+(f||'')+'</td></tr>'; };
+  h+='<h3 style="margin-top:14px">Qué cambia además de la TIR</h3><div class="tablewrap corta"><table><thead><tr><th class="l">Medida</th><th>'+esc(A.b.t)+'</th><th>'+esc(B.b.t)+'</th><th class="l">Lectura</th></tr></thead><tbody>'
+   +fila('Riesgo',esc(rk.a),esc(rk.b),rk.igual?'Mismo escalón':'<span class="tag warn">Cambia el riesgo</span>')
+   +fila('Ley',esc(A.b.ley||'—'),esc(B.b.ley||'—'),(A.b.ley||'')===(B.b.ley||'')?'':'Cambia la jurisdicción')
+   +fila('Vencimiento',fechaAR(A.b.vto),fechaAR(B.b.vto),B.b.vto>A.b.vto?'Te alargás':'Te acortás')
+   +fila('Duration modificada',nf(A.dm,2),nf(B.dm,2),B.dm>A.dm+0.5?'<span class="tag warn">Más sensible a la tasa</span>':B.dm<A.dm-0.5?'Menos sensible a la tasa':'Parecida')
+   +fila('Convexidad',nf(A.cv,1),nf(B.cv,1),'')
+   +fila('Paridad',pc(A.par,1),pc(B.par,1),'')
+   +'</tbody></table></div>';
+  // estrés del destino
+  var sh=[-200,-100,0,100,200,300], ts='';
+  sh.forEach(function(s){ var vb=swVal(B,o.uB,T,B.tir+s/10000), d=vb-vaT; ts+='<tr class="'+(s===0?'sel':'')+'"><td><b>'+(s>0?'+':'')+s+' pb</b></td><td>'+pc(B.tir+s/10000)+'</td><td>'+usd(vb,0)+'</td><td class="'+cls(d)+'"><b>'+(d>=0?'+':'')+usd(d,0)+'</b></td><td class="'+cls(d)+'">'+pc(d/o.vA0,2)+'</td></tr>'; });
+  var beY=null; (function(){ var lo=-0.05, hi=0.5, f=function(y){ return swVal(B,o.uB,T,y)-vaT; }; if(T>=B.b.vto||f(lo)<0||f(hi)>0) return; for(var k=0;k<60;k++){ var m=(lo+hi)/2; if(f(m)>0) lo=m; else hi=m; } beY=(lo+hi)/2; })();
+  h+='<h3 style="margin-top:14px">¿Y si después de comprar, la TIR de '+esc(B.b.t)+' sube?</h3>'+p_('Tu posición en '+esc(A.b.t)+' queda con su TIR de hoy; a '+esc(B.b.t)+' se le aplica el salto el día de tu fecha ('+fechaAR(T)+'). Muestra cuánto margen te deja el cambio.')+'<div class="tablewrap corta"><table><thead><tr><th>Salto de la TIR de '+esc(B.b.t)+'</th><th>TIR de '+esc(B.b.t)+'</th><th>Tu posición en '+esc(B.b.t)+'</th><th>Contra quedarte en '+esc(A.b.t)+'</th><th>%</th></tr></thead><tbody>'+ts+'</tbody></table></div>'+(beY!=null?p_('El cambio sigue conviniendo mientras la TIR de '+esc(B.b.t)+' no supere <b>'+pc(beY,2)+'</b> en tu fecha ('+nf((beY-B.tir)*10000,0)+' pb arriba de hoy).'):'');
+  // gráfico
+  var pts=o.serie.filter(function(p){ return p[0]<=Math.max(hz,(o.be||0))*1.4+60; }).map(function(p){ return [p[0]/30.4,p[1]]; });
+  if(pts.length>1){ var yr=rango(pts.map(function(p){ return p[1]; }).concat([0]),.1), xm=pts[pts.length-1][0];
+    h+='<div class="panel chart" style="margin-top:12px"><h3>Ventaja de cambiar, mes a mes (si las TIR no cambian)</h3>'+xySVG({W:900,H:300,xr:[0,xm],yr:yr,xf:function(v){ return nf(v,0); },yf:function(v){ return nf(v,0); },xt:6,yt:Math.max(2,Math.round((yr[1]-yr[0])/yr[2])),xlabel:"Meses desde hoy",ylabel:"USD",aria:"Ventaja del cambio en el tiempo",lines:[{pts:pts,color:"var(--c1)",w:3}],h:[{y:0,label:"recuperado"}],v:[{x:hz/30.4}]})+p_('Arranca negativa por el costo del cambio y sube a medida que cobrás la TIR extra. Donde cruza el cero recuperaste el costo; la línea vertical es tu fecha. Si la línea nunca cruza, la TIR de destino no alcanza para pagar el cambio.')+'</div>'; }
+  // conclusión
+  var verde=o.be!=null&&o.be<=hz;
+  h+=concl("Qué nos dice",[
+    verde?'<b>Conviene, si las TIR se mantienen:</b> recuperás el costo en '+nf(mesesBe,1)+' meses y al '+fechaAR(T)+' terminás '+usd(dT,0)+' arriba.':o.be!=null?'<b>No conviene para tu plazo:</b> el costo se recupera en '+nf(mesesBe,1)+' meses, después de tu fecha. Solo conviene si vas a mantener '+esc(B.b.t)+' más tiempo.':'<b>No conviene:</b> la TIR de '+esc(B.b.t)+' no alcanza para pagar el costo del cambio.',
+    'El costo es '+pc(o.costoPct,2)+': '+(o.spreadUSD>o.comV+o.comC?'pesa más la diferencia de puntas que las comisiones. Operar con el mercado más líquido (mediodía) o con orden límite puede abaratarlo.':'pesan más las comisiones; un broker más barato cambia la cuenta.'),
+    !rk.igual?'Ojo: pasás de '+esc(rk.a)+' a '+esc(rk.b)+'. La TIR extra puede ser el precio de ese riesgo.':(B.dm>A.dm+0.5?'Te alargás en duration: si las tasas suben, '+esc(B.b.t)+' cae más que '+esc(A.b.t)+'.':''),
+    'Regla práctica: cambiá solo si el recupero es claramente más corto que el tiempo que pensás mantener el destino, y si el riesgo no empeora.']);
+  // escáner
+  h+='<h3 style="margin-top:20px">Mejores destinos desde '+esc(A.b.t)+'</h3><div class="controls"><div class="field"><label for="w9">Buscar entre</label><select id="w9"><option value="igual">Mismo escalón de riesgo ('+esc(rk.a)+')</option><option value="todos">Todos (soberanos y ONs)</option></select></div></div><div id="wesc"></div>';
+  $("#wx").innerHTML=h; $("#w9").value=swE.universo; $("#w9").onchange=function(){ swE.universo=this.value; pintaSwEsc(A); }; pintaSwEsc(A);
+}
+function pintaSwEsc(A){
+  var liq=D.meta.liquidacion, hz=dias(liq,swE.fecha), cA=riesgoClase(A.b.t);
+  var cands=D.bonos.filter(noBopreal).map(function(b){ return b.t; }).concat(onsBonos().map(function(b){ return b.t; }))
+    .filter(function(t){ return t!==A.b.t&&(swE.universo==="todos"||riesgoClase(t)===cA); }).map(calcDe)
+    .filter(function(x){ return x&&x.tir!=null&&x.tir>A.tir&&x.tir<0.4&&x.b.vto>liq; });
+  var rows=cands.map(function(B){ var o=swCalc(A,B,swE.vn); return {B:B,o:o}; }).sort(function(p,q){ var a=p.o.be==null?1e9:p.o.be, b=q.o.be==null?1e9:q.o.be; return a-b; }).slice(0,15);
+  if(!rows.length){ $("#wesc").innerHTML='<div class="note">No hay instrumentos '+(swE.universo==="igual"?'del mismo escalón ':'')+'con más TIR que '+esc(A.b.t)+' ahora.</div>'; return; }
+  var t='<div class="tablewrap"><table><thead><tr><th class="l">Destino</th><th class="l">Riesgo</th><th>TIR</th><th>TIR extra (pb)</th><th>Duration mod.</th><th>Costo del cambio</th><th>Recupero</th><th class="l">Lectura</th></tr></thead><tbody>';
+  rows.forEach(function(r){ var B=r.B, o=r.o, m=swMeses(o.be), ok=o.be!=null&&o.be<=hz;
+    t+='<tr><td class="l"><b><a href="#swap" data-sw="'+esc(B.b.t)+'">'+esc(B.b.t)+'</a></b>'+(B.b.esON?' <span class="sub">'+esc(B.b.emi)+'</span>':'')+'</td><td class="l">'+esc(riesgoClase(B.b.t))+'</td><td>'+pc(B.tir)+'</td><td>'+nf((B.tir-A.tir)*10000,0)+'</td><td>'+nf(B.dm,2)+'</td><td>'+pc(o.costoPct,2)+'</td><td>'+(o.be!=null?(m<1?nf(o.be,0)+' días':nf(m,1)+' meses'):'no')+'</td><td class="l">'+(ok?'<span class="tag good">Se recupera en tu plazo</span>':'<span class="tag">Después de tu plazo</span>')+(B.dm>A.dm+1?' <span class="tag warn">Más duration</span>':'')+'</td></tr>'; });
+  $("#wesc").innerHTML=t+'</tbody></table></div>'+p_('Ordenados por tiempo de recupero, con tus costos y puntas. Tocá un ticker para simularlo arriba. Una TIR extra muy alta dentro del mismo escalón suele tener una razón: poca liquidez, ley distinta o un problema de la empresa que la calificación todavía no refleja.');
+  $("#wesc").querySelectorAll("[data-sw]").forEach(function(a){ a.onclick=function(e){ e.preventDefault(); swE.b=a.dataset.sw; R.swap(); }; });
+}
+
+/* ---------------- 2) CALENDARIO DE PAGOS ---------------- */
+var cpE={meses:12,tipos:{SOB:true,ON:true,LET:true},cartera:false};
+function cpEventos(desde,hasta){
+  var ev=[], add=function(b,tipo){ b.full.forEach(function(f){ if(f[0]>desde&&f[0]<=hasta&&f[1]>0){ var am=f[1]-f[2]; ev.push({f:f[0],t:b.t,tipo:tipo,emi:b.esON?b.emi:(b.nombre||''),renta:f[2],am:am,tot:f[1],cur:"USD",vence:f[0]===b.vto}); } }); };
+  if(cpE.tipos.SOB) D.bonos.forEach(function(b){ add(b,/BOPREAL/i.test(b.tipo)?"BOPREAL":"Soberano"); });
+  if(cpE.tipos.ON) onsBonos().forEach(function(b){ add(b,"ON "+b.grupo); });
+  if(cpE.tipos.LET) D.letras.filas.forEach(function(l){ if(l.vto>desde&&l.vto<=hasta) ev.push({f:l.vto,t:l.t,tipo:"Letra",emi:"Tesoro",renta:null,am:null,tot:l.pago,cur:"ARS",vence:true}); });
+  return ev.sort(function(a,b){ return a.f<b.f?-1:a.f>b.f?1:a.t<b.t?-1:1; });
+}
+R.calpagos=function(){
+  var h='<h2>Calendario de pagos</h2><p class="lead">Qué paga cada bono, ON y letra, mes a mes: renta (intereses), amortización (devolución de capital) y vencimientos. Con «Mi cartera» ves cuántos dólares cobrás vos.</p>';
+  h+='<div class="controls"><div class="field"><label for="k1">Período</label><select id="k1"><option value="1">Este mes</option><option value="3">3 meses</option><option value="6">6 meses</option><option value="12">12 meses</option><option value="24">24 meses</option></select></div><div class="field"><label for="k2">Qué mostrar</label><select id="k2"><option value="0">Todo el mercado (c/100 VN)</option><option value="1">Solo mi cartera (USD que cobro)</option></select></div><div class="field"><label>Instrumentos</label><div class="chk" id="k3"><label><input type="checkbox" value="SOB"'+(cpE.tipos.SOB?' checked':'')+'>Soberanos</label><label><input type="checkbox" value="ON"'+(cpE.tipos.ON?' checked':'')+'>ONs</label><label><input type="checkbox" value="LET"'+(cpE.tipos.LET?' checked':'')+'>Letras en pesos</label></div></div></div><div id="kx"></div>';
+  $("#view").innerHTML=h; $("#k1").value=cpE.meses; $("#k2").value=cpE.cartera?"1":"0";
+  $("#k1").onchange=function(){ cpE.meses=+this.value; pintaCal(); }; $("#k2").onchange=function(){ cpE.cartera=this.value==="1"; pintaCal(); };
+  $("#k3").querySelectorAll("input").forEach(function(i){ i.onchange=function(){ cpE.tipos[i.value]=i.checked; pintaCal(); }; });
+  pintaCal();
+};
+function pintaCal(){
+  var liq=D.meta.liquidacion, hoy=D.meta.fecha_precios, desde=sumaDias(hoy,-1), hasta;
+  if(cpE.meses===1){ var p=hoy.split("-"); hasta=onsMasMeses(p[0]+"-"+p[1]+"-01",1); hasta=sumaDias(hasta,-1); } else hasta=onsMasMeses(hoy,cpE.meses);
+  var ev=cpEventos(desde,hasta), vn={};
+  if(cpE.cartera){ cartera.forEach(function(c){ vn[c.t]=(vn[c.t]||0)+c.vn; }); ev=ev.filter(function(e){ return vn[e.t]; }); if(!cartera.length){ $("#kx").innerHTML='<div class="note info">Tu cartera está vacía. Cargá bonos u ONs en <a href="#cartera" data-go="cartera">Mi cartera</a>.</div>'; return; } }
+  if(!ev.length){ $("#kx").innerHTML='<div class="note">No hay pagos en el período elegido.</div>'; return; }
+  var meses={}; ev.forEach(function(e){ (meses[e.f.slice(0,7)]=meses[e.f.slice(0,7)]||[]).push(e); });
+  var NM=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  var conc=function(e){ return e.cur==="ARS"?'Vencimiento':e.vence?'Vencimiento':e.am>0.0001&&e.renta>0.0001?'Renta y amortización':e.am>0.0001?'Amortización':'Renta'; };
+  var col=function(tp){ return /^ON/.test(tp)?'var(--c3)':tp==="Letra"?'var(--good)':'var(--c1)'; };
+  var t='', totU=0;
+  Object.keys(meses).sort().forEach(function(k){ var L=meses[k], sU=0, filas='';
+    L.forEach(function(e){ var monto=cpE.cartera?(vn[e.t]/100*e.tot):e.tot; if(e.cur==="USD"&&cpE.cartera) sU+=monto;
+      filas+='<tr><td>'+e.f.slice(8)+'</td><td class="l"><b>'+esc(e.t)+'</b> <span class="sub">'+esc(e.emi)+'</span></td><td class="l"><span class="tag" style="border-color:'+col(e.tipo)+';color:'+col(e.tipo)+'">'+esc(e.tipo)+'</span></td><td class="l">'+conc(e)+'</td><td>'+(e.renta!=null?nf(cpE.cartera?vn[e.t]/100*e.renta:e.renta,2):'—')+'</td><td>'+(e.am!=null?nf(cpE.cartera?vn[e.t]/100*e.am:e.am,2):'—')+'</td><td><b>'+e.cur+' '+nf(monto,2)+'</b></td></tr>'; });
+    totU+=sU;
+    t+='<div class="panel" style="margin-bottom:12px"><h3 style="margin:0 0 8px">'+NM[+k.slice(5)-1]+' '+k.slice(0,4)+' <span class="sub">· '+L.length+' pago'+(L.length>1?'s':'')+(cpE.cartera&&sU?' · cobrás '+usd(sU,2):'')+'</span></h3><div class="tablewrap corta"><table><thead><tr><th>Día</th><th class="l">Instrumento</th><th class="l">Tipo</th><th class="l">Concepto</th><th>Renta</th><th>Amortización</th><th>'+(cpE.cartera?'Cobrás':'Paga c/100 VN')+'</th></tr></thead><tbody>'+filas+'</tbody></table></div></div>'; });
+  var head=cpE.cartera?'<div class="grid" style="margin-bottom:12px"><div class="stat"><div class="k">Cobrás en el período</div><div class="v">'+usd(totU,2)+'</div><div class="d">Cupones y amortizaciones en dólares de tu cartera</div></div></div>':'';
+  $("#kx").innerHTML=head+t+p_('Montos por cada 100 de valor nominal original (letras: pesos al vencimiento). Las fechas de las ONs se arman desde su vencimiento y pueden correrse uno o dos días por feriados o fines de semana. Las amortizaciones devuelven capital: no son ganancia.');
+  $("#kx").querySelectorAll("[data-go]").forEach(function(a){ a.onclick=function(e){ e.preventDefault(); ir(a.dataset.go); }; });
+}
+
+/* ================= Z9 · ¿CUÁNDO VENDER UNA LECAP ANTES DEL VENCIMIENTO? ================= */
+(function(){ var g=GRUPOS.filter(function(G){ return G[0]==="Mercado"; })[0]; if(!g) return; var i=g[1].map(function(v){ return v[0]; }).indexOf("letras"); g[1].splice(i+1,0,["lecapv","¿Vender la letra antes?"]); })();
+_VLABEL.lecapv="¿Vender la letra antes?"; DESC.lecapv="Comparar mantener una LECAP o BONCAP hasta el vencimiento contra venderla antes (si bajó la tasa) y reinvertir, con comisiones.";
+var lvE={t:null,monto:null,dia:30,modo:"CURVA",temV:null,reinv:"MISMA",temR:null,com:null};
+function lvCurva(){ var f=D.letras.filas.map(function(l){ var p=precioLetra(l); return [l.dias,Math.pow(l.pago/p,30/l.dias)-1]; }).filter(function(x){ return x[0]>=7&&isFinite(x[1]); }); return f.length>=3?ajusteCuad(f):null; }
+function lvCalc(l,dia,temV,temR,com,monto){
+  var p=precioLetra(l), vn=monto/(p/100*(1+com)), finM=vn*l.pago/100, rem=l.dias-dia;
+  if(rem<=0) return {vence:true,finM:finM};
+  var pV=l.pago/Math.pow(1+temV,rem/30), bruto=vn*pV/100, neto=bruto*(1-com), reinv=neto/(1+com)*Math.pow(1+temR,rem/30), temBE=Math.pow(finM*(1+com)/neto,30/rem)-1;
+  var ganHasta=neto/monto-1, temHasta=Math.pow(neto/monto,30/dia)-1;
+  return {p:p,vn:vn,finM:finM,rem:rem,pV:pV,bruto:bruto,neto:neto,reinv:reinv,dif:reinv-finM,temBE:temBE,ganHasta:ganHasta,temHasta:temHasta,temC:Math.pow(l.pago/(p*(1+com)),30/l.dias)-1};
+}
+R.lecapv=function(){
+  var L=D.letras.filas.slice().sort(function(a,b){ return a.dias-b.dias; }).filter(function(l){ return l.dias>=20; });
+  if(!L.length){ $("#view").innerHTML='<h2>¿Vender la letra antes del vencimiento?</h2><div class="note">No hay letras con más de 20 días al vencimiento.</div>'; return; }
+  if(!lvE.t||!letraPorT(lvE.t)||letraPorT(lvE.t).dias<20) lvE.t=L[Math.min(3,L.length-1)].t; if(lvE.monto==null) lvE.monto=D.letras.monto; if(lvE.com==null) lvE.com=D.letras.comision;
+  var h='<h2>¿Vender la letra antes del vencimiento?</h2><p class="lead">Compraste una LECAP o BONCAP. Si después baja la tasa de mercado, su precio sube y te tienta vender antes. ¿Conviene? Depende de una sola cosa: <b>a qué tasa vas a reinvertir lo que cobrás</b>. Acá se compara, a la misma fecha final, mantenerla hasta el vencimiento contra venderla y reinvertir.</p>';
+  h+='<div class="controls"><div class="field"><label for="lv1">Letra</label>'+selLetra("lv1",lvE.t)+'</div><div class="field"><label for="lv2">Monto invertido hoy ($)</label><input id="lv2" type="number" step="100000" value="'+lvE.monto+'"></div><div class="field"><label for="lv3">Vendo dentro de (días)</label><input id="lv3" type="number" step="5" min="1" value="'+lvE.dia+'"></div><div class="field"><label for="lv7">Comisión por operación (%)</label><input id="lv7" type="number" step="0.05" value="'+(+(lvE.com*100).toFixed(3))+'"></div></div>';
+  h+='<div class="controls"><div class="field"><label for="lv4">Tasa de mercado el día que vendo</label><select id="lv4"><option value="CURVA">La curva de hoy queda quieta (roll down)</option><option value="MANUAL">La escribo yo (TEM)</option></select></div><div class="field"><label for="lv5">TEM de venta (%)</label><input id="lv5" type="number" step="0.05"></div><div class="field"><label for="lv6">Reinvierto lo que cobro a</label><select id="lv6"><option value="MISMA">La misma tasa a la que vendí</option><option value="MANUAL">Otra TEM (escribila)</option></select></div><div class="field"><label for="lv8">TEM de reinversión (%)</label><input id="lv8" type="number" step="0.05"></div></div><div id="lvx"></div>';
+  h+=metodo("Cómo se calcula",p_('<b>Mantener:</b> cobrás al vencimiento el valor nominal × lo que paga la letra. <b>Vender:</b> el día de venta la letra vale lo que paga al vencimiento descontado a la tasa de mercado de ese día por los días que le faltan; cobrás eso menos la comisión y lo reinvertís (pagando otra comisión) hasta la misma fecha final.')+fx('Precio de venta = Pago al vencimiento ÷ (1 + TEM de venta)<sup>días que faltan ÷ 30</sup>')+fx('Vender y reinvertir = Neto de la venta × (1 + TEM de reinversión)<sup>días que faltan ÷ 30</sup>')+p_('<b>La trampa.</b> Si reinvertís a la misma tasa a la que vendiste y no hubiera comisiones, las dos cuentas dan exactamente igual: lo que ganaste en precio lo perdés en tasa. Con comisiones, mantener gana. Vender solo conviene si reinvertís a una tasa <b>mayor</b> que la de venta (otra letra más barata de la curva, un bono, una caución mejor) o si necesitás la plata antes.')+p_('<b>«Curva quieta»</b> toma la curva de letras de hoy (ajuste cuadrático de la TEM según los días) y supone que no se mueve: tu letra, al acortarse, pasa a rendir lo que hoy rinde una letra con los días que le faltan. Si la curva sube con el plazo, eso empuja el precio para arriba (roll down).'),false);
+  $("#view").innerHTML=h; $("#lv4").value=lvE.modo; $("#lv6").value=lvE.reinv;
+  var set=function(id,fn){ $("#"+id).oninput=fn; $("#"+id).onchange=fn; };
+  set("lv1",function(){ lvE.t=this.value; lvE.temV=null; lvE.temR=null; pintaLv(); }); set("lv2",function(){ if(+this.value>0){ lvE.monto=+this.value; pintaLv(); } });
+  set("lv3",function(){ if(+this.value>0){ lvE.dia=+this.value; if(lvE.modo==="CURVA") lvE.temV=null; pintaLv(); } }); set("lv7",function(){ var v=+this.value/100; if(v>=0&&v<0.05){ lvE.com=v; pintaLv(); } });
+  set("lv4",function(){ lvE.modo=this.value; pintaLv(); }); set("lv5",function(){ var v=+this.value/100; if(isFinite(v)&&v>-0.05&&v<0.3){ lvE.modo="MANUAL"; $("#lv4").value="MANUAL"; lvE.temV=v; pintaLv(); } });
+  set("lv6",function(){ lvE.reinv=this.value; pintaLv(); }); set("lv8",function(){ var v=+this.value/100; if(isFinite(v)&&v>-0.05&&v<0.3){ lvE.reinv="MANUAL"; $("#lv6").value="MANUAL"; lvE.temR=v; pintaLv(); } });
+  pintaLv();
+};
+function pintaLv(){
+  var l=letraPorT(lvE.t); if(!l){ $("#lvx").innerHTML=''; return; }
+  var dia=Math.min(lvE.dia,l.dias-1); if(dia<1){ $("#lvx").innerHTML='<div class="note">A esta letra le queda muy poco: no tiene sentido venderla antes.</div>'; return; }
+  var aj=lvCurva(), rem=l.dias-dia, temCurva=aj?aj.f(rem):null, p=precioLetra(l), temHoy=Math.pow(l.pago/p,30/l.dias)-1;
+  var temV=lvE.modo==="CURVA"?(temCurva!=null?temCurva:temHoy):(lvE.temV!=null?lvE.temV:temHoy-0.003);
+  var temR=lvE.reinv==="MISMA"?temV:(lvE.temR!=null?lvE.temR:temV);
+  if(document.activeElement!==$("#lv5")) $("#lv5").value=+(temV*100).toFixed(3); if(document.activeElement!==$("#lv8")) $("#lv8").value=+(temR*100).toFixed(3);
+  var o=lvCalc(l,dia,temV,temR,lvE.com,lvE.monto), fv=sumaDias(D.meta.liquidacion,dia);
+  var h='<div class="grid"><div class="stat"><div class="k">Si la mantenés hasta el '+fechaAR(l.vto)+'</div><div class="v">$ '+nf(o.finM,0)+'</div><div class="d">TEM de compra neta: '+pc(o.temC,2)+' · '+l.dias+' días</div></div>'
+   +'<div class="stat"><div class="k">Si vendés el '+fechaAR(fv)+' y reinvertís</div><div class="v">$ '+nf(o.reinv,0)+'</div><div class="d">Vendés a TEM '+pc(temV,2)+' y reinvertís a '+pc(temR,2)+' por '+o.rem+' días</div></div>'
+   +'<div class="stat"><div class="k">Vender contra mantener</div><div class="v '+cls(o.dif)+'">'+(o.dif>=0?'+':'−')+'$ '+nf(Math.abs(o.dif),0)+'</div><div class="d">'+pc(o.dif/o.finM,2)+' del resultado final</div></div>'
+   +'<div class="stat"><div class="k">TEM de reinversión para empatar</div><div class="v">'+pc(o.temBE,2)+'</div><div class="d">Tenés que reinvertir a más que esto para que vender convenga</div></div></div>';
+  h+='<div class="tablewrap corta" style="margin-top:12px"><table><thead><tr><th class="l">Paso</th><th>Precio ($ c/100 VN)</th><th>$</th><th class="l">Detalle</th></tr></thead><tbody>'
+   +'<tr><td class="l">Comprás hoy</td><td>'+nf(p,3)+'</td><td>'+nf(lvE.monto,0)+'</td><td class="l">'+nf(o.vn,0)+' VN, con '+pc(lvE.com,2)+' de comisión</td></tr>'
+   +'<tr><td class="l">Vendés el '+fechaAR(fv)+' (día '+dia+')</td><td>'+nf(o.pV,3)+'</td><td>'+nf(o.bruto,0)+'</td><td class="l">Pago al vencimiento ('+nf(l.pago,3)+') descontado a TEM '+pc(temV,2)+' por '+o.rem+' días</td></tr>'
+   +'<tr><td class="l">Neto de comisión</td><td></td><td>'+nf(o.neto,0)+'</td><td class="l">Ganaste '+pc(o.ganHasta,2)+' en '+dia+' días: TEM realizada '+pc(o.temHasta,2)+' (prometía '+pc(o.temC,2)+')</td></tr>'
+   +'<tr><td class="l">Reinvertís hasta el '+fechaAR(l.vto)+'</td><td></td><td>'+nf(o.reinv,0)+'</td><td class="l">Otra comisión de '+pc(lvE.com,2)+' y TEM '+pc(temR,2)+' por '+o.rem+' días</td></tr>'
+   +'<tr class="sel"><td class="l"><b>Mantener hasta el vencimiento</b></td><td>'+nf(l.pago,3)+'</td><td><b>'+nf(o.finM,0)+'</b></td><td class="l">Sin más comisiones</td></tr></tbody></table></div>';
+  // mapa: TEM de venta (filas) contra TEM de reinversión (columnas)
+  var dv=[-0.006,-0.004,-0.002,0,0.002], dr=[-0.004,-0.002,0,0.002,0.004,0.006], m='<h3 style="margin-top:16px">Vender contra mantener según las dos tasas ($)</h3>'+p_('Filas: la TEM de mercado el día que vendés (menor TEM = precio más alto). Columnas: la TEM a la que reinvertís, medida contra la de venta. La columna «igual» muestra la trampa: aunque la tasa haya bajado mucho, si reinvertís a esa misma tasa, vender pierde por las comisiones.')+'<div class="tablewrap corta"><table><thead><tr><th>TEM de venta</th>'+dr.map(function(d){ return '<th>Reinvierto a '+(d===0?'igual':(d>0?'+':'')+nf(d*100,1)+' pp')+'</th>'; }).join("")+'</tr></thead><tbody>';
+  dv.forEach(function(a){ var tv=temV+a; m+='<tr class="'+(a===0?'sel':'')+'"><td><b>'+pc(tv,2)+'</b></td>'+dr.map(function(d){ var q=lvCalc(l,dia,tv,tv+d,lvE.com,lvE.monto); return '<td class="'+cls(q.dif)+'">'+(q.dif>=0?'+':'−')+nf(Math.abs(q.dif),0)+'</td>'; }).join("")+'</tr>'; });
+  h+=m+'</tbody></table></div>';
+  // por día de venta
+  var t='<h3 style="margin-top:16px">Según el día en que vendés (misma TEM de venta y de reinversión que arriba)</h3><div class="tablewrap corta"><table><thead><tr><th>Vendo el día</th><th>Fecha</th><th>Precio de venta</th><th>Ganado hasta ahí</th><th>TEM realizada</th><th>Vender contra mantener</th></tr></thead><tbody>';
+  for(var d=Math.max(5,Math.round(l.dias/8)); d<l.dias; d+=Math.max(5,Math.round(l.dias/8))){ var tv2=lvE.modo==="CURVA"&&aj?aj.f(l.dias-d):temV, tr2=lvE.reinv==="MISMA"?tv2:temR, q=lvCalc(l,d,tv2,tr2,lvE.com,lvE.monto);
+    t+='<tr class="'+(d===dia?'sel':'')+'"><td>'+d+'</td><td>'+fechaAR(sumaDias(D.meta.liquidacion,d))+'</td><td>'+nf(q.pV,3)+'</td><td>'+pc(q.ganHasta,2)+'</td><td>'+pc(q.temHasta,2)+'</td><td class="'+cls(q.dif)+'">'+(q.dif>=0?'+':'−')+'$ '+nf(Math.abs(q.dif),0)+'</td></tr>'; }
+  h+=t+'</tbody></table></div>';
+  var gana=o.dif>0;
+  h+=concl("Qué nos dice",[
+    gana?'<b>Vender conviene</b> en este escenario: terminás $ '+nf(o.dif,0)+' arriba, porque reinvertís a '+pc(temR,2)+', más que la TEM de empate ('+pc(o.temBE,2)+').':'<b>Mantener conviene</b>: para que vender gane tenés que reinvertir a más de '+pc(o.temBE,2)+' mensual, y estás suponiendo '+pc(temR,2)+'.',
+    'La TEM realizada si vendés el día '+dia+' es '+pc(o.temHasta,2)+' contra '+pc(o.temC,2)+' que prometía: '+(o.temHasta>o.temC?'parece que ganaste más, pero eso solo se concreta si reinvertís mejor.':'vender temprano te deja menos de lo prometido.'),
+    'Regla práctica: vendé antes solo si tenés dónde poner la plata a una tasa mejor por los días que faltan (otra letra que quedó barata en la curva, por ejemplo), o si necesitás los pesos. Si la tasa bajó para todos, mantener casi siempre gana por las comisiones.',
+    'Si pensás que la tasa va a <b>subir</b>, el razonamiento se invierte: vender hoy y recomprar más barato después puede convenir, pero es una apuesta, no una cuenta segura.']);
+  $("#lvx").innerHTML=h;
+}
+
+/* ================= Z9c · CALCULADORA DE UNA ON (precio → TIR y TIR → precio) ================= */
+(function(){ var g=GRUPOS.filter(function(G){ return G[0]==="ONs"; })[0]; if(g) g[1].splice(1,0,["oncalc","Calculadora de ON"]); })();
+_VLABEL.oncalc="Calculadora de ON"; DESC.oncalc="Elegí una ON, escribí un precio y te da TIR, duration y paridad; o escribí la TIR que querés y te da a qué precio comprar.";
+var ocE={t:null,precio:null,tir:null};
+R.oncalc=function(){
+  var L=onsBonos(); if(!L.length){ $("#view").innerHTML='<h2>Calculadora de ON</h2><div class="note">No hay ONs con precio en este momento.</div>'; return; }
+  if(!ocE.t||!bonoPorT(ocE.t)) ocE.t=(L.filter(function(b){ return b.t==="VSCTD"; })[0]||L[0]).t;
+  var h='<h2>Calculadora de ON</h2><p class="lead">Elegí una ON y escribí un precio: la app calcula la TIR, la duration, el valor técnico y la paridad con su cronograma real. O hacé la pregunta al revés: escribí la TIR que querés ganar y te dice a qué precio tendrías que comprar.</p>';
+  h+='<div class="controls"><div class="field"><label for="oc1">ON</label>'+selBono("oc1",ocE.t,function(b){ return !!b.esON; })+'</div><div class="field"><label for="oc2">Precio (USD sucio c/100 VN)</label><input id="oc2" type="number" step="0.05"></div><div class="field"><label for="oc3">…o la TIR que querés (%)</label><input id="oc3" type="number" step="0.05"></div><button class="btn ghost" id="oc4" type="button">Volver al precio de mercado</button></div><div id="ocx"></div>';
+  $("#view").innerHTML=h.replace('<optgroup label="Bonos soberanos en dólares"></optgroup>','');
+  $("#oc1").onchange=function(){ ocE.t=this.value; ocE.precio=null; ocE.tir=null; pintaOc(); };
+  $("#oc2").oninput=function(){ var v=+this.value; if(v>0){ ocE.precio=v; ocE.tir=null; pintaOc("p"); } };
+  $("#oc3").oninput=function(){ var v=+this.value/100; if(isFinite(v)&&v>-0.2&&v<1){ ocE.tir=v; ocE.precio=null; pintaOc("y"); } };
+  $("#oc4").onclick=function(){ ocE.precio=null; ocE.tir=null; pintaOc(); };
+  pintaOc();
+};
+function pintaOc(origen){
+  var b=bonoPorT(ocE.t); if(!b){ $("#ocx").innerHTML=''; return; }
+  var liq=D.meta.liquidacion, pm=b.precio, p=ocE.precio!=null?ocE.precio:(ocE.tir!=null?sucioEn(b,ocE.tir,liq):pm), x=Object.assign({b:b,p:p},metricas(b,p)), xm=Object.assign({b:b,p:pm},metricas(b,pm));
+  if(origen!=="p") $("#oc2").value=+p.toFixed(2); if(origen!=="y"&&x.tir!=null) $("#oc3").value=+(x.tir*100).toFixed(2);
+  var sim=Math.abs(p-pm)>0.005;
+  var h=(sim?'<div class="note info">Estás simulando: precio '+nf(p,2)+' contra '+nf(pm,2)+' de mercado ('+(p>pm?'+':'')+pc(p/pm-1,2)+').</div>':'');
+  h+='<div class="grid"><div class="stat"><div class="k">TIR</div><div class="v">'+pc(x.tir)+'</div><div class="d">Neta de tu comisión de compra: '+pc(x.tirN)+(sim?' · mercado '+pc(xm.tir):'')+'</div></div>'
+   +'<div class="stat"><div class="k">Precio</div><div class="v">USD '+nf(p,2)+'</div><div class="d">Sucio, cada 100 VN original · limpio '+nf(x.limpio,2)+'</div></div>'
+   +'<div class="stat"><div class="k">Valor técnico y paridad</div><div class="v">'+nf(x.vt,2)+' · '+pc(x.par,1)+'</div><div class="d">Residual '+nf(b.vn,2)+'% + corridos '+nf(x.corr,2)+'</div></div>'
+   +'<div class="stat"><div class="k">Duration mod. · convexidad</div><div class="v">'+nf(x.dm,2)+' · '+nf(x.cv,1)+'</div><div class="d">Si la TIR sube 1 punto, el precio cae cerca de '+pc(x.dm/100,1)+'</div></div></div>';
+  var Y=[-0.02,-0.01,-0.005,0,0.005,0.01,0.02], t='<h3 style="margin-top:14px">Precio según la TIR (alrededor de la actual)</h3><div class="tablewrap corta"><table><thead><tr><th>TIR</th><th>Precio</th><th>Contra el precio de arriba</th></tr></thead><tbody>';
+  Y.forEach(function(d){ var y=x.tir+d, pr=sucioEn(b,y,liq); t+='<tr class="'+(d===0?'sel':'')+'"><td>'+pc(y)+'</td><td>'+nf(pr,2)+'</td><td class="'+cls(pr/p-1)+'">'+pc(pr/p-1,2)+'</td></tr>'; });
+  h+=t+'</tbody></table></div>';
+  h+='<h3 style="margin-top:14px">Flujo de fondos de '+esc(b.t)+' ('+esc(b.emi)+', '+esc(b.grupo)+')</h3>'+marchaTabla(b);
+  h+=concl("Cómo usarla",['Para decidir a qué precio poner una orden límite: escribí la TIR que te conforma y mirá el precio. Si el mercado está por encima, esperá; si está por debajo, la ON rinde más de lo que pedís.','Compará la TIR con otras ONs del mismo escalón ('+esc(b.grupo)+') en «Curva de ONs»: si pedís mucho más que sus pares, puede que nunca se dé.','Los precios son sucios (incluyen el interés corrido) y por cada 100 de valor nominal original, como cotizan en BYMA.']);
+  $("#ocx").innerHTML=h;
+}
+
+/* ================= Z · FORWARDS IMPLÍCITOS Y GRAFICADOR LIBRE (inspirado en lo que ofrece chamomberg.com) ================= */
+GRUPOS[0][1].splice(5,0,["fwd","Forwards de letras"],["graf","Graficador"]);
+_VLABEL.fwd="Forwards de letras"; _VLABEL.graf="Graficador";
+DESC.fwd="Tasa que el mercado ya está fijando entre dos vencimientos de letras (forward) y qué conviene según lo que esperás.";
+DESC.graf="Elegí hasta 10 instrumentos y dibujalos juntos en una misma curva (bonos en USD, letras o CER).";
+
+/* ---------- FORWARDS ---------- */
+var fwdEstado={esp:null};
+function letrasOrdenadas(){
+  return D.letras.filas.map(function(l){ var p=precioLetra(l); return p>0&&l.dias>0&&l.pago>0?{l:l,p:p,r:l.pago/p,d:l.dias}:null; }).filter(Boolean).sort(function(a,b){ return a.d-b.d; });
+}
+R.fwd=function(){
+  var L=letrasOrdenadas();
+  var h='<h2>Forwards implícitos de las letras</h2><p class="lead">Si hoy podés comprar una letra corta y una larga, el mercado te está dejando «trancar» una tasa para el tramo que queda en el medio. Esa tasa es el <b>forward</b>: lo que rinde la letra larga por el tiempo extra, descontando lo que ya rinde la corta.</p>';
+  if(L.length<2){ $("#view").innerHTML=h+'<div class="note">Hacen falta al menos dos letras con precio para calcular forwards.</div>'; return; }
+  var tem0=Math.pow(L[0].r,30/L[0].d)-1;
+  if(fwdEstado.esp==null) fwdEstado.esp=Math.round(tem0*1000)/10;
+  h+='<div class="controls"><div class="field"><label for="fe">TEM que esperás para cada tramo (%)</label><input id="fe" type="number" step="0.1" value="'+fwdEstado.esp+'"></div></div><div id="fx"></div>';
+  h+=metodo("Cómo se calcula y cómo usarlo","<p class=\"how\">Cada letra paga un monto fijo al vencimiento. Con el precio de hoy, <b>r = paga / precio</b> es lo que multiplica tu plata hasta ese día. Entre dos letras (la corta vence a los d₁ días, la larga a los d₂), el forward es <b>(r₂ / r₁)^(30 / (d₂ − d₁)) − 1</b> expresado por mes (TEM), y con 365 en lugar de 30 por año (TIREA).</p><p class=\"how\"><b>Cómo se usa:</b> comprar la larga hasta d₂ rinde r₂. Comprar la corta hasta d₁ y reinvertir el resto a tu TEM esperada rinde r₁ × (1 + TEM esperada)^((d₂ − d₁)/30). Si el forward es <b>mayor</b> que tu TEM esperada, conviene la larga (estás trancando más de lo que creés que vas a conseguir). Si es <b>menor</b>, conviene la corta y reinvertir.</p><p class=\"how\"><b>Cuidado:</b> en tramos de pocos días, un centavo de diferencia en el precio mueve muchísimo el forward. Los marcados como «tramo corto» son una guía débil. Además, el forward incluye la prima por plazo y la expectativa de devaluación o de tasas: no es un pronóstico puro.</p>",false);
+  $("#view").innerHTML=h;
+  var pinta=function(){
+    var esp=(fwdEstado.esp||0)/100, rows=[];
+    for(var i=0;i<L.length-1;i++){ var a=L[i], b=L[i+1], dd=b.d-a.d; if(dd<=0) continue;
+      var q=b.r/a.r, tem=Math.pow(q,30/dd)-1, tea=Math.pow(q,365/dd)-1, alt=a.r*Math.pow(1+esp,dd/30), gana=b.r-alt;
+      rows.push({a:a,b:b,dd:dd,tem:tem,tea:tea,corto:dd<15,gana:gana}); }
+    var t='<div class="tablewrap"><table><thead><tr><th class="l">Tramo</th><th>Días del tramo</th><th>TEM spot de la corta</th><th>TEM spot de la larga</th><th>TEM forward</th><th>TIREA forward</th><th class="l">Con tu TEM esperada</th></tr></thead><tbody>';
+    rows.forEach(function(x){ var tA=Math.pow(x.a.r,30/x.a.d)-1, tB=Math.pow(x.b.r,30/x.b.d)-1;
+      var lec=x.corto?'<span class="tag warn">Tramo corto: poco confiable</span>':x.tem>esp+0.0005?'<span class="tag good">Conviene la larga ('+esc(x.b.l.t)+')</span>':x.tem<esp-0.0005?'<span class="tag bad">Conviene la corta y reinvertir</span>':'<span class="tag">Indiferente</span>';
+      t+='<tr><td class="l"><b>'+esc(x.a.l.t)+'</b> → <b>'+esc(x.b.l.t)+'</b> <span class="sub">'+fechaAR(x.a.l.vto)+' a '+fechaAR(x.b.l.vto)+'</span></td><td>'+nf(x.dd,0)+'</td><td>'+pc(tA)+'</td><td>'+pc(tB)+'</td><td><b>'+pc(x.tem)+'</b></td><td>'+pc(x.tea,1)+'</td><td class="l">'+lec+'</td></tr>'; });
+    t+='</tbody></table></div>';
+    var fin=rows.filter(function(x){ return !x.corto; }), pts=L.map(function(x){ return {x:x.d,y:(Math.pow(x.r,30/x.d)-1)*100,label:x.l.t,color:"var(--c1)"}; });
+    var segs=fin.map(function(x){ return {pts:[[x.a.d,x.tem*100],[x.b.d,x.tem*100]],color:"var(--c3)",w:3.5}; });
+    var ys=pts.map(function(p){ return p.y; }).concat(fin.map(function(x){ return x.tem*100; })).concat([esp*100]), yr=rango(ys,.12), xmax=L[L.length-1].d*1.06;
+    var g='<div class="panel chart"><h3>TEM spot de cada letra y forward de cada tramo</h3>'+xySVG({W:900,H:360,xr:[0,xmax],yr:yr,xf:function(v){return nf(v,0);},yf:function(v){return nf(v,1)+"%";},xt:6,yt:Math.max(2,Math.round((yr[1]-yr[0])/yr[2])),xlabel:"Días al vencimiento",ylabel:"Tasa efectiva mensual",lines:segs,pts:pts,h:[{y:esp*100,color:"var(--c2)",label:"tu TEM esperada"}],aria:"Forwards de letras"})+leyenda([["var(--c1)","TEM spot de cada letra (desde hoy)"],["var(--c3)","TEM forward del tramo entre dos letras"],["var(--c2)","Tu TEM esperada"]])+'</div>';
+    var mx=fin.length?fin.slice().sort(function(a,b){ return b.tem-a.tem; })[0]:null, mn=fin.length?fin.slice().sort(function(a,b){ return a.tem-b.tem; })[0]:null;
+    var cc=concl("Qué nos dice hoy",[
+      mx?'El tramo que más paga es <b>'+esc(mx.a.l.t)+' → '+esc(mx.b.l.t)+'</b>: '+pc(mx.tem)+' mensual forward ('+nf(mx.dd,0)+' días).':'',
+      mn&&mx&&mn!==mx?'El que menos paga es '+esc(mn.a.l.t)+' → '+esc(mn.b.l.t)+': '+pc(mn.tem)+' mensual.':'',
+      fin.length>1?(fin[fin.length-1].tem>fin[0].tem?'La curva de forwards sube con el plazo: el mercado pide más tasa por prestar más lejos.':'La curva de forwards baja con el plazo: el mercado descuenta tasas más bajas más adelante.'):'',
+      'Compará el forward con la TEM que esperás: si creés que las tasas van a bajar más de lo que implica el forward, conviene trancar con la letra larga.']);
+    $("#fx").innerHTML=t+g+cc;
+  };
+  $("#fe").oninput=function(){ var v=parseFloat(this.value); if(isFinite(v)){ fwdEstado.esp=v; pinta(); } };
+  pinta();
+};
+
+/* ---------- GRAFICADOR LIBRE ---------- */
+var grafEstado={u:"usd",sel:null};
+function grafUniverso(u){
+  if(u==="usd") return {x:"Duration modificada (años)",y:"TIR",xf:function(v){return nf(v,1);},items:bonosCalc().filter(function(x){ return x.tir!=null&&x.dm!=null; }).map(function(x){ return {t:x.b.t,x:x.dm,y:x.tir,g:familia(x.b)||"BOPREAL"}; })};
+  if(u==="letras") return {x:"Plazo (años)",y:"TIREA",xf:function(v){return nf(v,2);},items:letrasOrdenadas().map(function(x){ return {t:x.l.t,x:x.d/365,y:Math.pow(x.r,365/x.d)-1,g:"Letras"}; })};
+  return {x:"Duration modificada real (años)",y:"TIR real (sobre la inflación)",xf:function(v){return nf(v,1);},items:cerTodos().filter(function(x){ return x.L!=null&&x.tir!=null&&x.anios>0.25; }).map(function(x){ return {t:x.t,x:x.L,y:x.tir,g:"CER"}; })};
+}
+var GRAF_COL=["var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--good)","var(--warn)","var(--bad)","var(--muted)","var(--c1)","var(--c2)"];
+R.graf=function(){
+  var U=grafUniverso(grafEstado.u), todos=U.items.slice().sort(function(a,b){ return a.x-b.x; });
+  var nombres=todos.map(function(i){ return i.t; });
+  if(!grafEstado.sel||grafEstado.u!==grafEstado.uSel){ grafEstado.sel=nombres.slice(0,Math.min(10,nombres.length)); grafEstado.uSel=grafEstado.u; }
+  grafEstado.sel=grafEstado.sel.filter(function(t){ return nombres.indexOf(t)>=0; });
+  var h='<h2>Graficador de curvas</h2><p class="lead">Elegí hasta 10 instrumentos y mirá dónde queda cada uno en una misma curva. Con 3 o más se dibuja además la línea ajustada: lo que queda por encima rinde más que lo que le corresponde a su plazo.</p>';
+  h+='<div class="controls"><div class="field"><label for="gu">Qué querés comparar</label><select id="gu"><option value="usd"'+(grafEstado.u==="usd"?" selected":"")+'>Bonos en dólares (TIR)</option><option value="letras"'+(grafEstado.u==="letras"?" selected":"")+'>Letras en pesos (TIREA)</option><option value="cer"'+(grafEstado.u==="cer"?" selected":"")+'>Bonos CER (TIR real)</option></select></div><button class="btn ghost" id="gt">Elegir los primeros 10</button><button class="btn ghost" id="gn">Limpiar</button></div>';
+  h+='<div id="gc" class="legend" style="flex-wrap:wrap;gap:8px 14px;margin:6px 0 12px"></div><div id="gg"></div>';
+  $("#view").innerHTML=h;
+  var chips=function(){
+    $("#gc").innerHTML=todos.map(function(i){ var on=grafEstado.sel.indexOf(i.t)>=0; return '<label style="display:inline-flex;gap:5px;align-items:center;cursor:pointer;opacity:'+(on?1:.7)+'"><input type="checkbox" data-t="'+esc(i.t)+'"'+(on?" checked":"")+'> '+esc(i.t)+'</label>'; }).join("");
+    $("#gc").querySelectorAll("input").forEach(function(c){ c.onchange=function(){ var t=c.dataset.t, k=grafEstado.sel.indexOf(t);
+      if(c.checked){ if(grafEstado.sel.length>=10){ c.checked=false; $("#gw").textContent="Máximo 10 instrumentos: sacá uno para agregar otro."; return; } if(k<0) grafEstado.sel.push(t); } else if(k>=0) grafEstado.sel.splice(k,1);
+      $("#gw").textContent=""; dibuja(); }; });
+  };
+  var dibuja=function(){
+    var S=todos.filter(function(i){ return grafEstado.sel.indexOf(i.t)>=0; });
+    if(!S.length){ $("#gg").innerHTML='<div class="note"><span id="gw"></span>Elegí al menos un instrumento.</div>'; return; }
+    var aj=S.length>=3?ajusteCuad(S.map(function(i){ return [i.x,i.y]; })):null, cur=[];
+    if(aj){ var a0=Math.min.apply(null,S.map(function(i){return i.x;})), a1=Math.max.apply(null,S.map(function(i){return i.x;})); for(var k=0;k<=40;k++){ var xv=a0+(a1-a0)*k/40; cur.push([xv,aj.f(xv)*100]); } }
+    var ys=S.map(function(i){return i.y*100;}).concat(cur.map(function(p){return p[1];})), yr=rango(ys,.12), xmax=Math.max.apply(null,S.map(function(i){return i.x;}))*1.08;
+    var svg=xySVG({W:900,H:380,xr:[0,xmax],yr:yr,xf:U.xf,yf:function(v){return nf(v,1)+"%";},xt:6,yt:Math.max(2,Math.round((yr[1]-yr[0])/yr[2])),xlabel:U.x,ylabel:U.y,lines:aj?[{pts:cur,color:"var(--muted)",w:2,dash:"6 4"}]:[],pts:S.map(function(i){ var d=aj?i.y-aj.f(i.x):null; return {x:i.x,y:i.y*100,label:i.t,r:6,color:d==null?"var(--c1)":d>0.0025?"var(--good)":d<-0.0025?"var(--bad)":"var(--c1)"}; }),aria:"Graficador de curvas"});
+    var tb='<div class="tablewrap"><table><thead><tr><th class="l">Instrumento</th><th>'+esc(U.x)+'</th><th>'+esc(U.y)+'</th>'+(aj?'<th>Sobre su curva (pb)</th><th class="l">Lectura</th>':'')+'</tr></thead><tbody>';
+    S.forEach(function(i){ var d=aj?(i.y-aj.f(i.x))*10000:null; tb+='<tr><td class="l"><b>'+esc(i.t)+'</b></td><td>'+U.xf(i.x)+'</td><td>'+pc(i.y)+'</td>'+(aj?'<td class="'+cls(d)+'">'+nf(d,0)+'</td><td class="l">'+(Math.abs(d)<25?'<span class="tag">En línea</span>':d>0?'<span class="tag good">Rinde más que su curva</span>':'<span class="tag bad">Rinde menos que su curva</span>')+'</td>':'')+'</tr>'; });
+    tb+='</tbody></table></div>';
+    $("#gg").innerHTML='<div class="panel chart"><span id="gw" class="sub"></span>'+svg+(aj?leyenda([["var(--good)","Rinde más que su curva"],["var(--bad)","Rinde menos"],["var(--c1)","En línea (±25 pb)"],["var(--muted)","Curva ajustada (cuadrática)"]]):'')+'</div>'+tb+p_('Esto compara instrumentos de la misma clase: no mezcles letras en pesos con bonos en dólares porque sus tasas no son comparables. Con pocos puntos la línea ajustada es una guía, no una verdad; diferencias de menos de 25 pb son ruido.');
+  };
+  $("#gu").onchange=function(){ grafEstado.u=this.value; R.graf(); };
+  $("#gt").onclick=function(){ grafEstado.sel=nombres.slice(0,10); chips(); dibuja(); };
+  $("#gn").onclick=function(){ grafEstado.sel=[]; chips(); dibuja(); };
+  chips(); dibuja();
+};
+
+/* ================= Z8 · GUÍAS «EN 30 SEGUNDOS» Y COMISIONES POR BROKER ================= */
+
+/* ---------- 1) Comisiones por broker (Revolución Financiera, tarifario publicado a marzo 2026) ---------- */
+var BROKERS=[
+  ["Veta Cap",0.0015,0.0015],["Cocos Capital",0.0045,0.0012],["Eco Valores",0.0049,0.0049],["IOL (plan Gold)",0.005,0.002],
+  ["Balanz",0.005,0.001],["Bull Market",0.005,0.0025],["PPI",0.006,0.002],["Rava Bursátil",0.008,0.008]];
+var BROKER_DER=0.0001, BROKER_FUENTE='Tarifario publicado por Revolución Financiera (rfinanciera.github.io/Comisiones.brokers), marzo 2026, persona humana operando online. Bonos y ONs: comisión por operación + derechos de mercado 0,01%. Cocos cobra las letras como 1,5% TNA según el plazo (acá, aproximado a 30 días). Las tarifas cambian: confirmá con tu broker.';
+function brokerSel(id){ return '<select id="'+id+'"><option value="">Elegí tu broker para cargar sus comisiones…</option>'+BROKERS.map(function(b,i){ return '<option value="'+i+'">'+esc(b[0])+' · '+pc(b[1],2)+' bonos/ONs · '+pc(b[2],2)+' letras</option>'; }).join("")+'</select>'; }
+var _inputs0=R.inputs; R.inputs=function(){
+  _inputs0();
+  var h3=[].slice.call(document.querySelectorAll("#view h3")).filter(function(x){ return /Costos de tu broker/.test(x.textContent); })[0]; if(!h3) return;
+  h3.insertAdjacentHTML("afterend",'<div class="controls"><div class="field" style="min-width:320px"><label for="kbr">Cargar las comisiones de un broker</label>'+brokerSel("kbr")+'</div></div>'+p_('<span class="sub">'+BROKER_FUENTE+'</span>'));
+  $("#kbr").onchange=function(){ var b=BROKERS[+this.value]; if(!b) return; COST.com_c=b[1]; COST.com_v=b[1]; COST.der=BROKER_DER; COST.com_letra=b[2]; guardaCostos(); aplicaCostos(); encabezado(); R.inputs(); };
+};
+var _swap0=R.swap; R.swap=function(){
+  _swap0();
+  var c=$("#w4"); if(!c) return; var ctl=c.closest(".controls");
+  ctl.insertAdjacentHTML("afterbegin",'<div class="field"><label for="wbr">Broker</label>'+brokerSel("wbr")+'</div>');
+  $("#wbr").onchange=function(){ var b=BROKERS[+this.value]; if(!b) return; swE.cv=b[1]+BROKER_DER; swE.cc=b[1]+BROKER_DER; $("#w4").value=+(swE.cv*100).toFixed(3); $("#w5").value=+(swE.cc*100).toFixed(3); pintaSw(); };
+};
+
+/* ---------- 2) Guías «En 30 segundos»: objetivo, qué hace, ejemplo y cómo leer ---------- */
+var G30={
+  resumen:["Ver en un minuto qué está pasando hoy con bonos, letras y dólar.","Junta lo más importante de cada pestaña: el bono que más rinde, la mejor letra, el dólar de referencia, y te deja un atajo a cada análisis.","si el bono con mayor TIR neta rinde 12%, comprándolo hoy y llevándolo al vencimiento ganarías 12% anual en dólares, si el Tesoro paga.","usalo como punto de partida. Cada tarjeta te lleva a la pestaña donde se explica ese número."],
+  bonos:["Saber cuánto rinde cada bono soberano en dólares y cuánto riesgo de precio tiene.","Con el precio de hoy y los pagos futuros de cada bono (cupones y amortizaciones) calcula TIR, valor técnico, paridad y duration. Podés escribir otro precio para simular.","un bono a USD 60 que te va a devolver USD 100 más intereses rinde mucho más que uno a USD 95 con los mismos pagos. La TIR resume eso en un número anual.","más TIR = más rendimiento, pero mirá la duration: con duration 5, si la tasa sube 1 punto el precio cae cerca de 5%. Paridad debajo de 100% = cotiza con descuento."],
+  curva:["Encontrar bonos baratos o caros comparándolos con los de su misma familia.","Ubica cada bono según su duration (horizontal) y su TIR (vertical) y traza la línea «justa» de cada familia (Globales, Bonares, nuevos del Tesoro).","si a duration 4 la línea marca 10% y un bono rinde 10,8%, paga 80 puntos básicos más que sus pares: está barato.","arriba de la línea = barato; abajo = caro. Diferencias de menos de 30 a 40 pb suelen ser ruido."],
+  cero:["Valuar cada pago de un bono con la tasa que corresponde a su plazo, en vez de usar una sola TIR.","Arma la curva cupón cero (una tasa por plazo) y con ella calcula el precio «justo» de cada bono.","un dólar que cobrás en 1 año vale hoy 0,92 y uno en 5 años vale 0,62. Sumando cada pago a su valor de hoy sale el precio justo.","si el bono cotiza por debajo de su precio justo, está barato; por encima, caro."],
+  letras:["Elegir en qué letra en pesos (LECAP o BONCAP) poner la plata y compararla con un plazo fijo.","Calcula la tasa de cada letra (TNA, TEM y TIREA) con tu comisión y cuánto ganás contra un plazo fijo con la misma plata.","comprás a $97 una letra que paga $100 en 30 días: ganás 3,1% en el mes (TEM). Si el plazo fijo paga 1,7% por mes, la letra le gana.","verde = le gana al plazo fijo. Usá la TEM para comparar plazos distintos y «vs curva» para ver si una letra está cara o barata frente a sus vecinas."],
+  lecapv:["Decidir si conviene vender una LECAP o BONCAP antes de que venza, por ejemplo porque bajó la tasa y subió su precio.","Compara, a la misma fecha final, mantenerla contra venderla y reinvertir, con comisiones, y calcula la tasa de reinversión que hace falta para que vender convenga.","compraste al 2,5% mensual y la tasa bajó al 2%: la letra sube y parece que ganaste. Pero si reinvertís al mismo 2%, terminás igual que manteniéndola, menos dos comisiones.","vender conviene solo si reinvertís a más que la «TEM de empate» o si necesitás la plata antes. Si la tasa bajó para todos, mantener casi siempre gana."],
+  fwd:["Saber qué tasa estás «trancando» para más adelante si comprás una letra larga en vez de una corta.","Con los precios de dos letras seguidas calcula la tasa del tramo entre una y otra (forward).","la letra a 30 días rinde 2% mensual y la de 60 días 2,1%: el mercado espera que dentro de un mes la tasa a 30 días sea cerca de 2,2%.","si creés que la tasa futura va a ser menor que el forward, conviene la letra larga; si creés que va a ser mayor, la corta y renovar."],
+  graf:["Comparar en un mismo gráfico los instrumentos que vos elijas.","Ubica hasta 10 bonos, letras o CER en una curva y, con 3 o más, dibuja la línea ajustada.","elegís cinco letras: si una queda claramente arriba de la línea, rinde más de lo que le corresponde a su plazo.","arriba de la línea = rinde más que sus vecinos; abajo = menos."],
+  carry:["Decidir si con tus pesos conviene comprar dólares hoy o hacer una letra y comprarlos después.","Calcula a qué dólar de salida empatan los dos caminos (dólar de equilibrio) y lo compara con la banda cambiaria y los futuros.","con $1.500.000 y el dólar a $1.500, una letra a 60 días te da $1.560.000: la letra gana si al vencer el dólar está por debajo de $1.560.","si el dólar de equilibrio queda bien arriba del dólar futuro, la letra tiene margen; si está cerca, el riesgo es alto."],
+  comparador:["Comparar, con la misma plata y la misma fecha, una letra en pesos contra un bono u ON en dólares.","Pasa tus dólares a pesos, hace la letra y vuelve a dólares al vencimiento; en paralelo compra el bono y lo vende ese día. Todo con comisiones.","USD 10.000 en una letra terminan en USD 10.250 si el dólar sigue a la banda; en el bono, USD 10.180. Gana la letra por USD 70.","mirá el dólar final de empate: por encima de ese dólar conviene el bono; por debajo, la letra."],
+  carrygraf:["Ver a qué dólar final conviene cada estrategia: letra, bono, con o sin deuda.","Grafica tu retorno en dólares según el dólar del vencimiento para cada camino.","si el dólar termina en $1.600, la letra te deja +2% y el bono +1%; si termina en $1.800, la letra pierde y el bono gana.","donde se cruzan las líneas está el dólar de empate. Elegí según dónde creés que va a estar el dólar."],
+  carrytrade:["Analizar el carry trade usando un bono en dólares comprado con pesos.","Calcula cuánto ganás en pesos con el bono hasta tu fecha y lo compara con lo que te rendirían los pesos, según el dólar de salida.","comprás un bono con pesos: si el dólar sube 5% y el bono rinde 4% en dólares, en pesos ganás cerca de 9%.","ganás si la suba del dólar más la TIR del bono supera tu tasa en pesos; perdés si el dólar baja."],
+  decision:["Elegir entre alternativas muy distintas (bonos en dólares, CER, dual) con la misma plata y la misma fecha.","Lleva todas las opciones a la misma moneda (dólares) y la misma fecha, con tus supuestos de inflación y dólar.","con USD 10.000 a 2 años, el bono en dólares termina en USD 12.300 y el CER en USD 12.700 si la inflación es 25% y el dólar sube 20%.","gana la que deja más dólares al final, pero solo con tus supuestos: cambialos para ver qué tan firme es la decisión."],
+  swap:["Decidir si conviene vender un bono u ON para comprar otro que rinde más, pagando comisiones.","Calcula cuánto te cuesta el cambio (comisiones, derechos y diferencia de puntas) y en cuánto tiempo la TIR extra lo recupera. Abajo te muestra los mejores destinos.","cambiar cuesta 1,5% y el destino rinde 2,5 puntos más por año: recuperás el costo en unos 7 meses (1,5 ÷ 2,5 × 12).","conviene si el recupero es más corto que el tiempo que vas a mantener el bono nuevo, y si no estás subiendo de riesgo sin darte cuenta (mirá los avisos)."],
+  sens:["Ver cuánto ganás o perdés si la tasa de mercado cambia de golpe.","Recalcula el precio de cada bono u ON si su TIR sube o baja, en forma exacta y con la aproximación por duration.","un bono con duration 5 pierde cerca de 10% si su TIR sube 2 puntos, y gana algo más de 10% si baja 2 puntos.","elegí bonos cuya caída con +5 puntos puedas aguantar sin vender. Si dos rinden parecido, el de menor duration tiene menos riesgo."],
+  conv:["Entender por qué el precio no se mueve en línea recta con la tasa y aprovecharlo con un barbell.","Compara el precio real con la aproximación por duration, y arma un barbell (corto + largo) contra un bullet (intermedio) de igual duration.","el barbell tiene 5 puntos más de convexidad pero rinde 0,4% menos por año: conviene solo si esperás que la tasa se mueva más de 3 o 4 puntos.","la convexidad siempre juega a favor; la pregunta es si su costo en TIR la vale. Usá bonos del mismo riesgo."],
+  par:["Ver cómo se mueve el precio de un bono solo por el paso del tiempo, aunque la tasa no cambie.","Proyecta la paridad (precio ÷ valor técnico) hasta el vencimiento con la TIR de hoy constante.","un bono a paridad 80% sube solo hacia 100% a medida que se acerca el vencimiento.","debajo de 100% el tiempo te juega a favor en el precio; arriba de 100% el precio baja de a poco (lo compensan los cupones)."],
+  horiz:["Saber cuánto ganás si comprás hoy y vendés en una fecha, según la tasa de ese día.","Suma cupones cobrados, su reinversión y el precio de venta, con comisiones, para varios escenarios de TIR de venta.","USD 10.000 en un bono al 10% vendido en un año: ganás cerca de USD 1.000 si la TIR no cambia, y casi nada si sube 3 puntos.","buscá bonos que ganen en «hoy» y sigan ganando con +3 puntos: tienen colchón. El break-even te dice cuánto puede subir la tasa sin que pierdas."],
+  roll:["Medir cuánto ganás porque el bono se acorta con el tiempo (roll down). Para una ON es su «carry».","Si la curva queda quieta, el bono pasa a rendir lo que rinde uno más corto de su familia; la app calcula ese efecto en el precio.","si la curva sube con el plazo, un bono a 5 años que en un año pasa a tener 4 años baja su TIR de 10% a 9,5% y su precio sube.","más ventaja en pb = más ganancia extra por el paso del tiempo. Vale solo si la curva no se mueve."],
+  inmun:["Asegurarte de llegar a una suma en dólares en una fecha, suba o baje la tasa.","Combina dos bonos (uno corto y uno largo) en la proporción justa para que su duration iguale tu plazo (método de Redington).","necesitás USD 10.000 en 3 años: ponés unos USD 7.400 hoy repartidos entre un bono corto y uno largo, y llegás aunque la tasa se mueva 3 puntos.","en la tabla de shocks la cartera inmunizada queda cerca de 0% en todos los escenarios. No cubre un default: usá bonos del mismo riesgo."],
+  hist:["Ver qué pasó de verdad comprando un bono en el pasado, con precios reales.","Simula una compra el primer día de la serie, reinvirtiendo cada cobro en el mismo bono, y la compara con lo que prometía la TIR.","si la TIR prometía 12% y en la realidad ganaste 18%, fue porque la tasa bajó después de comprar.","sirve para ver que la TIR es una promesa condicionada: el resultado real depende de cómo se mueva la tasa."],
+  reinv:["Ver cuánto aporta reinvertir los cupones y amortizaciones que cobrás.","Arma cobro por cobro y lo reinvierte a la tasa que elijas (podés cambiarla en cada fila).","en un bono que amortiza mucho, reinvertir al 8% en vez de al 4% puede sumarte 2 o 3 puntos de retorno total.","si la reinversión explica buena parte de tu ganancia, tu resultado depende de las tasas futuras: probá tasas más bajas."],
+  retorno:["Saber de dónde sale cada dólar que ganás: precio, cupones, reinversión y comisiones.","Descompone el resultado de comprar hoy y vender en tu fecha, y lo controla por dos caminos: la cuenta cierra al centavo.","ganás USD 900 = +600 de cupones, +80 de reinversión, +300 de precio y −80 de comisiones.","si la ganancia de capital es negativa en un bono que amortiza no es pérdida: te devolvieron capital en el camino. Lo que importa es el total."],
+  score:["Comparar el riesgo de cada bono en varias dimensiones, no solo por su TIR.","Puntúa de 1 a 5 la sensibilidad a la tasa, la jurisdicción, la liquidez y otros factores, y los combina.","el GD46 tiene puntaje alto en tasa (duration larga) pero bajo en jurisdicción (ley Nueva York).","más puntaje = más riesgo. Entre bonos de TIR parecida, elegí el de menor puntaje."],
+  cer:["Ver si conviene un bono que ajusta por inflación (CER) o un dual, según la inflación que esperás.","Con tu inflación esperada calcula cuánto rinde cada bono CER y dual en pesos y lo compara con tasa fija.","un CER que rinde inflación + 5% con 25% de inflación esperada rinde cerca de 31% anual en pesos.","si esperás más inflación que la de breakeven, conviene CER; si esperás menos, tasa fija."],
+  cerdatos:["Revisar los datos que alimentan todo el bloque CER: índice CER, TAMAR y precios.","Muestra las series y precios tal como llegan del BCRA y del mercado.","si el CER de hoy es 7 veces el de la emisión, el capital del bono vale 7 veces el original en pesos.","si algún dato está viejo o vacío, los resultados del bloque CER pueden no ser confiables."],
+  cerbonos:["Ver cuánto rinde cada bono CER por encima de la inflación y cuánto riesgo de precio tiene.","Calcula TIR real, duration y la inflación a la que empata con una letra a tasa fija.","una TIR real de 6% con 20% de inflación te da cerca de 27% en pesos.","más TIR real = más rendimiento sobre la inflación; mirá la duration para el riesgo de precio."],
+  cerflujos:["Ver el cronograma de pagos de cada bono CER.","Lista los pagos en valor real (a CER base); el CER del día de pago los pasa a pesos.","un pago de 10 en valor real, con un CER 7 veces el inicial, son $70 por cada 100 VN.","sirve para saber cuándo cobrás y cuánto, antes de ajustar por inflación."],
+  cermotor:["Ver paso a paso cómo se calcula la TIR real de un bono CER.","Muestra la compra en valor real y cada pago real descontado a la TIR real.","pagás 95 en valor real y cobrás 105 en un año: TIR real de 10,5%.","es la cocina del cálculo: sirve para verificar o para aprender."],
+  cercurva:["Encontrar bonos CER baratos o caros comparándolos entre sí.","Dibuja TIR real contra duration, traza la curva ajustada y muestra la inflación implícita.","si la curva dice TIR real 4% a duration 2 y un bono rinde 4,8%, está barato.","arriba de la línea = barato; abajo = caro."],
+  breakeven:["Saber qué inflación está descontando el mercado, mes a mes.","Compara letras a tasa fija con bonos CER que vencen casi el mismo día y despeja la inflación que los iguala.","la letra rinde 2,2% mensual y el CER 0,4% real mensual: el mercado espera cerca de 1,8% de inflación por mes.","si esperás más inflación que el breakeven, conviene el CER; si esperás menos, la tasa fija."],
+  cerduales:["Ver qué pata de un dual CER/TAMAR gana en cada escenario.","Calcula lo que cobrás por CER y por TAMAR + margen en los escenarios que elijas.","con 20% de inflación y TAMAR de 30%, el dual paga por la pata TAMAR.","el dual te da lo mejor de las dos patas; el costo es que rinde algo menos que la mejor de ellas."],
+  cerhist:["Ver si un bono CER se abarató o se encareció en términos reales.","Compara el precio en pesos del bono con la evolución del índice CER.","si el CER subió 10% y el bono 7%, se abarató en términos reales.","precio que sube menos que el CER = más TIR real hoy (más barato)."],
+  duales:["Elegir entre duales y dólar linked según de qué te querés cubrir.","Compara lo que paga cada uno en distintos escenarios de dólar, inflación y tasa.","un dólar linked te paga en pesos el dólar oficial al vencimiento: si el dólar sube 20%, cobrás 20% más.","si temés una devaluación, dólar linked; si temés inflación o tasas altas, dual CER/TAMAR."],
+  dolar:["Ver el dólar MEP y CCL que conseguís de verdad, con puntas y comisiones.","Calcula MEP y CCL con varios bonos y muestra el oficial, la banda cambiaria y los futuros.","si un bono cuesta $56.000 en pesos y USD 37 en dólares, el MEP es $56.000 ÷ 37 ≈ $1.514.","usá el bono con mejor MEP para dolarizarte. La brecha dice cuánto más caro es el MEP que el oficial."],
+  dolhist:["Ver cómo evolucionaron el MEP y el CCL.","Calcula día por día el MEP y el CCL con los cierres del AL30 o el GD30.","si el MEP pasó de $1.300 a $1.500 en un año, subió 15%.","mirá la tendencia y el canje (CCL ÷ MEP): un canje alto indica que cuesta sacar los dólares afuera."],
+  cobertura:["Protegerte si el dólar sube mientras tenés pesos.","Compara, con la misma plata y plazo: letra con futuro, dólar linked, duales, CER, comprar MEP y, como contraejemplo, un bono y una ON en dólares.","con $10 millones a 100 días, letra + futuro te asegura una cantidad fija de dólares; un bono en dólares puede caer justo en la crisis.","una buena cobertura deja casi los mismos dólares en los tres escenarios (dólar baja, central, sube)."],
+  riesgo:["Ver cuánto paga Argentina por encima del Tesoro de EE.UU. y qué riesgo de default descuenta el precio.","Calcula el spread de cada bono contra el Tesoro, el default implícito y escenarios de compresión o suba.","un bono que rinde 10% cuando el Tesoro rinde 4% tiene 600 pb de riesgo país.","si creés que el riesgo país va a bajar, ganan más los bonos largos; si va a subir, pierden más."],
+  ons:["Ver las ONs en dólares con calificación A o mejor: cuánto rinden y qué riesgo tienen.","Calcula TIR, valor técnico, paridad y duration de cada ON con su cronograma real, y muestra su calificación.","una ON AAA que rinde 7% contra un soberano que rinde 10%: resignás 3 puntos de rendimiento a cambio de un riesgo que el mercado ve menor.","compará ONs del mismo escalón. Una que rinde mucho más que sus pares suele tener una razón: liquidez, plazo o un riesgo propio."],
+  oncalc:["Saber cuánto rinde una ON a un precio dado, o a qué precio comprarla para ganar la TIR que querés.","Con el cronograma real de la ON calcula TIR, duration, valor técnico y paridad a partir del precio, o el precio a partir de la TIR.","si querés 7% en una ON que hoy rinde 6,5% con duration 4, tendrías que comprarla cerca de 2% más barata.","usala para poner órdenes límite: si el mercado está por encima del precio que te da, esperá."],
+  onscurva:["Encontrar ONs baratas o caras dentro de su calificación.","Dibuja TIR contra duration por escalón (AAA, AA, A) y ajusta una curva para cada uno.","si las AAA a duration 3 rinden 6,5% y una paga 7,3%, paga 80 pb más que sus pares.","arriba de la curva de su escalón = paga más (oportunidad o advertencia); abajo = paga menos."],
+  onsfam:["Ver cuánto más rinde cada escalón de calificación a igual plazo.","Compara la TIR de las ONs AAA, AA y A a la misma duration y calcula el premio por bajar de escalón.","a 3 años de duration, AAA rinde 6,5% y AA 7,2%: bajar un escalón te paga 70 pb.","si el premio es chico, quedate en el escalón más alto; si es grande, el mercado ve un riesgo real."],
+  onsspread:["Saber cuánto más rinde una ON que un bono del Tesoro de igual plazo y qué default implica ese premio.","Calcula el spread contra la curva soberana y lo traduce en probabilidad de default con el recupero que elijas.","un spread de 200 pb con 40% de recupero equivale a cerca de 3,3% de default por año (2% ÷ 0,6).","es una referencia de máxima: el spread también paga liquidez y ley, así que el default que descuenta el mercado es menor."],
+  onssens:["Ver cuánto caen las ONs si sube la tasa o si se deteriora el crédito de su escalón.","Revalúa cada ON con sus flujos ante subas de tasa y ante un estrés distinto por calificación.","una ON con duration 4 pierde cerca de 4% si su TIR sube 1 punto; con 7% de TIR, eso son unos 7 meses de interés.","elegí ONs cuya caída en el estrés puedas recuperar con el interés dentro de tu plazo."],
+  onsmezcla:["Saber qué herramientas de bonos sirven para ONs y cuándo se pueden mezclar con soberanos.","Resume qué supone cada herramienta y si la teoría permite combinar riesgos distintos.","inmunizar con un soberano y una ON te cubre de la tasa, pero no de que se abra el spread de la empresa.","mismo riesgo: la teoría aplica. Distinto riesgo: se puede comparar y diversificar, pero no cubrir uno con otro."],
+  cartera:["Seguir tus bonos y ONs: cuánto valen, cuánto rinden juntos y cuándo cobrás.","Con los valores nominales que cargás calcula valor, TIR y duration de la cartera y los cobros de los próximos 12 meses.","10.000 VN de GD30 y 5.000 de una ON: la app suma los flujos y calcula una sola TIR para todo.","la TIR de la cartera es el rendimiento promedio si todos pagan; la duration te dice cuánto cae si suben las tasas."],
+  calpagos:["Saber qué se cobra cada mes: rentas, amortizaciones y vencimientos.","Arma un calendario con los pagos de soberanos, ONs y letras, o solo de tu cartera en dólares.","con 20.000 VN de GD30, en enero cobrás USD 48 de renta y USD 1.600 de amortización.","las amortizaciones son capital que vuelve, no ganancia: sirven para planificar qué hacer con esa plata."],
+  nov:["Ver instrumentos nuevos que cotizan y todavía no están en la app.","Compara lo que hay en el mercado con lo que está cargado.","sale una LECAP nueva: aparece acá hasta que se agrega.","si algo te interesa acá, todavía no tiene análisis en la app."],
+  altas:["Lista de trabajo para sumar instrumentos a la app.","Muestra qué falta (flujos, condiciones) para cargar cada instrumento.","un bono nuevo sin cronograma no puede tener TIR hasta que se cargan sus pagos.","es información interna: no hace falta para analizar."],
+  inputs:["Poner los costos de tu broker y la operación de referencia que usa toda la app.","Guarda comisiones, derechos de mercado y supuestos; todas las pestañas los usan. Podés cargar las comisiones de tu broker con un clic.","con 0,5% de comisión + 0,01% de derechos, invertir USD 10.000 cuesta USD 51 al comprar y otro tanto al vender.","cuanto más baja la comisión, más alta tu TIR neta y más rápido recuperás un cambio de bono."],
+  flujos:["Ver el cronograma completo de pagos de cada bono.","Muestra cupón, amortización y capital residual por cada 100 VN original.","el GD30 devuelve 8% del capital original por semestre: con 10.000 VN cobrás USD 800 de capital cada vez.","es la base de todos los cálculos: si un flujo está mal, la TIR también."],
+  motor:["Ver la cuenta exacta de la TIR, como en una planilla.","Pone la compra en negativo y cada pago en positivo por fecha; la TIR es la tasa que hace cero la suma descontada.","pagás 95 y cobrás 105 en un año: la TIR es 10,5%.","sirve para verificar o aprender, no para decidir."],
+  apidatos:["Ver los precios tal como llegan del mercado.","Lista último precio, punta compradora (bid), punta vendedora (ask) y volumen.","bid 56,10 y ask 56,40: si comprás pagás 56,40; si vendés cobrás 56,10.","si un instrumento no tiene puntas ni volumen, su precio puede no ser confiable."]
+};
+var GUIA_ABIERTA=true; try{ GUIA_ABIERTA=localStorage.getItem("bonoslab.guia")!=="0"; }catch(e){}
+(function(){ var st=document.createElement("style"); st.textContent='.guia{margin:10px 0 16px}.guia summary{cursor:pointer}.guia-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:10px}.guia-g .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}.guia-g p{margin:0;font-size:.9rem;line-height:1.45}@media (max-width:760px){.guia-g{grid-template-columns:1fr}}'; document.head.appendChild(st); })();
+function guiaHTML(v){ var g=G30[v]; if(!g) return "";
+  var it=[["🎯 Para qué sirve",g[0]],["⚙️ Qué hace la app",g[1]],["🧮 Ejemplo (números redondos)",g[2]?g[2].charAt(0).toUpperCase()+g[2].slice(1):""],["✅ Cómo leer el resultado",g[3]?g[3].charAt(0).toUpperCase()+g[3].slice(1):""]];
+  return '<details class="panel guia"'+(GUIA_ABIERTA?' open':'')+'><summary><b>En 30 segundos</b> <span class="sub">· qué hace esta pestaña y cómo leerla</span></summary><div class="guia-g">'+it.map(function(x){ return '<div><div class="k">'+x[0]+'</div><p>'+x[1]+'</p></div>'; }).join("")+'</div><p style="margin:10px 0 0"><a href="#" class="sub" data-guiapref>'+(GUIA_ABIERTA?'Mostrar estas guías cerradas en todas las pestañas':'Mostrar estas guías abiertas en todas las pestañas')+'</a></p></details>'; }
+function guiaInserta(v){
+  if(!G30[v]||$("#view .guia")) return; var lead=$("#view .lead"), h2=$("#view h2"), html=guiaHTML(v);
+  if(lead) lead.insertAdjacentHTML("afterend",html); else if(h2) h2.insertAdjacentHTML("afterend",html); else $("#view").insertAdjacentHTML("afterbegin",html);
+  guiaPref();
+}
+function guiaPref(){ var a=$("#view [data-guiapref]"); if(!a) return; a.onclick=function(e){ e.preventDefault(); GUIA_ABIERTA=!GUIA_ABIERTA; try{ localStorage.setItem("bonoslab.guia",GUIA_ABIERTA?"1":"0"); }catch(x){} var d=$("#view .guia"); if(d) d.open=GUIA_ABIERTA; a.textContent=GUIA_ABIERTA?'Mostrar estas guías cerradas en todas las pestañas':'Mostrar estas guías abiertas en todas las pestañas'; }; }
+Object.keys(G30).forEach(function(v){ var o=R[v]; if(typeof o!=="function") return; R[v]=function(){ var r=o.apply(this,arguments); guiaInserta(v); return r; }; });
+
+/* ---------- 3) Introducción y Guía al día con ONs y las pestañas nuevas ---------- */
+var _intro0=R.intro; R.intro=function(){ _intro0(); var l=$("#view .lead"); if(l) l.innerHTML='Una herramienta para analizar <b>bonos soberanos en dólares, obligaciones negociables (ONs), letras y bonos en pesos</b> (tasa fija, CER, duales y dólar linked), el dólar y las coberturas. Los precios se actualizan solos; vos ponés los supuestos (tus comisiones, tu plazo, tu inflación esperada) y la app te muestra el resultado y qué conclusión sacar. Cada pestaña empieza con un recuadro «En 30 segundos» que dice para qué sirve, qué hace, un ejemplo y cómo leer el resultado.'; };
+var GUIA_NUEVAS=[["¿Cuánto rinden las ONs y qué riesgo tienen?","onss","ONs › ONs en dólares"],["¿Me conviene una ON AAA o una AA?","onsfam","ONs › Resumen por calificación"],["¿Cuánto más paga una ON que un bono del Tesoro?","onsspread","ONs › Spread y default implícito"],["¿Conviene vender mi bono u ON y comprar otro de más TIR?","swap","Análisis de bonos › Cambiar de bono"],["¿Qué cobro este mes y los que vienen?","calpagos","Mi cartera › Calendario de pagos"],["¿Puedo usar las herramientas de bonos con ONs?","onsmezcla","ONs › Herramientas con ONs"],["¿Conviene vender la LECAP antes de que venza?","lecapv","Mercado › ¿Vender la letra antes?"],["¿Cuánto me cobra mi broker y cómo lo cargo?","inputs","Ayuda › Inputs (Supuestos)"]];
+var _guia0=R.guia; R.guia=function(){ _guia0();
+  $("#view").insertAdjacentHTML("beforeend",'<h3 style="margin-top:20px">Preguntas nuevas: ONs, cambio de bono y calendario</h3><div class="tablewrap corta"><table><thead><tr><th class="l">Tu pregunta</th><th class="l">Dónde</th></tr></thead><tbody>'+GUIA_NUEVAS.map(function(q){ var v=q[1]==="onss"?"ons":q[1]; return '<tr><td class="l">'+q[0]+'</td><td class="l"><a href="#'+v+'" data-go="'+v+'">'+q[2]+'</a></td></tr>'; }).join("")+'</tbody></table></div>');
+  $("#view").querySelectorAll("[data-go]").forEach(function(a){ a.onclick=function(e){ e.preventDefault(); ir(a.dataset.go); }; });
+};
+
 function estadoTexto(){
   var cuando=fechaAR(fechaART(LIVE.actualizado))+' a las '+horaART(LIVE.actualizado)+' (hora de Argentina)';
   if(estado.en_vivo) return 'en vivo ('+(estado.fuente==="directo"?'precios traídos directo de data912 hace un momento':'archivo de datos reciente')+'), actualizado el '+cuando+'.'+(LIVE.avisos&&LIVE.avisos.length?' Avisos: '+esc(LIVE.avisos.join("; "))+'.':'');
@@ -2694,7 +3726,7 @@ function encabezado(){
 
 /* Precios en vivo: el navegador consulta data912 directo (con su propia conexión).
    Si falla, se usa datos.json (que actualiza el robot de GitHub) y se marca como Respaldo si es viejo. */
-var URLS_PX=["https://data912.com/live/arg_bonds","https://data912.com/live/arg_notes","https://data912.com/live/arg_letras","https://data912.com/live/arg_bills"];
+var URLS_PX=["https://data912.com/live/arg_bonds","https://data912.com/live/arg_notes","https://data912.com/live/arg_letras","https://data912.com/live/arg_bills","https://data912.com/live/arg_corp"];
 function pedir(url, ms){
   var ctl=(typeof AbortController!=="undefined")?new AbortController():null, t=ctl?setTimeout(function(){ ctl.abort(); },ms||15000):null;
   return fetch(url,{cache:"no-store",signal:ctl?ctl.signal:undefined}).then(function(r){ if(t) clearTimeout(t); if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); },function(e){ if(t) clearTimeout(t); throw e; });
@@ -2739,7 +3771,11 @@ function cargarEnVivo(manual){
 }
 
 encabezado();
-cargarEnVivo(false); setInterval(function(){ cargarEnVivo(false); }, 300000);
+/* Refresco: cada 60 s en horario de mercado (lun-vie 10:45 a 17:15, hora de Argentina), cada 5 min fuera de horario, y en pausa si la pestaña está oculta. */
+function enHorarioMercado(){ var a=new Date(Date.now()-3*3600000), d=a.getUTCDay(), m=a.getUTCHours()*60+a.getUTCMinutes(); return d>=1&&d<=5&&m>=10*60+45&&m<=17*60+15; }
+function agendaRefresco(){ clearTimeout(estado.timer); estado.timer=setTimeout(function(){ if(document.hidden){ agendaRefresco(); return; } cargarEnVivo(false).then(agendaRefresco,agendaRefresco); }, enHorarioMercado()?60000:300000); }
+document.addEventListener("visibilitychange",function(){ if(!document.hidden&&Date.now()-(estado.ultimoIntento||0)>30000) cargarEnVivo(false); });
+cargarEnVivo(false); agendaRefresco();
 var h0=(location.hash||"").slice(1); if(R[h0]) actual=h0;
 pestanas(); R[actual]();
 })();
