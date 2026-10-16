@@ -33,6 +33,8 @@ MESES = {"enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6
          "setiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12}
 NUM = {"un": 1, "una": 1, "uno": 1, "dos": 2, "tres": 3, "cuatro": 4, "cinco": 5, "seis": 6, "siete": 7, "ocho": 8, "nueve": 9,
        "diez": 10, "once": 11, "doce": 12, "trece": 13, "catorce": 14, "quince": 15, "dieciseis": 16, "veinte": 20}
+MOT_FREC = "BYMA no informa cada cuanto paga el cupon"
+OVERRIDES = AQUI / "overrides_ons.json"  # opcional: {"ons": {"AEC3": {"fr": 2}}} = frecuencia confirmada a mano en el prospecto
 
 
 def post(ruta, cuerpo, intentos=2):
@@ -62,6 +64,7 @@ def bajo(s):
     """minusculas y sin acentos, pero conserva %, comas y barras (norm() las borra)."""
     import unicodedata
     s = unicodedata.normalize("NFKD", str(s or "")).encode("ascii", "ignore").decode().lower()
+    s = re.sub(r"(\d)[.,]{2,}(\d)", r"\1,\2", s)  # typos de BYMA: "7.,25%"
     return re.sub(r"\s+", " ", s)
 
 
@@ -108,7 +111,9 @@ def cupones(vto, fr, desde):
 
 
 def pct(s):
-    return float(s.replace(".", "").replace(",", ".")) if re.fullmatch(r"\d{1,3}(\.\d{3})*(,\d+)?", s) else float(s.replace(",", "."))
+    """numero de un porcentaje. BYMA escribe "9.125%" (punto decimal) o "9,125%"; solo si hay coma el punto es de miles."""
+    s = s.strip()
+    return float(s.replace(".", "").replace(",", ".")) if "," in s else float(s)
 
 
 # ---------------------------------------------------------------- lector de la ficha (ON)
@@ -132,11 +137,15 @@ def leer_interes(txt):
     elif re.search(r"anualmente|en forma anual|pagaderos? anual|una vez al ano", t):
         fr = 1
     else:
-        dias = {(d.day, d.month) for _, d in fechas_texto(t)}
-        n = len({m for _, m in dias})
-        fr = {1: 1, 2: 2, 4: 4, 12: 12}.get(n)
+        # sin palabra de frecuencia: se deduce solo de VARIAS fechas de pago parejas. Se ignora lo que viene despues de
+        # "prospecto / condiciones completas / difundido" (fechas de publicacion, no de pago) y una fecha sola no prueba nada
+        cuerpo = re.split(r"suplemento|prospecto|condiciones completas|difundid|bolsar", t)[0]
+        meses = sorted({d.month for _, d in fechas_texto(cuerpo)})
+        n = len(meses)
+        if n in (2, 4, 12) and all((b - a) % (12 // n) == 0 for a, b in zip(meses, meses[1:] + [meses[0] + 12])):
+            fr = n
     if not fr:
-        return tasas[0] / 100, None, "no se encontro cada cuanto paga"
+        return tasas[0] / 100, None, MOT_FREC
     return tasas[0] / 100, fr, None
 
 
@@ -175,12 +184,14 @@ def leer_amort(txt, vto, emision, fr):
     return None, "no se pudo leer la amortizacion"
 
 
-def a_fila(f, sym, emisor_app, clase, ley, fix="", moo=""):
+def a_fila(f, sym, emisor_app, clase, ley, fix="", moo="", fr_forzada=None):
     """ficha -> fila del catalogo de la app, o (None, motivo)."""
     vto, emi = ymd(f.get("fechaVencimiento")), ymd(f.get("fechaEmision"))
     if not vto:
         return None, "sin fecha de vencimiento"
     tasa, fr, mot = leer_interes(f.get("interes") or "")
+    if mot == MOT_FREC and fr_forzada in (1, 2, 4, 12):  # frecuencia confirmada a mano en overrides_ons.json
+        fr, mot = fr_forzada, None
     if mot:
         return None, mot
     am, mot = leer_amort(f.get("formaAmortizacion") or "", vto, emi, fr)
@@ -268,7 +279,24 @@ def meses_entre(a, b):
     return m + (b - base).days / max(1, (mas_meses(a, m + 1) - base).days)
 
 
+def d360_us(a, b):
+    """dias 30/360 metodo US (NASD), el de DAYS360 de Excel por defecto"""
+    import calendar
+    ult = lambda x: x.day == calendar.monthrange(x.year, x.month)[1]
+    d1, d2 = a.day, b.day
+    if a.month == 2 and ult(a) and b.month == 2 and ult(b):
+        d2 = 30
+    if a.month == 2 and ult(a):
+        d1 = 30
+    if d2 == 31 and d1 >= 30:
+        d2 = 30
+    if d1 == 31:
+        d1 = 30
+    return (b.year - a.year) * 360 + (b.month - a.month) * 30 + (d2 - d1)
+
+
 METODOS = {
+    "dias_360_us": lambda e, v, tem: 100 * (1 + tem) ** (d360_us(e, v) / 30),
     "meses_calendario": lambda e, v, tem: 100 * (1 + tem) ** meses_entre(e, v),
     "dias_30": lambda e, v, tem: 100 * (1 + tem) ** ((v - e).days / 30),
     "dias_365_12": lambda e, v, tem: 100 * (1 + tem) ** ((v - e).days * 12 / 365),
@@ -345,7 +373,7 @@ def flujos_bono(f):
         return None, mot
     fr = frec(f.get("interes") or "") or frec(f.get("formaAmortizacion") or "")
     if not fr:
-        return None, "no se encontro cada cuanto paga"
+        return None, MOT_FREC
     paso = 12 // fr
     # primera fecha de pago: la primera fecha del texto de intereses posterior al devengamiento que no sea un cambio de tasa
     cand = [d for _, d in fechas_texto(f.get("interes") or "") if dev < d < vto and d not in {x for x, _ in tr if x}]
@@ -415,6 +443,27 @@ TIPO_PUB = [(r"cer|ajustable", "CER"), (r"linked|dolar estadounidense al tipo de
             (r"tamar", "TAMAR"), (r"dual", "Dual")]
 
 
+def pasa_prueba(ok, mal, minimo):
+    """Una ficha que no se puede leer no es un riesgo (queda pendiente). El riesgo es leerla MAL sin avisar.
+    Por eso la carga automatica se habilita si hay suficientes lecturas correctas y casi ninguna equivocada."""
+    return ok >= minimo and ok / (ok + mal) >= 0.95
+
+
+def desde_de(p, estado, primera, hoy, alta):
+    """fecha desde la que figura como "nueva": hoy si recien paso a cargarse sola; si no, la que ya tenia"""
+    if estado == "auto" and p.get("estado") != "auto" and not primera:
+        return hoy
+    return p.get("desde") or alta
+
+
+def prev_de(prev, t, variantes=()):
+    """entrada de la corrida anterior de este titulo (por su ticker o por cualquiera de sus variantes)"""
+    for x in [t, *variantes]:
+        if x in prev:
+            return prev[x]
+    return {}
+
+
 # ---------------------------------------------------------------- principal
 def main():
     cat = leer_catalogo()
@@ -452,21 +501,30 @@ def main():
     print(f"BYMA: {len(pan_on)} filas de ONs, {len(pan_pb)} de bonos publicos")
 
     # 2) prueba del lector con el catalogo
-    ok = tot = 0
+    ok = mal = abst = ok_c = 0  # leidas bien / leidas MAL / no pudo leerlas (quedan pendientes) / leidas bien con cuotas
     difs = []
     for c in cat:
         f = ficha(c[0] + "D")
         if not f:
             continue
         fila, mot = a_fila(f, c[0], c[1], c[2], c[3])
-        tot += 1
         if fila and iguales(fila, c):
             ok += 1
+            ok_c += fila[7] != "B"
+        elif fila:
+            mal += 1
+            difs.insert(0, {"t": c[0], "motivo": "lee distinto al catalogo", "leido": fila[4:8], "catalogo": c[4:8]})
         else:
-            difs.append({"t": c[0], "motivo": mot or "datos distintos", "leido": fila and fila[4:8], "catalogo": c[4:8]})
-    tasa_ok = ok / tot if tot else 0
-    modo_auto_on = tot >= 20 and tasa_ok >= 0.8
-    print(f"Prueba del lector de ONs: {ok}/{tot} coinciden con el catalogo -> {'automatico' if modo_auto_on else 'solo pendientes'}")
+            abst += 1
+            difs.append({"t": c[0], "motivo": mot, "leido": None, "catalogo": c[4:8]})
+    tot = ok + mal + abst
+    modo_auto_on = pasa_prueba(ok, mal, 10)
+    modo_auto_cuotas = ok_c >= 3  # los cronogramas en cuotas solo entran solos si el lector ya acerto varios con el catalogo
+    print(f"Prueba del lector de ONs: {ok} bien, {mal} mal, {abst} sin poder leer (de {tot}) -> {'automatico' if modo_auto_on else 'solo pendientes'}")
+    try:
+        ov = json.loads(OVERRIDES.read_text(encoding="utf-8")).get("ons", {})
+    except Exception:
+        ov = {}
 
     # 3) ONs nuevas en dolares
     hoy_iso = HOY.isoformat()
@@ -493,18 +551,20 @@ def main():
         mejor = min(notas) if notas else None
         if not sigue and (mejor is None or mejor > ESCALA.index("A")):
             continue  # fuera del universo de la app (A o mejor)
-        fila, mot = a_fila(f, base, nombre_emisor(emi_b), clase or "?", ley_app(f), fix, moo)
+        fila, mot = a_fila(f, base, nombre_emisor(emi_b), clase or "?", ley_app(f), fix, moo, (ov.get(base) or {}).get("fr"))
         if not mot and not clase:
             mot = "no se encontro el numero de clase"
         if not mot and mejor is None:
             mot = "todavia sin calificacion en los listados (se carga cuando aparezca)"
         if not mot and mejor > ESCALA.index("A"):
             mot = "calificacion menor a A"
+        if not mot and fila and fila[7] != "B" and not modo_auto_cuotas:
+            mot = "amortiza en cuotas: ese tipo de cronograma todavia no se pudo validar contra el catalogo"
         if not mot and not modo_auto_on:
             mot = "el lector todavia no paso la prueba con el catalogo"
         estado = "auto" if not mot else "pendiente"
         p = prev_ons.get(base, {})
-        ons.append({"t": base, "estado": estado, "motivo": mot, "fila": fila, "desde": p.get("desde") or alta,
+        ons.append({"t": base, "estado": estado, "motivo": mot, "fila": fila, "desde": desde_de(p, estado, primera, hoy_iso, alta),
                     "ficha": {k: f.get(k) for k in ("denominacion", "emisor", "ley", "moneda", "fechaEmision", "fechaVencimiento",
                                                    "interes", "formaAmortizacion", "montoNominal", "codigoIsin")}})
     print(f"ONs nuevas: {sum(o['estado'] == 'auto' for o in ons)} automaticas, {sum(o['estado'] != 'auto' for o in ons)} pendientes")
@@ -541,26 +601,30 @@ def main():
         if not mot and not modo_auto_l:
             mot = "el calculo del pago todavia no paso la prueba con las letras cargadas"
         letras.append({"t": s, "vto": v.isoformat(), "pago": pago, "tem": tem, "emision": e and e.isoformat(),
-                       "estado": "auto" if not mot else "pendiente", "motivo": mot, "desde": prev_l.get(s, {}).get("desde") or alta,
+                       "estado": "auto" if not mot else "pendiente", "motivo": mot, "desde": desde_de(prev_l.get(s, {}), "auto" if not mot else "pendiente", primera, hoy_iso, alta),
                        "interes": (f.get("interes") or "")[:600]})
 
     # 5) bonos soberanos y BOPREAL en dolares
     REF = leer_ref()
     rb = {b["t"]: b for b in REF.get("bonos", [])}
-    okb = totb = 0
+    okb = malb = abstb = 0
     difb = []
     for t, b in rb.items():
         f = ficha(t + "D") or ficha(t)
         if not f:
             continue
         fl, mot = flujos_bono(f)
-        totb += 1
         if fl and flujos_iguales(fl, b["flujos"]):
             okb += 1
+        elif fl:
+            malb += 1
+            difb.insert(0, {"t": t, "motivo": "flujos distintos"})
         else:
-            difb.append({"t": t, "motivo": mot or "flujos distintos"})
-    modo_auto_b = totb >= 5 and okb / totb >= 0.8
-    print(f"Prueba de bonos: {okb}/{totb} -> {'automatico' if modo_auto_b else 'solo pendientes'}")
+            abstb += 1
+            difb.append({"t": t, "motivo": mot})
+    totb = okb + malb + abstb
+    modo_auto_b = pasa_prueba(okb, malb, 5)
+    print(f"Prueba de bonos: {okb} bien, {malb} mal, {abstb} sin poder leer (de {totb}) -> {'automatico' if modo_auto_b else 'solo pendientes'}")
     conocidos = set(rb) | set(ref) | {x["t"] for x in (REF.get("cer") or {}).get("bonos", [])} | {x["t"] for x in (REF.get("cer") or {}).get("duales", [])}
     prev_b = {x["t"]: x for x in previo.get("bonos", [])}
     prev_x = {x["t"]: x for x in previo.get("otros", [])}
@@ -573,15 +637,31 @@ def main():
             continue
         b = sy[:-1] if sy[-1] in "DC" and sy[:-1] in {str(x.get("symbol")) for x in pan_pb} else sy
         base_pb.setdefault(b, r.get("maturityDate"))
+    # un mismo titulo cotiza con varios tickers (AL29, AL29D, AL29C, AL29X, AL29Y...): se reconoce por el codigo ISIN
+    isin_conocidos = set()
+    for t in conocidos:
+        fk = ficha(t) or ficha(t + "D")
+        if fk and fk.get("codigoIsin"):
+            isin_conocidos.add(fk["codigoIsin"])
+    grupos = {}
     for b in sorted(base_pb):
         if b in conocidos or re.fullmatch(r"[ST]\d{1,2}[EFMAYJLGSOND]\d", b):
             continue
         f = ficha(b)
         if not f:
             continue
-        mon, emi_t = bajo(f.get("moneda")), bajo(f.get("emisor"))
+        emi_t = bajo(f.get("emisor"))
         if not re.search(r"gobierno nacional|nacion|tesoro|banco central|bcra|republica argentina", emi_t):
             continue  # provincias, municipios y otros quedan afuera
+        isin = f.get("codigoIsin") or ""
+        if isin and isin in isin_conocidos:
+            continue  # es un titulo que la app ya tiene, solo que con otra liquidacion
+        grupos.setdefault(isin or b, []).append((b, f))
+    for g in grupos.values():
+        g.sort(key=lambda x: (x[0][-1] in "CDXYZ", len(x[0]), x[0]))  # primero el ticker "limpio"
+        b, f = g[0]
+        variantes = [t for t, _ in g[1:]]
+        mon, emi_t = bajo(f.get("moneda")), bajo(f.get("emisor"))
         fic = {k: f.get(k) for k in ("denominacion", "emisor", "ley", "moneda", "fechaEmision", "fechaVencimiento", "interes", "formaAmortizacion", "codigoIsin")}
         if "dolar" in mon and "linked" not in mon:
             fl, mot = flujos_bono(f)
@@ -591,19 +671,19 @@ def main():
             tipo = "BOPREAL (emisor BCRA)" if re.search(r"banco central|bcra", emi_t) else ("Global nuevo" if ley == "Nueva York" else "Bonar nuevo")
             bonos.append({"t": b, "nombre": (f.get("denominacion") or b).strip()[:80], "ley": ley, "tipo": tipo,
                           "vto": (ymd(f.get("fechaVencimiento")) or HOY).isoformat(), "flujos": fl, "estado": "auto" if not mot else "pendiente",
-                          "motivo": mot, "desde": prev_b.get(b, {}).get("desde") or alta, "ficha": fic})
+                          "motivo": mot, "desde": desde_de(prev_de(prev_b, b, variantes), "auto" if not mot else "pendiente", primera, hoy_iso, alta), "variantes": variantes, "ficha": fic})
         else:
             txt = bajo((f.get("moneda") or "") + " " + (f.get("interes") or "") + " " + (f.get("denominacion") or ""))
             tipo = next((n for pat, n in TIPO_PUB if re.search(pat, txt)), "En pesos")
             otros.append({"t": b, "tipo": tipo, "vto": (ymd(f.get("fechaVencimiento")) or HOY).isoformat(), "estado": "pendiente",
                           "motivo": "familia que hoy se carga a mano (necesita la serie de " + {"CER": "CER", "Dólar linked": "dólar A3500", "TAMAR": "TAMAR"}.get(tipo, "tasas") + ")",
-                          "desde": prev_x.get(b, {}).get("desde") or alta, "ficha": fic})
+                          "desde": prev_de(prev_x, b, variantes).get("desde") or alta, "variantes": variantes, "ficha": fic})
     print(f"Bonos nuevos en dolares: {sum(x['estado'] == 'auto' for x in bonos)} automaticos, {sum(x['estado'] != 'auto' for x in bonos)} pendientes; otros: {len(otros)}")
 
     out = {"actualizado": datetime.now(timezone.utc).isoformat(timespec="seconds"), "fecha": hoy_iso,
-           "prueba": {"ons": {"ok": ok, "total": tot, "auto": modo_auto_on, "difs": difs[:40]},
+           "prueba": {"ons": {"ok": ok, "mal": mal, "abst": abst, "total": tot, "auto": modo_auto_on, "difs": difs[:40]},
                       "letras": {"metodo": metodo, "error_max": validos.get(metodo), "auto": modo_auto_l},
-                      "bonos": {"ok": okb, "total": totb, "auto": modo_auto_b, "difs": difb[:20]}},
+                      "bonos": {"ok": okb, "mal": malb, "abst": abstb, "total": totb, "auto": modo_auto_b, "difs": difb[:20]}},
            "ons": ons, "letras": letras, "bonos": bonos, "otros": otros}
     SALIDA.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
@@ -611,8 +691,8 @@ def main():
     # 5) aviso por mail: solo lo que aparece por primera vez
     nuevos_o = [o for o in ons if o["t"] not in prev_ons or prev_ons[o["t"]].get("estado") != o["estado"]]
     nuevos_l = [l for l in letras if l["t"] not in prev_l or prev_l[l["t"]].get("estado") != l["estado"]]
-    nuevos_b = [x for x in bonos if x["t"] not in prev_b or prev_b[x["t"]].get("estado") != x["estado"]]
-    nuevos_x = [x for x in otros if x["t"] not in prev_x]
+    nuevos_b = [x for x in bonos if prev_de(prev_b, x["t"], x.get("variantes", [])).get("estado") != x["estado"]]
+    nuevos_x = [x for x in otros if not prev_de(prev_x, x["t"], x.get("variantes", []))]
     if primera:
         with AVISO.open("a", encoding="utf-8") as fa:
             fa.write(f"## Primera revisión de emisiones\n\nSe leyeron las fichas técnicas de BYMA. El lector acertó en {ok} de {tot} ONs del catálogo"
@@ -632,7 +712,7 @@ def main():
         for l in nuevos_l:
             lin.append(f"- **{l['t']}** — letra, vence {l['vto']}" + (f", paga {l['pago']:.4f}: **cargada en la app**" if l["estado"] == "auto" else f": pendiente ({l['motivo']})"))
         for x in nuevos_b:
-            lin.append(f"- **{x['t']}D** — {x['nombre']}, vence {x['vto']}" + (": **cargado en la app**" if x["estado"] == "auto" else f": pendiente ({x['motivo']})"))
+            lin.append(f"- **{x['t']}** — {x['nombre']}, vence {x['vto']}" + (": **cargado en la app**" if x["estado"] == "auto" else f": pendiente ({x['motivo']})"))
         for x in nuevos_x:
             lin.append(f"- **{x['t']}** — bono {x['tipo']}, vence {x['vto']}: {x['motivo']}")
         with AVISO.open("a", encoding="utf-8") as fa:
