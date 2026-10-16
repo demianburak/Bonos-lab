@@ -187,7 +187,7 @@ def leer_amort(txt, vto, emision, fr):
     return None, "no se pudo leer la amortizacion"
 
 
-def a_fila(f, sym, emisor_app, clase, ley, fix="", moo="", fr_forzada=None, tasa_forzada=None):
+def a_fila(f, sym, emisor_app, clase, ley, fix="", moo="", fr_forzada=None, tasa_forzada=None, am_forzada=None):
     """ficha -> fila del catalogo de la app, o (None, motivo)."""
     vto, emi = ymd(f.get("fechaVencimiento")), ymd(f.get("fechaEmision"))
     if not vto:
@@ -200,6 +200,8 @@ def a_fila(f, sym, emisor_app, clase, ley, fix="", moo="", fr_forzada=None, tasa
     if mot:
         return None, mot
     am, mot = leer_amort(f.get("formaAmortizacion") or "", vto, emi, fr)
+    if mot == "no se pudo leer la amortizacion" and am_forzada == "B":  # ficha con errores de tipeo; "al vencimiento" confirmado a mano
+        am, mot = "B", None
     if mot:
         return None, mot
     if am != "B":
@@ -556,7 +558,7 @@ def main():
         mejor = min(notas) if notas else None
         if not sigue and (mejor is None or mejor > ESCALA.index("A")):
             continue  # fuera del universo de la app (A o mejor)
-        fila, mot = a_fila(f, base, nombre_emisor(emi_b), clase or "?", ley_app(f), fix, moo, (ov.get(base) or {}).get("fr"), (ov.get(base) or {}).get("tasa"))
+        fila, mot = a_fila(f, base, nombre_emisor(emi_b), clase or "?", ley_app(f), fix, moo, (ov.get(base) or {}).get("fr"), (ov.get(base) or {}).get("tasa"), (ov.get(base) or {}).get("am"))
         if not mot and not clase:
             mot = "no se encontro el numero de clase"
         if not mot and mejor is None:
