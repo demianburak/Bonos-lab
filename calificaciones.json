@@ -1,11 +1,11 @@
 {
- "actualizado": "2026-10-16T13:57:49+00:00",
+ "actualizado": "2026-10-16T15:23:49+00:00",
  "fecha": "2026-10-16",
  "estado": {
   "fix": {
    "ok": true,
-   "filas": 2644,
-   "cruzadas": 57,
+   "filas": 280,
+   "cruzadas": 2,
    "con_nota": 93
   },
   "moodys": {
@@ -724,78 +724,6 @@
    "fecha": "2026-09-15",
    "ag": "FIX",
    "sigue": false
-  },
-  {
-   "ent": "CT Barragan S.A.",
-   "ins": "Obligaciones Negociables Clase 10 Po ...",
-   "cal": "AAA(arg)",
-   "fecha": "2026-08-31",
-   "ag": "FIX",
-   "sigue": false
-  },
-  {
-   "ent": "Compañía General de Combustibles S.A. - (CGC)",
-   "ins": "Obligaciones Negociables Clase 41 Po ...",
-   "cal": "AA-(arg)",
-   "fecha": "2026-08-28",
-   "ag": "FIX",
-   "sigue": false
-  },
-  {
-   "ent": "Crown Point Energía S.A.",
-   "ins": "Obligaciones Negociables Clase X Gar ...",
-   "cal": "A(arg)",
-   "fecha": "2026-08-26",
-   "ag": "FIX",
-   "sigue": false
-  },
-  {
-   "ent": "Banco Comafi S.A.",
-   "ins": "Obligaciones Negociables Clase XXVII U ...",
-   "cal": "AA(arg)",
-   "fecha": "2026-08-21",
-   "ag": "FIX",
-   "sigue": false
-  },
-  {
-   "ent": "Profertil S.A.",
-   "ins": "Obligaciones Negociables Clase 4 Por ...",
-   "cal": "AAA(arg)",
-   "fecha": "2026-08-21",
-   "ag": "FIX",
-   "sigue": false
-  },
-  {
-   "ent": "Empresa Provincial de Energía de Córdoba S.A.U.",
-   "ins": "ON Clase II Por hasta el equivalente ...",
-   "cal": "AA(arg)",
-   "fecha": "2026-08-19",
-   "ag": "FIX",
-   "sigue": false
-  },
-  {
-   "ent": "Empresa Provincial de Energía de Córdoba S.A.U.",
-   "ins": "ON Clase I Por hasta el equivalente ...",
-   "cal": "AA(arg)",
-   "fecha": "2026-08-19",
-   "ag": "FIX",
-   "sigue": false
-  },
-  {
-   "ent": "Toyota Cia. Financiera Argentina S.A.",
-   "ins": "Obligaciones Negociables Clase 42 Po ...",
-   "cal": "AAA(arg)",
-   "fecha": "2026-08-19",
-   "ag": "FIX",
-   "sigue": false
-  },
-  {
-   "ent": "Pampa Energia S.A.",
-   "ins": "Obligaciones Negociables Clase 28 Po ...",
-   "cal": "AAA(arg)",
-   "fecha": "2026-08-18",
-   "ag": "FIX",
-   "sigue": true
   }
  ],
  "revisar": [
@@ -804,13 +732,6 @@
    "ins": "Obligaciones Negociables Subordinadas ...",
    "cal": "AA+(arg)",
    "fecha": "2026-09-16",
-   "accion": "Confirma"
-  },
-  {
-   "ent": "Pampa Energia S.A.",
-   "ins": "Obligaciones Negociables Adicionales ...",
-   "cal": "AAA(arg)",
-   "fecha": "2026-08-18",
    "accion": "Confirma"
   }
  ],
