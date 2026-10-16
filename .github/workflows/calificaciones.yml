@@ -1,0 +1,47 @@
+name: Revisar calificaciones y emisiones nuevas
+
+on:
+  schedule:
+    - cron: "47 11 * * 1-5"   # 08:47 hora de Argentina, lunes a viernes
+    - cron: "47 23 * * 1-5"   # 20:47 hora de Argentina
+  workflow_dispatch:          # permite correrlo a mano desde la pestaña Actions
+
+permissions:
+  contents: write
+  issues: write               # para avisarte por mail cuando hay novedades
+
+concurrency:
+  group: calificaciones
+  cancel-in-progress: false
+
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Calificaciones (FIX y Moody's Local)
+        run: python calificaciones.py
+        continue-on-error: true
+      - name: ONs y letras nuevas (fichas técnicas de BYMA)
+        run: python ons_nuevas.py
+        continue-on-error: true
+      - name: Guardar archivos si cambiaron
+        run: |
+          git config user.name "calificaciones-bot"
+          git config user.email "calificaciones-bot@users.noreply.github.com"
+          for f in calificaciones.json listado_calif.json nuevos.json fichas_byma.json; do [ -f "$f" ] && git add "$f"; done
+          git diff --cached --quiet && exit 0
+          git commit -m "Calificaciones y emisiones $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 5; done
+          exit 1
+      - name: Avisar por mail si hay novedades
+        if: hashFiles('aviso.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "" >> aviso.md
+          echo "App: https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/" >> aviso.md
+          gh issue create --title "Bonos Lab: novedades del $(TZ=America/Argentina/Buenos_Aires date +%d/%m/%Y)" --body-file aviso.md
