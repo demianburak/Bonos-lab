@@ -1,0 +1,885 @@
+{
+ "actualizado": "2026-10-16T13:57:49+00:00",
+ "fecha": "2026-10-16",
+ "estado": {
+  "fix": {
+   "ok": true,
+   "filas": 2644,
+   "cruzadas": 57,
+   "con_nota": 93
+  },
+  "moodys": {
+   "ok": false
+  }
+ },
+ "ons": {
+  "YMC1": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "YMCI": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "YMCX": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "YMCU": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "YMCJ": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "YM34": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "YCAM": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "YCAN": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "YM41": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-07",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "YM35": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-07",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "YM38": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "YM40": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-07",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "YMCY": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-07",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "YM42": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-07",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "YM39": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-07",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "YFCI": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-11",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "YFCK": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-11",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "MGC3": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "MGCM": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "MGCO": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "MGCR": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "MGCQ": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-18",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "MGCN": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-18",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "TLCM": {
+   "fix": "AAA(arg)",
+   "moo": "AA+.ar",
+   "fixFecha": "2026-07-28",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Sube"
+  },
+  "TLCP": {
+   "fix": "AA+(arg)",
+   "moo": "AA+.ar",
+   "base": true
+  },
+  "TLCT": {
+   "fix": "AA+(arg)",
+   "moo": "AA+.ar",
+   "base": true
+  },
+  "TLCQ": {
+   "fix": "AAA(arg)",
+   "moo": "AA+.ar",
+   "fixFecha": "2026-07-28",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Sube"
+  },
+  "TLCO": {
+   "fix": "AAA(arg)",
+   "moo": "AA+.ar",
+   "fixFecha": "2026-07-28",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Sube"
+  },
+  "TLCU": {
+   "fix": "AAA(arg)",
+   "moo": "AA+.ar",
+   "fixFecha": "2026-07-28",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Sube"
+  },
+  "PNDC": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "PN43": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "PNXC": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "PN42": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-23",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PN38": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-23",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PN41": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-23",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PN35": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-23",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PN36": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-23",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "TTCA": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "TTCD": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "TTCB": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-05-15",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "TTC8": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-05-15",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "TTC9": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-05-15",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PLC4": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PLC5": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PLC1": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-07-24",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PLC3": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-07-24",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PLC6": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-07-24",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PLC2": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-07-24",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "DNC7": {
+   "fix": "A+(arg)",
+   "moo": "A.ar",
+   "base": true
+  },
+  "DNC3": {
+   "fix": "AA-(arg)",
+   "moo": "A.ar",
+   "fixFecha": "2026-08-07",
+   "fixPersp": "RW Positivo",
+   "fixAccion": "Sube"
+  },
+  "DNC5": {
+   "fix": "AA-(arg)",
+   "moo": "A.ar",
+   "fixFecha": "2026-08-07",
+   "fixPersp": "RW Positivo",
+   "fixAccion": "Sube"
+  },
+  "VSCT": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-08",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "VSCV": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "VSCO": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-08",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "VSCW": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-08",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "VSCP": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-08",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "VSCU": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "VSCR": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-07-08",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "GN49": {
+   "fix": "",
+   "moo": "AA+.ar",
+   "base": true
+  },
+  "GN43": {
+   "fix": "",
+   "moo": "AA+.ar",
+   "base": true
+  },
+  "GN48": {
+   "fix": "",
+   "moo": "AA+.ar",
+   "base": true
+  },
+  "GN47": {
+   "fix": "",
+   "moo": "AA+.ar",
+   "base": true
+  },
+  "IRCF": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-06-01",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "IRCP": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-06-01",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "IRCJ": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-06-01",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "IRCO": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-06-01",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "LOC5": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-10-13",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "LOC6": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-10-13",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "RCCJ": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-05-05",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "ARC1": {
+   "fix": "AA+(arg)",
+   "moo": "AA+.ar",
+   "base": true
+  },
+  "CAC5": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "fixFecha": "2026-05-22",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "CACB": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "fixFecha": "2026-05-22",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "YM43": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "MGCT": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-18",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "TTCE": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-05-15",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Asigna"
+  },
+  "TLCV": {
+   "fix": "AA+(arg)",
+   "moo": "AA+.ar",
+   "base": true
+  },
+  "TLCW": {
+   "fix": "AA+(arg)",
+   "moo": "AA+.ar",
+   "base": true
+  },
+  "RAC4": {
+   "fix": "",
+   "moo": "AA-.ar",
+   "base": true
+  },
+  "RAC5": {
+   "fix": "",
+   "moo": "AA-.ar",
+   "base": true
+  },
+  "IRCQ": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "CS44": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-04-24",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "CS51": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "CS49": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-24",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "CS52": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-24",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "CS48": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-24",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "CS50": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-24",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "CS53": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-24",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Asigna"
+  },
+  "VSCX": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "PLC7": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "DNCA": {
+   "fix": "A+(arg)",
+   "moo": "A.ar",
+   "base": true
+  },
+  "BACA": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "BACG": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "BACH": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  },
+  "RC5C": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "fixFecha": "2026-05-15",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Asigna"
+  },
+  "LUC5": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-05",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PQCT": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-05",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PQCR": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-05",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "PQCS": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "fixFecha": "2026-08-05",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "MTC2": {
+   "fix": "",
+   "moo": "A.ar",
+   "base": true
+  },
+  "BYCH": {
+   "fix": "AAA(arg)",
+   "moo": "AAA.ar",
+   "base": true
+  }
+ },
+ "cambios": [
+  {
+   "det": "2026-10-16",
+   "t": "DNC5",
+   "emi": "Edenor",
+   "cl": "5",
+   "ag": "FIX",
+   "antes": "A+(arg)",
+   "ahora": "AA-(arg)",
+   "dir": "sube",
+   "fecha": "2026-08-07"
+  },
+  {
+   "det": "2026-10-16",
+   "t": "DNC3",
+   "emi": "Edenor",
+   "cl": "3",
+   "ag": "FIX",
+   "antes": "A+(arg)",
+   "ahora": "AA-(arg)",
+   "dir": "sube",
+   "fecha": "2026-08-07"
+  },
+  {
+   "det": "2026-10-16",
+   "t": "TLCU",
+   "emi": "Telecom",
+   "cl": "28",
+   "ag": "FIX",
+   "antes": "AA+(arg)",
+   "ahora": "AAA(arg)",
+   "dir": "sube",
+   "fecha": "2026-07-28"
+  },
+  {
+   "det": "2026-10-16",
+   "t": "TLCO",
+   "emi": "Telecom",
+   "cl": "23",
+   "ag": "FIX",
+   "antes": "AA+(arg)",
+   "ahora": "AAA(arg)",
+   "dir": "sube",
+   "fecha": "2026-07-28"
+  },
+  {
+   "det": "2026-10-16",
+   "t": "TLCQ",
+   "emi": "Telecom",
+   "cl": "25",
+   "ag": "FIX",
+   "antes": "AA+(arg)",
+   "ahora": "AAA(arg)",
+   "dir": "sube",
+   "fecha": "2026-07-28"
+  },
+  {
+   "det": "2026-10-16",
+   "t": "TLCM",
+   "emi": "Telecom",
+   "cl": "21",
+   "ag": "FIX",
+   "antes": "AA+(arg)",
+   "ahora": "AAA(arg)",
+   "dir": "sube",
+   "fecha": "2026-07-28"
+  }
+ ],
+ "nuevas": [
+  {
+   "ent": "Loma Negra C.I.A.S.A.",
+   "ins": "ON Clase 7 Por hasta USD 70 millones ...",
+   "cal": "AAA(arg)",
+   "fecha": "2026-10-13",
+   "ag": "FIX",
+   "sigue": true
+  },
+  {
+   "ent": "Banco de Servicios y Transacciones S.A.U. - BST",
+   "ins": "Obligaciones Negociables Clase XXX A ...",
+   "cal": "A+(arg)",
+   "fecha": "2026-09-17",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "John Deere Credit Compañía Financiera S.A.",
+   "ins": "Obligaciones Negociables Clase XXI Po ...",
+   "cal": "AAA(arg)",
+   "fecha": "2026-09-16",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "VMOS S.A.",
+   "ins": "Obligaciones Negociables Clase 1 Por ...",
+   "cal": "AAA(arg)",
+   "fecha": "2026-09-15",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "CT Barragan S.A.",
+   "ins": "Obligaciones Negociables Clase 10 Po ...",
+   "cal": "AAA(arg)",
+   "fecha": "2026-08-31",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "Compañía General de Combustibles S.A. - (CGC)",
+   "ins": "Obligaciones Negociables Clase 41 Po ...",
+   "cal": "AA-(arg)",
+   "fecha": "2026-08-28",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "Crown Point Energía S.A.",
+   "ins": "Obligaciones Negociables Clase X Gar ...",
+   "cal": "A(arg)",
+   "fecha": "2026-08-26",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "Banco Comafi S.A.",
+   "ins": "Obligaciones Negociables Clase XXVII U ...",
+   "cal": "AA(arg)",
+   "fecha": "2026-08-21",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "Profertil S.A.",
+   "ins": "Obligaciones Negociables Clase 4 Por ...",
+   "cal": "AAA(arg)",
+   "fecha": "2026-08-21",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "Empresa Provincial de Energía de Córdoba S.A.U.",
+   "ins": "ON Clase II Por hasta el equivalente ...",
+   "cal": "AA(arg)",
+   "fecha": "2026-08-19",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "Empresa Provincial de Energía de Córdoba S.A.U.",
+   "ins": "ON Clase I Por hasta el equivalente ...",
+   "cal": "AA(arg)",
+   "fecha": "2026-08-19",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "Toyota Cia. Financiera Argentina S.A.",
+   "ins": "Obligaciones Negociables Clase 42 Po ...",
+   "cal": "AAA(arg)",
+   "fecha": "2026-08-19",
+   "ag": "FIX",
+   "sigue": false
+  },
+  {
+   "ent": "Pampa Energia S.A.",
+   "ins": "Obligaciones Negociables Clase 28 Po ...",
+   "cal": "AAA(arg)",
+   "fecha": "2026-08-18",
+   "ag": "FIX",
+   "sigue": true
+  }
+ ],
+ "revisar": [
+  {
+   "ent": "Banco Macro S.A.",
+   "ins": "Obligaciones Negociables Subordinadas ...",
+   "cal": "AA+(arg)",
+   "fecha": "2026-09-16",
+   "accion": "Confirma"
+  },
+  {
+   "ent": "Pampa Energia S.A.",
+   "ins": "Obligaciones Negociables Adicionales ...",
+   "cal": "AAA(arg)",
+   "fecha": "2026-08-18",
+   "accion": "Confirma"
+  }
+ ],
+ "sin_cruce": [
+  "YMC1",
+  "YMCI",
+  "YMCX",
+  "YMCU",
+  "YMCJ",
+  "YM34",
+  "YCAM",
+  "YCAN",
+  "YM38",
+  "MGC3",
+  "MGCM",
+  "MGCO",
+  "MGCR",
+  "TLCP",
+  "TLCT",
+  "PNDC",
+  "PN43",
+  "PNXC",
+  "TTCA",
+  "TTCD",
+  "PLC4",
+  "PLC5",
+  "DNC7",
+  "VSCV",
+  "VSCU",
+  "GN49",
+  "GN43",
+  "GN48",
+  "GN47",
+  "ARC1",
+  "YM43",
+  "TLCV",
+  "TLCW",
+  "RAC4",
+  "RAC5",
+  "IRCQ",
+  "CS51",
+  "VSCX",
+  "PLC7",
+  "DNCA",
+  "BACA",
+  "BACG",
+  "BACH",
+  "MTC2",
+  "BYCH"
+ ],
+ "fix_ids": {
+  "Loma Negra": "3940",
+  "Aeropuertos Argentina 2000": "954",
+  "Banco Macro": "97",
+  "Cresud": "218",
+  "Pampa Energía": "1754",
+  "YPF Luz": "3965",
+  "Edenor": "234",
+  "Luz de Tres Picos": "4087",
+  "Petroquímica Comodoro Rivadavia": "546",
+  "Telecom": "619",
+  "Pluspetrol": "4393",
+  "Pan American Energy": "537",
+  "Vista Energy": "3823",
+  "YPF": "644",
+  "Banco Galicia": "75",
+  "IRSA": "1746",
+  "Capex": "158",
+  "Arcor": "35",
+  "Tecpetrol": "2049"
+ }
+}
