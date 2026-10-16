@@ -34,7 +34,7 @@ MESES = {"enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6
 NUM = {"un": 1, "una": 1, "uno": 1, "dos": 2, "tres": 3, "cuatro": 4, "cinco": 5, "seis": 6, "siete": 7, "ocho": 8, "nueve": 9,
        "diez": 10, "once": 11, "doce": 12, "trece": 13, "catorce": 14, "quince": 15, "dieciseis": 16, "veinte": 20}
 MOT_FREC = "BYMA no informa cada cuanto paga el cupon"
-OVERRIDES = AQUI / "overrides_ons.json"  # opcional: {"ons": {"AEC3": {"fr": 2}}} = frecuencia confirmada a mano en el prospecto
+OVERRIDES = AQUI / "overrides_ons.json"  # opcional: {"ons": {"AEC3": {"fr": 2}, "HJCH": {"fr": 2, "tasa": 7.06}}} = frecuencia (y tasa anual %, si BYMA no la trae) confirmadas a mano
 
 
 def post(ruta, cuerpo, intentos=2):
@@ -124,6 +124,9 @@ def leer_interes(txt):
     tasas = sorted({round(pct(m.group(1)), 4) for m in re.finditer(r"(\d{1,2}(?:[.,]\d{1,8})?)\s*%", t)})
     tasas = [x for x in tasas if 0 < x < 30]
     if not tasas:
+        # tasa cero explicita ("tasa cero", "FIJO (cero)", "0%"): no hay cupones, se paga todo al vencimiento
+        if re.search(r"\bcero\b|(?<![\d.,])0(?:[.,]0+)?\s*%|no hay pago de intereses", t):
+            return 0.0, 1, None
         return None, None, "no se encontro la tasa"
     if len(tasas) > 1:
         return None, None, "tasa escalonada (" + ", ".join(f"{x}%" for x in tasas) + ")"
@@ -184,12 +187,14 @@ def leer_amort(txt, vto, emision, fr):
     return None, "no se pudo leer la amortizacion"
 
 
-def a_fila(f, sym, emisor_app, clase, ley, fix="", moo="", fr_forzada=None):
+def a_fila(f, sym, emisor_app, clase, ley, fix="", moo="", fr_forzada=None, tasa_forzada=None):
     """ficha -> fila del catalogo de la app, o (None, motivo)."""
     vto, emi = ymd(f.get("fechaVencimiento")), ymd(f.get("fechaEmision"))
     if not vto:
         return None, "sin fecha de vencimiento"
     tasa, fr, mot = leer_interes(f.get("interes") or "")
+    if mot == "no se encontro la tasa" and tasa_forzada and 0 < tasa_forzada < 30 and fr_forzada in (1, 2, 4, 12):
+        tasa, fr, mot = tasa_forzada / 100, fr_forzada, None  # tasa y frecuencia confirmadas a mano en overrides_ons.json
     if mot == MOT_FREC and fr_forzada in (1, 2, 4, 12):  # frecuencia confirmada a mano en overrides_ons.json
         fr, mot = fr_forzada, None
     if mot:
@@ -551,7 +556,7 @@ def main():
         mejor = min(notas) if notas else None
         if not sigue and (mejor is None or mejor > ESCALA.index("A")):
             continue  # fuera del universo de la app (A o mejor)
-        fila, mot = a_fila(f, base, nombre_emisor(emi_b), clase or "?", ley_app(f), fix, moo, (ov.get(base) or {}).get("fr"))
+        fila, mot = a_fila(f, base, nombre_emisor(emi_b), clase or "?", ley_app(f), fix, moo, (ov.get(base) or {}).get("fr"), (ov.get(base) or {}).get("tasa"))
         if not mot and not clase:
             mot = "no se encontro el numero de clase"
         if not mot and mejor is None:
