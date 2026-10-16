@@ -200,6 +200,14 @@ def a_fila(f, sym, emisor_app, clase, ley, fix="", moo="", fr_forzada=None, tasa
     if mot:
         return None, mot
     am, mot = leer_amort(f.get("formaAmortizacion") or "", vto, emi, fr)
+    if isinstance(am_forzada, list) and fr:  # cronograma de cuotas copiado a mano de la ficha del broker: [["fecha", %], ...]; lo ya pagado va con fecha 2000-01-01
+        try:
+            fijo = [[str(d), round(float(p), 4)] for d, p in am_forzada]
+            if abs(sum(p for _, p in fijo) - 100) < 0.05 and max(d for d, _ in fijo) == vto.isoformat():
+                return [sym, emisor_app, clase, ley, vto.isoformat(), tasa, fr, sorted(fijo), fix, moo], None
+        except Exception:
+            pass
+        return None, "el cronograma cargado a mano no es valido"
     if mot == "no se pudo leer la amortizacion" and am_forzada == "B":  # ficha con errores de tipeo; "al vencimiento" confirmado a mano
         am, mot = "B", None
     if mot:
@@ -565,7 +573,7 @@ def main():
             mot = "todavia sin calificacion en los listados (se carga cuando aparezca)"
         if not mot and mejor > ESCALA.index("A"):
             mot = "calificacion menor a A"
-        if not mot and fila and fila[7] != "B" and not modo_auto_cuotas:
+        if not mot and fila and fila[7] != "B" and not modo_auto_cuotas and not isinstance((ov.get(base) or {}).get("am"), list):  # el cronograma cargado a mano ya esta revisado
             mot = "amortiza en cuotas: ese tipo de cronograma todavia no se pudo validar contra el catalogo"
         if not mot and not modo_auto_on:
             mot = "el lector todavia no paso la prueba con el catalogo"
