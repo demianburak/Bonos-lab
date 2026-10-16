@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-16T19:06:17+00:00",
+ "actualizado": "2026-10-16T19:25:11+00:00",
  "fecha": "2026-10-16",
  "prueba": {
   "ons": {
@@ -728,8 +728,19 @@
   {
    "t": "AER4",
    "estado": "pendiente",
-   "motivo": "no se pudo leer la amortizacion",
-   "fila": null,
+   "motivo": "todavia sin calificacion en los listados (se carga cuando aparezca)",
+   "fila": [
+    "AER4",
+    "Aeropuertos Argentina 2000",
+    "4",
+    "ARG",
+    "2028-11-01",
+    0.095,
+    4,
+    "B",
+    "",
+    ""
+   ],
    "desde": "2000-01-01",
    "ficha": {
     "denominacion": "GARANTIZADAS CLASE 4",
@@ -939,10 +950,21 @@
   },
   {
    "t": "BYY2",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "BYY2",
+    "Banco Galicia",
+    "32",
+    "ARG",
+    "2028-06-05",
+    0.0475,
+    2,
+    "B",
+    "AAA(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase XXXII Serie II",
     "emisor": "BANCO DE GALICIA Y BUENOS AIRES S.A.",
@@ -1217,10 +1239,21 @@
   },
   {
    "t": "CP40",
-   "estado": "pendiente",
-   "motivo": "no se pudo leer la amortizacion",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "CP40",
+    "Compañia General De Combustibles",
+    "40",
+    "ARG",
+    "2028-03-09",
+    0.095,
+    4,
+    "B",
+    "AA-(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase 40",
     "emisor": "COMPAÑIA GENERAL DE COMBUSTIBLES S.A.",
@@ -1369,10 +1402,54 @@
   },
   {
    "t": "CWCA",
-   "estado": "pendiente",
-   "motivo": "amortiza en cuotas y no se pudo leer el cronograma",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "CWCA",
+    "Crown Point Energía",
+    "X",
+    "ARG",
+    "2029-09-03",
+    0.085,
+    4,
+    [
+     [
+      "2027-12-03",
+      12.5
+     ],
+     [
+      "2028-03-03",
+      12.5
+     ],
+     [
+      "2028-06-03",
+      12.5
+     ],
+     [
+      "2028-09-03",
+      12.5
+     ],
+     [
+      "2028-12-03",
+      12.5
+     ],
+     [
+      "2029-03-03",
+      12.5
+     ],
+     [
+      "2029-06-03",
+      12.5
+     ],
+     [
+      "2029-09-03",
+      12.5
+     ]
+    ],
+    "A(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase X",
     "emisor": "Crown Point Energía S.A.",
@@ -1388,10 +1465,21 @@
   },
   {
    "t": "DEC2",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "DEC2",
+    "Empresa Distribuidora De Electricidad De Salta - Edesa",
+    "2",
+    "ARG",
+    "2027-02-24",
+    0.085,
+    2,
+    "B",
+    "AA-(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase 2",
     "emisor": "EMPRESA DISTRIBUIDORA DE ELECTRICIDAD DE SALTA - EDESA S.A.",
@@ -1467,10 +1555,134 @@
   },
   {
    "t": "EAC2",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "EAC2",
+    "Msu Green Energy",
+    "2",
+    "ARG",
+    "2033-10-12",
+    0.045,
+    4,
+    [
+     [
+      "2027-01-12",
+      3.57
+     ],
+     [
+      "2027-04-12",
+      3.57
+     ],
+     [
+      "2027-07-12",
+      3.57
+     ],
+     [
+      "2027-10-12",
+      3.57
+     ],
+     [
+      "2028-01-12",
+      3.57
+     ],
+     [
+      "2028-04-12",
+      3.57
+     ],
+     [
+      "2028-07-12",
+      3.57
+     ],
+     [
+      "2028-10-12",
+      3.57
+     ],
+     [
+      "2029-01-12",
+      3.57
+     ],
+     [
+      "2029-04-12",
+      3.57
+     ],
+     [
+      "2029-07-12",
+      3.57
+     ],
+     [
+      "2029-10-12",
+      3.57
+     ],
+     [
+      "2030-01-12",
+      3.57
+     ],
+     [
+      "2030-04-12",
+      3.57
+     ],
+     [
+      "2030-07-12",
+      3.57
+     ],
+     [
+      "2030-10-12",
+      3.57
+     ],
+     [
+      "2031-01-12",
+      3.57
+     ],
+     [
+      "2031-04-12",
+      3.57
+     ],
+     [
+      "2031-07-12",
+      3.57
+     ],
+     [
+      "2031-10-12",
+      3.57
+     ],
+     [
+      "2032-01-12",
+      3.57
+     ],
+     [
+      "2032-04-12",
+      3.57
+     ],
+     [
+      "2032-07-12",
+      3.57
+     ],
+     [
+      "2032-10-12",
+      3.57
+     ],
+     [
+      "2033-01-12",
+      3.57
+     ],
+     [
+      "2033-04-12",
+      3.57
+     ],
+     [
+      "2033-07-12",
+      3.57
+     ],
+     [
+      "2033-10-12",
+      3.61
+     ]
+    ],
+    "AA-(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "CLASE 2",
     "emisor": "MSU GREEN ENERGY S.A.",
@@ -2629,10 +2841,21 @@
   },
   {
    "t": "PHC3",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "PHC3",
+    "Puente Hnos",
+    "3",
+    "ARG",
+    "2027-01-16",
+    0.065,
+    2,
+    "B",
+    "A+(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase III",
     "emisor": "Puente Hnos. S.A.",
@@ -3011,8 +3234,19 @@
   {
    "t": "RAC8",
    "estado": "pendiente",
-   "motivo": "no se pudo leer la amortizacion",
-   "fila": null,
+   "motivo": "todavia sin calificacion en los listados (se carga cuando aparezca)",
+   "fila": [
+    "RAC8",
+    "Raghsa",
+    "8",
+    "ARG",
+    "2036-08-04",
+    0.0795,
+    2,
+    "B",
+    "",
+    ""
+   ],
    "desde": "2000-01-01",
    "ficha": {
     "denominacion": "Clase 8",
@@ -3536,8 +3770,32 @@
   {
    "t": "VS1X",
    "estado": "pendiente",
-   "motivo": "amortiza en cuotas y no se pudo leer el cronograma",
-   "fila": null,
+   "motivo": "todavia sin calificacion en los listados (se carga cuando aparezca)",
+   "fila": [
+    "VS1X",
+    "Vista Energy",
+    "31",
+    "ARG",
+    "2038-04-08",
+    0.07875,
+    2,
+    [
+     [
+      "2036-04-08",
+      33.0
+     ],
+     [
+      "2037-04-08",
+      33.0
+     ],
+     [
+      "2038-04-08",
+      34.0
+     ]
+    ],
+    "",
+    ""
+   ],
    "desde": "2000-01-01",
    "ficha": {
     "denominacion": "Clase XXXI Adicionales",

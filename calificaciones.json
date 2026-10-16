@@ -1,12 +1,12 @@
 {
- "actualizado": "2026-10-16T19:04:24+00:00",
+ "actualizado": "2026-10-16T19:23:19+00:00",
  "fecha": "2026-10-16",
  "estado": {
   "fix": {
    "ok": true,
    "filas": 280,
    "cruzadas": 13,
-   "con_nota": 170
+   "con_nota": 178
   },
   "moodys": {
    "ok": false
@@ -688,6 +688,11 @@
    "moo": "",
    "base": true
   },
+  "CWC6": {
+   "fix": "A(arg)",
+   "moo": "",
+   "base": true
+  },
   "DEC4": {
    "fix": "AA-(arg)",
    "moo": "",
@@ -783,6 +788,16 @@
    "base": true
   },
   "LMS6": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "LMS7": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "LMS8": {
    "fix": "AAA(arg)",
    "moo": "",
    "base": true
@@ -883,12 +898,22 @@
    "moo": "",
    "base": true
   },
+  "PHC4": {
+   "fix": "A+(arg)",
+   "moo": "",
+   "base": true
+  },
   "PN34": {
    "fix": "AAA(arg)",
    "moo": "",
    "base": true
   },
   "PN37": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PNIC": {
    "fix": "AAA(arg)",
    "moo": "",
    "base": true
@@ -920,6 +945,16 @@
   },
   "RCCR": {
    "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "RUCD": {
+   "fix": "A+(arg)",
+   "moo": "",
+   "base": true
+  },
+  "RUCE": {
+   "fix": "AA-(arg)",
    "moo": "",
    "base": true
   },
@@ -972,6 +1007,11 @@
   },
   "VSCY": {
    "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "XMC1": {
+   "fix": "AA(arg)",
    "moo": "",
    "base": true
   },
@@ -1199,6 +1239,7 @@
   "CP41",
   "CS46",
   "CS47",
+  "CWC6",
   "DEC4",
   "DNCB",
   "EAC3",
@@ -1209,6 +1250,8 @@
   "IRCN",
   "LDCG",
   "LMS6",
+  "LMS7",
+  "LMS8",
   "MGCE",
   "MGCU",
   "MSSF",
@@ -1224,14 +1267,18 @@
   "PFC2",
   "PFC3",
   "PFC4",
+  "PHC4",
   "PN34",
   "PN37",
+  "PNIC",
   "PNJC",
   "PNRC",
   "PNZC",
   "PQCO",
   "PZCG",
   "RCCR",
+  "RUCD",
+  "RUCE",
   "T641",
   "T672",
   "TBCA",
@@ -1241,6 +1288,7 @@
   "VMC1",
   "VSCQ",
   "VSCY",
+  "XMC1",
   "YFCG",
   "YFCL",
   "YFCM",
