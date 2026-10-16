@@ -1,12 +1,12 @@
 {
- "actualizado": "2026-10-16T18:46:13+00:00",
+ "actualizado": "2026-10-16T19:04:24+00:00",
  "fecha": "2026-10-16",
  "estado": {
   "fix": {
    "ok": true,
    "filas": 280,
    "cruzadas": 13,
-   "con_nota": 165
+   "con_nota": 170
   },
   "moodys": {
    "ok": false
@@ -638,6 +638,11 @@
    "moo": "",
    "base": true
   },
+  "AFCP": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
   "CACD": {
    "fix": "AA(arg)",
    "moo": "",
@@ -709,6 +714,11 @@
    "base": true
   },
   "FO4A": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
+  "FO4B": {
    "fix": "AA-(arg)",
    "moo": "",
    "base": true
@@ -930,7 +940,17 @@
    "moo": "",
    "base": true
   },
+  "TBCA": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
   "TLCD": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "TLCF": {
    "fix": "AAA(arg)",
    "moo": "",
    "base": true
@@ -1002,6 +1022,11 @@
   },
   "ZPC5": {
    "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "ZZC1": {
+   "fix": "AA-(arg)",
    "moo": "",
    "base": true
   }
@@ -1164,6 +1189,7 @@
   "AEC3",
   "AFCK",
   "AFCL",
+  "AFCP",
   "CACD",
   "CIC8",
   "CIC9",
@@ -1179,6 +1205,7 @@
   "EMC1",
   "EOC1",
   "FO4A",
+  "FO4B",
   "IRCN",
   "LDCG",
   "LMS6",
@@ -1207,7 +1234,9 @@
   "RCCR",
   "T641",
   "T672",
+  "TBCA",
   "TLCD",
+  "TLCF",
   "VBC1",
   "VMC1",
   "VSCQ",
@@ -1221,7 +1250,8 @@
   "YMCZ",
   "ZPC2",
   "ZPC3",
-  "ZPC5"
+  "ZPC5",
+  "ZZC1"
  ],
  "fix_ids": {
   "Loma Negra": "3940",

@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-16T18:48:04+00:00",
+ "actualizado": "2026-10-16T19:06:17+00:00",
  "fecha": "2026-10-16",
  "prueba": {
   "ons": {
@@ -1326,10 +1326,34 @@
   },
   {
    "t": "CWC6",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "CWC6",
+    "Crown Point Energía",
+    "6",
+    "ARG",
+    "2027-10-30",
+    0.095,
+    2,
+    [
+     [
+      "2026-10-30",
+      33.33
+     ],
+     [
+      "2027-04-30",
+      33.33
+     ],
+     [
+      "2027-10-30",
+      33.34
+     ]
+    ],
+    "A(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase VI",
     "emisor": "Crown Point Energía S.A.",
@@ -1912,10 +1936,58 @@
   },
   {
    "t": "LMS7",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "LMS7",
+    "Aluar Aluminio Argentino",
+    "7",
+    "ARG",
+    "2028-10-12",
+    0.07,
+    4,
+    [
+     [
+      "2000-01-01",
+      33.32
+     ],
+     [
+      "2027-01-12",
+      8.33
+     ],
+     [
+      "2027-04-12",
+      8.33
+     ],
+     [
+      "2027-07-12",
+      8.33
+     ],
+     [
+      "2027-10-12",
+      8.33
+     ],
+     [
+      "2028-01-12",
+      8.33
+     ],
+     [
+      "2028-04-12",
+      8.33
+     ],
+     [
+      "2028-07-12",
+      8.33
+     ],
+     [
+      "2028-10-12",
+      8.37
+     ]
+    ],
+    "AAA(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "GARANTIZADAS SERIE 7",
     "emisor": "ALUAR ALUMINIO ARGENTINO S.A.",
@@ -1931,10 +2003,34 @@
   },
   {
    "t": "LMS8",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "LMS8",
+    "Aluar Aluminio Argentino",
+    "8",
+    "ARG",
+    "2027-03-21",
+    0.0625,
+    4,
+    [
+     [
+      "2000-01-01",
+      50.0
+     ],
+     [
+      "2026-12-21",
+      25.0
+     ],
+     [
+      "2027-03-21",
+      25.0
+     ]
+    ],
+    "AAA(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "GARANTIZADAS SERIE 8",
     "emisor": "ALUAR ALUMINIO ARGENTINO S.A.",
@@ -1951,8 +2047,32 @@
   {
    "t": "LQC1",
    "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
+   "motivo": "todavia sin calificacion en los listados (se carga cuando aparezca)",
+   "fila": [
+    "LQC1",
+    "Luz de Tres Picos",
+    "1",
+    "ARG",
+    "2034-07-28",
+    0.085,
+    2,
+    [
+     [
+      "2032-07-28",
+      33.0
+     ],
+     [
+      "2033-07-28",
+      33.0
+     ],
+     [
+      "2034-07-28",
+      34.0
+     ]
+    ],
+    "",
+    ""
+   ],
    "desde": "2000-01-01",
    "ficha": {
     "denominacion": "Clase 1",
@@ -2528,10 +2648,34 @@
   },
   {
    "t": "PHC4",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "PHC4",
+    "Puente Hnos",
+    "4",
+    "ARG",
+    "2029-05-12",
+    0.065,
+    2,
+    [
+     [
+      "2027-05-12",
+      33.0
+     ],
+     [
+      "2028-05-12",
+      33.0
+     ],
+     [
+      "2029-05-12",
+      34.0
+     ]
+    ],
+    "A+(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase IV",
     "emisor": "Puente Hnos. S.A.",
@@ -2607,10 +2751,70 @@
   },
   {
    "t": "PNIC",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "PNIC",
+    "Pan American Energy",
+    "17",
+    "ARG",
+    "2032-02-07",
+    0.0425,
+    4,
+    [
+     [
+      "2000-01-01",
+      15.0
+     ],
+     [
+      "2027-02-07",
+      5.0
+     ],
+     [
+      "2027-08-07",
+      5.0
+     ],
+     [
+      "2028-02-07",
+      5.0
+     ],
+     [
+      "2028-08-07",
+      5.0
+     ],
+     [
+      "2029-02-07",
+      5.0
+     ],
+     [
+      "2029-08-07",
+      10.0
+     ],
+     [
+      "2030-02-07",
+      10.0
+     ],
+     [
+      "2030-08-07",
+      10.0
+     ],
+     [
+      "2031-02-07",
+      10.0
+     ],
+     [
+      "2031-08-07",
+      10.0
+     ],
+     [
+      "2032-02-07",
+      10.0
+     ]
+    ],
+    "AAA(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "CLASE 17",
     "emisor": "PAN AMERICAN ENERGY, S.L. SUCURSAL ARGENTINA",
@@ -2826,8 +3030,32 @@
   {
    "t": "RC1C",
    "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
+   "motivo": "todavia sin calificacion en los listados (se carga cuando aparezca)",
+   "fila": [
+    "RC1C",
+    "Arcor",
+    "1",
+    "ARG",
+    "2033-07-31",
+    0.076,
+    2,
+    [
+     [
+      "2031-07-31",
+      33.0
+     ],
+     [
+      "2032-07-31",
+      33.0
+     ],
+     [
+      "2033-07-31",
+      34.0
+     ]
+    ],
+    "",
+    ""
+   ],
    "desde": "2000-01-01",
    "ficha": {
     "denominacion": "Clase 1",
@@ -2904,10 +3132,34 @@
   },
   {
    "t": "RUCD",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "RUCD",
+    "Msu Energy",
+    "12",
+    "ARG",
+    "2030-12-05",
+    0.0975,
+    2,
+    [
+     [
+      "2028-12-05",
+      17.5
+     ],
+     [
+      "2029-12-05",
+      17.5
+     ],
+     [
+      "2030-12-05",
+      65.0
+     ]
+    ],
+    "A+(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase XII Serie B",
     "emisor": "MSU ENERGY S.A.",
@@ -2923,10 +3175,30 @@
   },
   {
    "t": "RUCE",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "RUCE",
+    "Msu Energy",
+    "13",
+    "ARG",
+    "2027-10-30",
+    0.075,
+    4,
+    [
+     [
+      "2027-07-30",
+      50.0
+     ],
+     [
+      "2027-10-30",
+      50.0
+     ]
+    ],
+    "AA-(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase XIII",
     "emisor": "MSU ENERGY S.A.",
@@ -3161,8 +3433,32 @@
   {
    "t": "TT1A",
    "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
+   "motivo": "todavia sin calificacion en los listados (se carga cuando aparezca)",
+   "fila": [
+    "TT1A",
+    "Tecpetrol",
+    "10",
+    "ARG",
+    "2033-01-22",
+    0.0725,
+    2,
+    [
+     [
+      "2031-01-22",
+      33.0
+     ],
+     [
+      "2032-01-22",
+      33.0
+     ],
+     [
+      "2033-01-22",
+      34.0
+     ]
+    ],
+    "",
+    ""
+   ],
    "desde": "2000-01-01",
    "ficha": {
     "denominacion": "Clase 10 Adicionales",
@@ -3408,10 +3704,30 @@
   },
   {
    "t": "XMC1",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "XMC1",
+    "Minera Exar",
+    "I",
+    "ARG",
+    "2027-11-11",
+    0.08,
+    2,
+    [
+     [
+      "2027-05-11",
+      50.0
+     ],
+     [
+      "2027-11-11",
+      50.0
+     ]
+    ],
+    "AA(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase I",
     "emisor": "Minera Exar S.A.",
@@ -3458,8 +3774,32 @@
   {
    "t": "YFCJ",
    "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
+   "motivo": "todavia sin calificacion en los listados (se carga cuando aparezca)",
+   "fila": [
+    "YFCJ",
+    "YPF Luz",
+    "18",
+    "ARG",
+    "2032-10-16",
+    0.07875,
+    2,
+    [
+     [
+      "2030-10-16",
+      33.0
+     ],
+     [
+      "2031-10-16",
+      33.0
+     ],
+     [
+      "2032-10-16",
+      34.0
+     ]
+    ],
+    "",
+    ""
+   ],
    "desde": "2000-01-01",
    "ficha": {
     "denominacion": "Clase XVIII",
