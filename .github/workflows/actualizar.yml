@@ -28,4 +28,7 @@ jobs:
           git config user.email "precios-bot@users.noreply.github.com"
           git add datos.json
           [ -f historico.json ] && git add historico.json || true
-          git diff --cached --quiet || (git commit -m "Precios $(date -u +%Y-%m-%dT%H:%M)Z" && git push)
+          git diff --cached --quiet && exit 0
+          git commit -m "Precios $(date -u +%Y-%m-%dT%H:%M)Z"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 5; done
+          exit 1
