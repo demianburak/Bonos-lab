@@ -1,12 +1,12 @@
 {
- "actualizado": "2026-10-16T15:23:49+00:00",
+ "actualizado": "2026-10-16T18:11:41+00:00",
  "fecha": "2026-10-16",
  "estado": {
   "fix": {
    "ok": true,
    "filas": 280,
-   "cruzadas": 2,
-   "con_nota": 93
+   "cruzadas": 4,
+   "con_nota": 102
   },
   "moodys": {
    "ok": false
@@ -622,6 +622,55 @@
    "fix": "AAA(arg)",
    "moo": "AAA.ar",
    "base": true
+  },
+  "EMC1": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "HJCJ": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-09-16",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "MCC1": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "fixFecha": "2026-10-05",
+   "fixPersp": "Perspectiva Positiva",
+   "fixAccion": "Confirma"
+  },
+  "OLC7": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PFC2": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PN34": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PZCG": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "VBC1": {
+   "fix": "AA+(arg)",
+   "moo": "",
+   "base": true
+  },
+  "VMC1": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
   }
  },
  "cambios": [
@@ -715,18 +764,24 @@
    "cal": "AAA(arg)",
    "fecha": "2026-09-16",
    "ag": "FIX",
-   "sigue": false
-  },
-  {
-   "ent": "VMOS S.A.",
-   "ins": "Obligaciones Negociables Clase 1 Por ...",
-   "cal": "AAA(arg)",
-   "fecha": "2026-09-15",
-   "ag": "FIX",
-   "sigue": false
+   "sigue": true
   }
  ],
  "revisar": [
+  {
+   "ent": "John Deere Credit Compañía Financiera S.A.",
+   "ins": "Obligaciones Negociables Adicionales ...",
+   "cal": "AAA(arg)",
+   "fecha": "2026-09-16",
+   "accion": "Confirma"
+  },
+  {
+   "ent": "John Deere Credit Compañía Financiera S.A.",
+   "ins": "Obligaciones Negociables Adicionales ...",
+   "cal": "AAA(arg)",
+   "fecha": "2026-09-16",
+   "accion": "Confirma"
+  },
   {
    "ent": "Banco Macro S.A.",
    "ins": "Obligaciones Negociables Subordinadas ...",
@@ -780,7 +835,14 @@
   "BACG",
   "BACH",
   "MTC2",
-  "BYCH"
+  "BYCH",
+  "EMC1",
+  "OLC7",
+  "PFC2",
+  "PN34",
+  "PZCG",
+  "VBC1",
+  "VMC1"
  ],
  "fix_ids": {
   "Loma Negra": "3940",
@@ -801,6 +863,9 @@
   "IRSA": "1746",
   "Capex": "158",
   "Arcor": "35",
-  "Tecpetrol": "2049"
+  "Tecpetrol": "2049",
+  "Compañia Mega": "4308",
+  "Pecom Servicios de Energía": "4607",
+  "John Deere Credit Cía. Financiera": "452"
  }
 }
