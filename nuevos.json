@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-16T18:13:39+00:00",
+ "actualizado": "2026-10-16T18:48:04+00:00",
  "fecha": "2026-10-16",
  "prueba": {
   "ons": {
@@ -728,7 +728,7 @@
   {
    "t": "AER4",
    "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
+   "motivo": "no se pudo leer la amortizacion",
    "fila": null,
    "desde": "2000-01-01",
    "ficha": {
@@ -849,10 +849,21 @@
   },
   {
    "t": "AFCP",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "AFCP",
+    "Banco Comafi",
+    "24",
+    "ARG",
+    "2028-06-05",
+    0.0525,
+    2,
+    "B",
+    "AA(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase XXIV",
     "emisor": "BANCO COMAFI S.A.",
@@ -899,8 +910,19 @@
   {
    "t": "BYCX",
    "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
+   "motivo": "todavia sin calificacion en los listados (se carga cuando aparezca)",
+   "fila": [
+    "BYCX",
+    "Banco Galicia",
+    "31",
+    "ARG",
+    "2026-12-30",
+    0.055,
+    2,
+    "B",
+    "",
+    ""
+   ],
    "desde": "2000-01-01",
    "ficha": {
     "denominacion": "CLASE XXXI",
@@ -1324,7 +1346,7 @@
   {
    "t": "CWCA",
    "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
+   "motivo": "amortiza en cuotas y no se pudo leer el cronograma",
    "fila": null,
    "desde": "2000-01-01",
    "ficha": {
@@ -1560,10 +1582,21 @@
   },
   {
    "t": "FO4B",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "FO4B",
+    "Futuros y Opciones.com",
+    "4",
+    "ARG",
+    "2027-01-20",
+    0.085,
+    4,
+    "B",
+    "AA-(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Serie IV Clase B",
     "emisor": "Futuros y Opciones.com S.A.",
@@ -2744,8 +2777,19 @@
   {
    "t": "RAC7",
    "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
+   "motivo": "todavia sin calificacion en los listados (se carga cuando aparezca)",
+   "fila": [
+    "RAC7",
+    "Raghsa",
+    "7",
+    "ARG",
+    "2032-12-11",
+    0.085,
+    2,
+    "B",
+    "",
+    ""
+   ],
    "desde": "2000-01-01",
    "ficha": {
     "denominacion": "Clase 7",
@@ -3026,10 +3070,21 @@
   },
   {
    "t": "TBCA",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "TBCA",
+    "CT Barragán",
+    "10",
+    "ARG",
+    "2028-01-03",
+    0.049,
+    2,
+    "B",
+    "AAA(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase 10",
     "emisor": "CT Barragán S.A.",
@@ -3075,10 +3130,21 @@
   },
   {
    "t": "TLCF",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "TLCF",
+    "Telecom",
+    "14",
+    "ARG",
+    "2028-02-10",
+    0.01,
+    2,
+    "B",
+    "AAA(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "CLASE 14",
     "emisor": "TELECOM ARGENTINA S. A.",
@@ -3740,10 +3806,21 @@
   },
   {
    "t": "ZZC1",
-   "estado": "pendiente",
-   "motivo": "BYMA no informa cada cuanto paga el cupon",
-   "fila": null,
-   "desde": "2000-01-01",
+   "estado": "auto",
+   "motivo": null,
+   "fila": [
+    "ZZC1",
+    "Camuzzi Gas Pampeana",
+    "1",
+    "ARG",
+    "2027-02-21",
+    0.0795,
+    2,
+    "B",
+    "AA-(arg)",
+    ""
+   ],
+   "desde": "2026-10-16",
    "ficha": {
     "denominacion": "Clase 1",
     "emisor": "CAMUZZI GAS PAMPEANA S.A.",

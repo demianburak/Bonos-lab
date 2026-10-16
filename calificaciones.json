@@ -1,12 +1,12 @@
 {
- "actualizado": "2026-10-16T18:11:41+00:00",
+ "actualizado": "2026-10-16T18:46:13+00:00",
  "fecha": "2026-10-16",
  "estado": {
   "fix": {
    "ok": true,
    "filas": 280,
-   "cruzadas": 4,
-   "con_nota": 102
+   "cruzadas": 13,
+   "con_nota": 165
   },
   "moodys": {
    "ok": false
@@ -623,10 +623,116 @@
    "moo": "AAA.ar",
    "base": true
   },
+  "AEC3": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
+  "AFCK": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "AFCL": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "CACD": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "CIC8": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "CIC9": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "CICA": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "CICB": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "COC4": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "CP41": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
+  "CS46": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "CS47": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "DEC4": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
+  "DNCB": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
+  "EAC3": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
   "EMC1": {
    "fix": "AAA(arg)",
    "moo": "",
    "base": true
+  },
+  "EOC1": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "FO4A": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
+  "HJCG": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-09-16",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "HJCH": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-09-16",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "HJCI": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-09-16",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
   },
   "HJCJ": {
    "fix": "AAA(arg)",
@@ -635,12 +741,117 @@
    "fixPersp": "Perspectiva Estable",
    "fixAccion": "Confirma"
   },
+  "HJCK": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-09-16",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "HJCL": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-09-16",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "HJCM": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "fixFecha": "2026-09-16",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Asigna"
+  },
+  "IRCN": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "LDCG": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
+  "LMS6": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
   "MCC1": {
    "fix": "AA(arg)",
    "moo": "",
    "fixFecha": "2026-10-05",
    "fixPersp": "Perspectiva Positiva",
    "fixAccion": "Confirma"
+  },
+  "MCC2": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "fixFecha": "2026-10-05",
+   "fixPersp": "Perspectiva Positiva",
+   "fixAccion": "Confirma"
+  },
+  "MCC3": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "fixFecha": "2026-10-05",
+   "fixPersp": "Perspectiva Positiva",
+   "fixAccion": "Confirma"
+  },
+  "MGCE": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "MGCU": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "MSSF": {
+   "fix": "A+(arg)",
+   "moo": "",
+   "base": true
+  },
+  "MSSG": {
+   "fix": "A+(arg)",
+   "moo": "",
+   "base": true
+  },
+  "MU32": {
+   "fix": "A(arg)",
+   "moo": "",
+   "base": true
+  },
+  "MUC4": {
+   "fix": "A(arg)",
+   "moo": "",
+   "base": true
+  },
+  "NPCC": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "OLC2": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "OLC3": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "OLC5": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "OLC6": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
   },
   "OLC7": {
    "fix": "AAA(arg)",
@@ -652,13 +863,75 @@
    "moo": "",
    "base": true
   },
+  "PFC3": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PFC4": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
   "PN34": {
    "fix": "AAA(arg)",
    "moo": "",
    "base": true
   },
+  "PN37": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PNJC": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PNRC": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PNZC": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PQCO": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
   "PZCG": {
    "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "RCCR": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "SIC2": {
+   "fix": "A+(arg)",
+   "moo": "",
+   "fixFecha": "2026-10-06",
+   "fixPersp": "Perspectiva Estable",
+   "fixAccion": "Confirma"
+  },
+  "T641": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "T672": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "TLCD": {
+   "fix": "AAA(arg)",
    "moo": "",
    "base": true
   },
@@ -669,6 +942,66 @@
   },
   "VMC1": {
    "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "VSCQ": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "VSCY": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "YFCG": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "YFCL": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "YFCM": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "YFCP": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "YM37": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "YMCR": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "YMCZ": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "ZPC2": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "ZPC3": {
+   "fix": "AA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "ZPC5": {
+   "fix": "AA(arg)",
    "moo": "",
    "base": true
   }
@@ -757,14 +1090,6 @@
    "fecha": "2026-09-17",
    "ag": "FIX",
    "sigue": false
-  },
-  {
-   "ent": "John Deere Credit Compañía Financiera S.A.",
-   "ins": "Obligaciones Negociables Clase XXI Po ...",
-   "cal": "AAA(arg)",
-   "fecha": "2026-09-16",
-   "ag": "FIX",
-   "sigue": true
   }
  ],
  "revisar": [
@@ -836,13 +1161,67 @@
   "BACH",
   "MTC2",
   "BYCH",
+  "AEC3",
+  "AFCK",
+  "AFCL",
+  "CACD",
+  "CIC8",
+  "CIC9",
+  "CICA",
+  "CICB",
+  "COC4",
+  "CP41",
+  "CS46",
+  "CS47",
+  "DEC4",
+  "DNCB",
+  "EAC3",
   "EMC1",
+  "EOC1",
+  "FO4A",
+  "IRCN",
+  "LDCG",
+  "LMS6",
+  "MGCE",
+  "MGCU",
+  "MSSF",
+  "MSSG",
+  "MU32",
+  "MUC4",
+  "NPCC",
+  "OLC2",
+  "OLC3",
+  "OLC5",
+  "OLC6",
   "OLC7",
   "PFC2",
+  "PFC3",
+  "PFC4",
   "PN34",
+  "PN37",
+  "PNJC",
+  "PNRC",
+  "PNZC",
+  "PQCO",
   "PZCG",
+  "RCCR",
+  "T641",
+  "T672",
+  "TLCD",
   "VBC1",
-  "VMC1"
+  "VMC1",
+  "VSCQ",
+  "VSCY",
+  "YFCG",
+  "YFCL",
+  "YFCM",
+  "YFCP",
+  "YM37",
+  "YMCR",
+  "YMCZ",
+  "ZPC2",
+  "ZPC3",
+  "ZPC5"
  ],
  "fix_ids": {
   "Loma Negra": "3940",
@@ -866,6 +1245,7 @@
   "Tecpetrol": "2049",
   "Compañia Mega": "4308",
   "Pecom Servicios de Energía": "4607",
-  "John Deere Credit Cía. Financiera": "452"
+  "John Deere Credit Cía. Financiera": "452",
+  "Sidersa": "4320"
  }
 }
