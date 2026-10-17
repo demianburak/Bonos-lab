@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-16T19:25:11+00:00",
+ "actualizado": "2026-10-17T00:04:02+00:00",
  "fecha": "2026-10-16",
  "prueba": {
   "ons": {
@@ -3052,36 +3052,6 @@
    }
   },
   {
-   "t": "PNJC",
-   "estado": "auto",
-   "motivo": null,
-   "fila": [
-    "PNJC",
-    "Pan American Energy",
-    "18",
-    "ARG",
-    "2027-02-07",
-    0.0125,
-    4,
-    "B",
-    "AAA(arg)",
-    ""
-   ],
-   "desde": "2026-10-16",
-   "ficha": {
-    "denominacion": "CLASE 18",
-    "emisor": "PAN AMERICAN ENERGY, S.L. SUCURSAL ARGENTINA",
-    "ley": "",
-    "moneda": "Dólares",
-    "fechaEmision": "2022-02-07 00:00:00.0",
-    "fechaVencimiento": "2027-02-07 00:00:00.0",
-    "interes": "FIJO DE 1,25%",
-    "formaAmortizacion": "AL VENCIMIENTO.",
-    "montoNominal": 25097123,
-    "codigoIsin": "ARAXIO5600P3"
-   }
-  },
-  {
    "t": "PNRC",
    "estado": "auto",
    "motivo": null,
@@ -4666,7 +4636,6 @@
    "motivo": "no se encontro la tasa",
    "desde": "2000-01-01",
    "variantes": [
-    "TVD8D",
     "TVD8X",
     "TVD8Y",
     "TVD8Z"

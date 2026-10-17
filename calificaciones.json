@@ -1,12 +1,12 @@
 {
- "actualizado": "2026-10-16T19:23:19+00:00",
+ "actualizado": "2026-10-17T00:02:13+00:00",
  "fecha": "2026-10-16",
  "estado": {
   "fix": {
    "ok": true,
    "filas": 280,
    "cruzadas": 13,
-   "con_nota": 178
+   "con_nota": 184
   },
   "moodys": {
    "ok": false
@@ -643,6 +643,11 @@
    "moo": "",
    "base": true
   },
+  "BYY2": {
+   "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
   "CACD": {
    "fix": "AA(arg)",
    "moo": "",
@@ -673,6 +678,11 @@
    "moo": "",
    "base": true
   },
+  "CP40": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
   "CP41": {
    "fix": "AA-(arg)",
    "moo": "",
@@ -693,12 +703,27 @@
    "moo": "",
    "base": true
   },
+  "CWCA": {
+   "fix": "A(arg)",
+   "moo": "",
+   "base": true
+  },
+  "DEC2": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
   "DEC4": {
    "fix": "AA-(arg)",
    "moo": "",
    "base": true
   },
   "DNCB": {
+   "fix": "AA-(arg)",
+   "moo": "",
+   "base": true
+  },
+  "EAC2": {
    "fix": "AA-(arg)",
    "moo": "",
    "base": true
@@ -895,6 +920,11 @@
   },
   "PFC4": {
    "fix": "AAA(arg)",
+   "moo": "",
+   "base": true
+  },
+  "PHC3": {
+   "fix": "A+(arg)",
    "moo": "",
    "base": true
   },
@@ -1230,18 +1260,23 @@
   "AFCK",
   "AFCL",
   "AFCP",
+  "BYY2",
   "CACD",
   "CIC8",
   "CIC9",
   "CICA",
   "CICB",
   "COC4",
+  "CP40",
   "CP41",
   "CS46",
   "CS47",
   "CWC6",
+  "CWCA",
+  "DEC2",
   "DEC4",
   "DNCB",
+  "EAC2",
   "EAC3",
   "EMC1",
   "EOC1",
@@ -1267,6 +1302,7 @@
   "PFC2",
   "PFC3",
   "PFC4",
+  "PHC3",
   "PHC4",
   "PN34",
   "PN37",
@@ -1324,6 +1360,7 @@
   "Compañia Mega": "4308",
   "Pecom Servicios de Energía": "4607",
   "John Deere Credit Cía. Financiera": "452",
-  "Sidersa": "4320"
+  "Sidersa": "4320",
+  "Vmos Sociedad Anonima": "4867"
  }
 }
